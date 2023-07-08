@@ -55,7 +55,7 @@ public abstract class ModItems {
 
     
     public static void register() {
-        GInstrumentMod.LOGGER.info("Registered instruments under " + GInstrumentMod.MODID);
+        GInstrumentMod.LOGGER.info("Registered all instrument items");
     }
 
 }

@@ -40,6 +40,7 @@ public class OpenInstrumentPacket implements ModPacket {
     }
 
 
+    @SuppressWarnings("resource")
     @Override
     public boolean handle(LocalPlayer player, PacketSender responseSender) {
         // Minecraft.getInstance().setScreen(OPEN_INSTRUMENT.get(instrumentType).get().apply(hand));

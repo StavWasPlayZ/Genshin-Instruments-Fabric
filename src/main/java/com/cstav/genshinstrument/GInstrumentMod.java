@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.cstav.genshinstrument.item.ModItems;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
+import com.cstav.genshinstrument.sound.ModSounds;
 
 public class GInstrumentMod implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("genshinstrument");
@@ -14,6 +15,7 @@ public class GInstrumentMod implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		ModSounds.regsiter();
 		ModPacketHandler.register();
 
 		ModCreativeModeTabs.regsiter();
