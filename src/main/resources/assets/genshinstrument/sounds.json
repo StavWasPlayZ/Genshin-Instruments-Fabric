@@ -1,0 +1,438 @@
+{
+    "windsong_lyre_note_0": {
+        "catrgory": "record",
+        "sounds": ["genshinstrument:windsong_lyre/0"]
+    },
+    "windsong_lyre_note_1": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/1"]
+    },
+    "windsong_lyre_note_2": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/2"]
+    },
+    "windsong_lyre_note_3": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/3"]
+    },
+    "windsong_lyre_note_4": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/4"]
+    },
+    "windsong_lyre_note_5": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/5"]
+    },
+    "windsong_lyre_note_6": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/6"]
+    },
+    "windsong_lyre_note_7": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/7"]
+    },
+    "windsong_lyre_note_8": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/8"]
+    },
+    "windsong_lyre_note_9": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/9"]
+    },
+    "windsong_lyre_note_10": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/10"]
+    },
+    "windsong_lyre_note_11": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/11"]
+    },
+    "windsong_lyre_note_12": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/12"]
+    },
+    "windsong_lyre_note_13": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/13"]
+    },
+    "windsong_lyre_note_14": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/14"]
+    },
+    "windsong_lyre_note_15": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/15"]
+    },
+    "windsong_lyre_note_16": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/16"]
+    },
+    "windsong_lyre_note_17": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/17"]
+    },
+    "windsong_lyre_note_18": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/18"]
+    },
+    "windsong_lyre_note_19": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/19"]
+    },
+    "windsong_lyre_note_20": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/20"]
+    },
+
+    "windsong_lyre_note_0_stereo": {
+        "catrgory": "record",
+        "sounds": ["genshinstrument:windsong_lyre/0.stereo"]
+    },
+    "windsong_lyre_note_1_stereo": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/1.stereo"]
+    },
+    "windsong_lyre_note_2_stereo": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/2.stereo"]
+    },
+    "windsong_lyre_note_3_stereo": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/3.stereo"]
+    },
+    "windsong_lyre_note_4_stereo": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/4.stereo"]
+    },
+    "windsong_lyre_note_5_stereo": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/5.stereo"]
+    },
+    "windsong_lyre_note_6_stereo": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/6.stereo"]
+    },
+    "windsong_lyre_note_7_stereo": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/7.stereo"]
+    },
+    "windsong_lyre_note_8_stereo": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/8.stereo"]
+    },
+    "windsong_lyre_note_9_stereo": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/9.stereo"]
+    },
+    "windsong_lyre_note_10_stereo": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/10.stereo"]
+    },
+    "windsong_lyre_note_11_stereo": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/11.stereo"]
+    },
+    "windsong_lyre_note_12_stereo": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/12.stereo"]
+    },
+    "windsong_lyre_note_13_stereo": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/13.stereo"]
+    },
+    "windsong_lyre_note_14_stereo": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/14.stereo"]
+    },
+    "windsong_lyre_note_15_stereo": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/15.stereo"]
+    },
+    "windsong_lyre_note_16_stereo": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/16.stereo"]
+    },
+    "windsong_lyre_note_17_stereo": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/17.stereo"]
+    },
+    "windsong_lyre_note_18_stereo": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/18.stereo"]
+    },
+    "windsong_lyre_note_19_stereo": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/19.stereo"]
+    },
+    "windsong_lyre_note_20_stereo": {
+        "category": "record",
+        "sounds": ["genshinstrument:windsong_lyre/20.stereo"]
+    },
+
+
+    "floral_zither_old_note_0": {
+        "catrgory": "record",
+        "sounds": ["genshinstrument:floral_zither_old/0"]
+    },
+    "floral_zither_old_note_1": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_old/1"]
+    },
+    "floral_zither_old_note_2": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_old/2"]
+    },
+    "floral_zither_old_note_3": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_old/3"]
+    },
+    "floral_zither_old_note_4": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_old/4"]
+    },
+    "floral_zither_old_note_5": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_old/5"]
+    },
+    "floral_zither_old_note_6": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_old/6"]
+    },
+    "floral_zither_old_note_7": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_old/7"]
+    },
+    "floral_zither_old_note_8": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_old/8"]
+    },
+    "floral_zither_old_note_9": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_old/9"]
+    },
+    "floral_zither_old_note_10": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_old/10"]
+    },
+    "floral_zither_old_note_11": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_old/11"]
+    },
+    "floral_zither_old_note_12": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_old/12"]
+    },
+    "floral_zither_old_note_13": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_old/13"]
+    },
+    "floral_zither_old_note_14": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_old/14"]
+    },
+    "floral_zither_old_note_15": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_old/15"]
+    },
+    "floral_zither_old_note_16": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_old/16"]
+    },
+    "floral_zither_old_note_17": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_old/17"]
+    },
+    "floral_zither_old_note_18": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_old/18"]
+    },
+    "floral_zither_old_note_19": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_old/19"]
+    },
+    "floral_zither_old_note_20": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_old/20"]
+    },
+
+    "floral_zither_new_note_0": {
+        "catrgory": "record",
+        "sounds": ["genshinstrument:floral_zither_new/0"]
+    },
+    "floral_zither_new_note_1": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_new/1"]
+    },
+    "floral_zither_new_note_2": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_new/2"]
+    },
+    "floral_zither_new_note_3": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_new/3"]
+    },
+    "floral_zither_new_note_4": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_new/4"]
+    },
+    "floral_zither_new_note_5": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_new/5"]
+    },
+    "floral_zither_new_note_6": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_new/6"]
+    },
+    "floral_zither_new_note_7": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_new/7"]
+    },
+    "floral_zither_new_note_8": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_new/8"]
+    },
+    "floral_zither_new_note_9": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_new/9"]
+    },
+    "floral_zither_new_note_10": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_new/10"]
+    },
+    "floral_zither_new_note_11": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_new/11"]
+    },
+    "floral_zither_new_note_12": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_new/12"]
+    },
+    "floral_zither_new_note_13": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_new/13"]
+    },
+    "floral_zither_new_note_14": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_new/14"]
+    },
+    "floral_zither_new_note_15": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_new/15"]
+    },
+    "floral_zither_new_note_16": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_new/16"]
+    },
+    "floral_zither_new_note_17": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_new/17"]
+    },
+    "floral_zither_new_note_18": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_new/18"]
+    },
+    "floral_zither_new_note_19": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_new/19"]
+    },
+    "floral_zither_new_note_20": {
+        "category": "record",
+        "sounds": ["genshinstrument:floral_zither_new/20"]
+    },
+
+
+    "vintage_lyre_note_0": {
+        "catrgory": "record",
+        "sounds": ["genshinstrument:vintage_lyre/0"]
+    },
+    "vintage_lyre_note_1": {
+        "category": "record",
+        "sounds": ["genshinstrument:vintage_lyre/1"]
+    },
+    "vintage_lyre_note_2": {
+        "category": "record",
+        "sounds": ["genshinstrument:vintage_lyre/2"]
+    },
+    "vintage_lyre_note_3": {
+        "category": "record",
+        "sounds": ["genshinstrument:vintage_lyre/3"]
+    },
+    "vintage_lyre_note_4": {
+        "category": "record",
+        "sounds": ["genshinstrument:vintage_lyre/4"]
+    },
+    "vintage_lyre_note_5": {
+        "category": "record",
+        "sounds": ["genshinstrument:vintage_lyre/5"]
+    },
+    "vintage_lyre_note_6": {
+        "category": "record",
+        "sounds": ["genshinstrument:vintage_lyre/6"]
+    },
+    "vintage_lyre_note_7": {
+        "category": "record",
+        "sounds": ["genshinstrument:vintage_lyre/7"]
+    },
+    "vintage_lyre_note_8": {
+        "category": "record",
+        "sounds": ["genshinstrument:vintage_lyre/8"]
+    },
+    "vintage_lyre_note_9": {
+        "category": "record",
+        "sounds": ["genshinstrument:vintage_lyre/9"]
+    },
+    "vintage_lyre_note_10": {
+        "category": "record",
+        "sounds": ["genshinstrument:vintage_lyre/10"]
+    },
+    "vintage_lyre_note_11": {
+        "category": "record",
+        "sounds": ["genshinstrument:vintage_lyre/11"]
+    },
+    "vintage_lyre_note_12": {
+        "category": "record",
+        "sounds": ["genshinstrument:vintage_lyre/12"]
+    },
+    "vintage_lyre_note_13": {
+        "category": "record",
+        "sounds": ["genshinstrument:vintage_lyre/13"]
+    },
+    "vintage_lyre_note_14": {
+        "category": "record",
+        "sounds": ["genshinstrument:vintage_lyre/14"]
+    },
+    "vintage_lyre_note_15": {
+        "category": "record",
+        "sounds": ["genshinstrument:vintage_lyre/15"]
+    },
+    "vintage_lyre_note_16": {
+        "category": "record",
+        "sounds": ["genshinstrument:vintage_lyre/16"]
+    },
+    "vintage_lyre_note_17": {
+        "category": "record",
+        "sounds": ["genshinstrument:vintage_lyre/17"]
+    },
+    "vintage_lyre_note_18": {
+        "category": "record",
+        "sounds": ["genshinstrument:vintage_lyre/18"]
+    },
+    "vintage_lyre_note_19": {
+        "category": "record",
+        "sounds": ["genshinstrument:vintage_lyre/19"]
+    },
+    "vintage_lyre_note_20": {
+        "category": "record",
+        "sounds": ["genshinstrument:vintage_lyre/20"]
+    },
+
+
+    "glorious_drum_don": {
+        "catrgory": "record",
+        "sounds": ["genshinstrument:glorious_drum/don"]
+    },
+    "glorious_drum_ka": {
+        "category": "record",
+        "sounds": ["genshinstrument:glorious_drum/ka"]
+    }
+}

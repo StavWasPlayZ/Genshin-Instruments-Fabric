@@ -17,7 +17,7 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.cstav.genshinstrument.GenshinstrumentMod"
+			"com.cstav.genshinstrument.GInstrumentMod"
 		]
 	},
 	"mixins": [

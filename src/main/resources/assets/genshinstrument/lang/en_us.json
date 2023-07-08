@@ -1,0 +1,80 @@
+{
+    "genshinstrument.itemGroup.instruments": "Instruments",
+
+    "item.genshinstrument.windsong_lyre": "Windsong Lyre",
+    "item.genshinstrument.floral_zither": "Floral Zither",
+    "item.genshinstrument.vintage_lyre": "Vintage Lyre",
+    "item.genshinstrument.glorious_drum": "Arataki's Great And Glorious Drum",
+
+
+    "soundCategory.record": "Instruments",
+
+
+    "button.genshinstrument.instrumentOptions": "Instrument Options",
+    "button.genshinstrument.zither_options": "Zither Options",
+
+
+    "button.genshinstrument.audioChannels": "Instrument Audio Channel Type",
+    "button.genshinstrument.audioChannels.mono": "Mono",
+    "button.genshinstrument.audioChannels.stereo": "Stereo",
+    "button.genshinstrument.audioChannels.stereo.tooltip":
+        "NOTICE: Because of some annoying specification by OpenAL, all sounds produced on Stereo will be stuck on 100%.\nThis includes some instruments.",
+    "button.genshinstrument.audioChannels.mixed.tooltip":
+        "On Multiplayer, if the Instruments sound category is set to 100% - you will hear intruments on Stereo within %s blocks of range.\nOtherwise, you will hear Stereo, as well as when you play yourself.",
+    "button.genshinstrument.audioChannels.mixed": "Mixed",
+    "button.genshinstrument.stop_music_on_play.tooltip": "When you or other players within %s blocks of range play an instrument, Minecraft's background music will stop.",
+    "button.genshinstrument.stop_music_on_play": "Stop Music On Play",
+    "button.genshinstrument.emit_ring": "Emit Ring Animations",
+    "button.genshinstrument.shared_instrument.tooltip": "See what other notes players nearby are playing in your instrument's screen",
+    "button.genshinstrument.shared_instrument": "Shared Instrument Screen",
+
+
+    "button.genshinstrument.label": "Note labels",
+    "button.genshinstrument.pitch": "Pitch",
+
+    "button.genshinstrument.zither.soundType": "Sound Type",
+    "button.genshinstrument.zither.soundType.old": "Old",
+    "button.genshinstrument.zither.soundType.new": "New",
+
+
+    "button.genshinstrument.label.do_re_mi": "Do Re Mi",
+
+    "genshinstrument.label.do": "Do",
+    "genshinstrument.label.re": "Re",
+    "genshinstrument.label.mi": "Mi",
+    "genshinstrument.label.fa": "Fa",
+    "genshinstrument.label.so": "So",
+    "genshinstrument.label.la": "La",
+    "genshinstrument.label.ti": "Ti",
+
+    "genshinstrument.label.glorious_drum.ka": "Ka",
+    "genshinstrument.label.glorious_drum.don": "Don",
+
+
+    "button.genshinstrument.label.keyboard_layout": "Keyboard",
+    "button.genshinstrument.label.abc": "ABC",
+    "button.genshinstrument.label.none": "No Label",
+
+    "button.genshinstrument.label.don_ka": "Don-Ka",
+
+
+
+    "genshinstrument.advancements.main.root.title": "A Bard's Journey",
+    "genshinstrument.advancements.main.root.description": "Though wine may not be by your side, the instruments will always walk you through the Game of Freedom.",
+
+    "genshinstrument.advancements.main.master.title": "A Band of One",
+    "genshinstrument.advancements.main.master.description": "Have all instruments in your inventory at once",
+    
+    "genshinstrument.advancements.main.windsong_lyre.title": "The Sound of Wind",
+    "genshinstrument.advancements.main.windsong_lyre.description": "Play the Windsong Lyre",
+    
+    "genshinstrument.advancements.main.vintage_lyre.title": "The Forest Will Remeber",
+    "genshinstrument.advancements.main.vintage_lyre.description": "Play the Vintage Lyre",
+    
+    "genshinstrument.advancements.main.glorious_drum.title": "Totally Not a Scam",
+    "genshinstrument.advancements.main.glorious_drum.description": "Play Arataki's Glorious Drum",
+    
+    "genshinstrument.advancements.main.floral_zither.title": "Incognito Player",
+    "genshinstrument.advancements.main.floral_zither.description": "Play the Floral Zither"
+
+}
