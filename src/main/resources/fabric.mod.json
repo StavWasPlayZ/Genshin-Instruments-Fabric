@@ -1,0 +1,32 @@
+{
+	"schemaVersion": 1,
+	"id": "genshinstrument",
+	"version": "2.7.8",
+	"name": "Genshin Instruments",
+	"description": "A mod that brings Genshin Impact's instruments to Minecraft!\nThis is my first ever published mod, and I am quite proud of it :')\nHope you enjoy it as much as I do!!",
+	"authors": [
+		"Stav (IGN StavWasPlayZ)"
+	],
+	"contact": {
+		"homepage": "https://www.curseforge.com/minecraft/mc-mods/genshin-instruments",
+		"sources": "https://github.com/StavWasPlayZ/Genshin-Instruments-Fabric",
+		"issues": "https://github.com/StavWasPlayZ/Genshin-Instruments-Fabric/issues"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/genshinstrument/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.cstav.genshinstrument.GenshinstrumentMod"
+		]
+	},
+	"mixins": [
+		"genshinstrument.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.14.21",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	}
+}
