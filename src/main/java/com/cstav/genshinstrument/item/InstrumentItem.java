@@ -1,5 +1,8 @@
 package com.cstav.genshinstrument.item;
 
+import com.cstav.genshinstrument.networking.ModPacketHandler;
+import com.cstav.genshinstrument.networking.packets.instrument.OpenInstrumentPacket;
+
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -35,8 +38,7 @@ public class InstrumentItem extends Item {
     }
 
     static void sendOpenRequest(ServerPlayer player, InteractionHand hand, String instrumentType) {
-        //TODO Re-implement sending packets
-        // ModPacketHandler.sendToClient(new OpenInstrumentPacket(instrumentType, hand), player);
+        ModPacketHandler.sendToClient(new OpenInstrumentPacket(instrumentType, hand), player);
     }
     
 
