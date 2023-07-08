@@ -6,10 +6,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.cstav.genshinstrument.GInstrumentMod;
+
 @Mixin(MinecraftServer.class)
 public class ExampleMixin {
-	@Inject(at = @At("HEAD"), method = "loadWorld")
+	@Inject(at = @At("HEAD"), method = "loadLevel")
 	private void init(CallbackInfo info) {
-		// This code is injected into the start of MinecraftServer.loadWorld()V
+		GInstrumentMod.LOGGER.info("test load thing");
 	}
 }

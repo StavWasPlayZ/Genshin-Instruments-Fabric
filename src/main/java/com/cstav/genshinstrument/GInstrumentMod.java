@@ -13,7 +13,7 @@ public class GInstrumentMod implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		ModItemGroup.regsiter();
+		ModCreativeModeTabs.regsiter();
 		ModItems.register();
 	}
 }
