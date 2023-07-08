@@ -13,13 +13,13 @@ import net.minecraft.world.item.ItemStack;
 public class ModCreativeModeTabs {
     
     public static final CreativeModeTab INSTRUMENTS = FabricItemGroup.builder()
-        //TODO: Change to Zither once it is added
-        .icon(() -> new ItemStack(ModItems.WINDSONG_LYRE))
-        .title(Component.translatable("genshinstrument.iteGroup.instruments"))
+        .icon(() -> new ItemStack(ModItems.FLORAL_ZITHER))
+        .title(Component.translatable("genshinstrument.itemGroup.instruments"))
         .build();
 
     public static void regsiter() {
         Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, new ResourceLocation(GInstrumentMod.MODID, "instruments_group"), INSTRUMENTS);
+        
     }
 
 }

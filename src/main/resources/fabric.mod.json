@@ -18,6 +18,9 @@
 	"entrypoints": {
 		"main": [
 			"com.cstav.genshinstrument.GInstrumentMod"
+		],
+		"client": [
+			"com.cstav.genshinstrument.GInstrumentMod"
 		]
 	},
 	"mixins": [

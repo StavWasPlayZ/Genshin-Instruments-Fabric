@@ -3,6 +3,9 @@ package com.cstav.genshinstrument.sound;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.cstav.genshinstrument.client.config.ModClientConfigs;
+import com.cstav.genshinstrument.client.config.enumType.InstrumentChannelType;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -72,16 +75,14 @@ public class NoteSound {
         if (!hasStereo())
             return mono;
         
-        //TODO: Re-implement preferences
-        // final InstrumentChannelType preference = ModClientConfigs.CHANNEL_TYPE.get();
+        final InstrumentChannelType preference = ModClientConfigs.CHANNEL_TYPE.get();
 
-        // return switch(preference) {
-        //     case MIXED -> (metInstrumentVolume() && (distanceFromPlayer <= STEREO_RANGE)) ? stereo.get() : mono;
+        return switch(preference) {
+            case MIXED -> (metInstrumentVolume() && (distanceFromPlayer <= STEREO_RANGE)) ? stereo.get() : mono;
 
-        //     case STEREO -> stereo.get();
-        //     case MONO -> mono;
-        // };
-        return stereo.get();
+            case STEREO -> stereo.get();
+            case MONO -> mono;
+        };
     }
     /**
      * Returns the literal preference of the client. Defaults to Stereo.
@@ -93,16 +94,14 @@ public class NoteSound {
         if (!hasStereo())
             return mono;
         
-        //TODO: Re-implement preferences
-        // final InstrumentChannelType preference = ModClientConfigs.CHANNEL_TYPE.get();
+        final InstrumentChannelType preference = ModClientConfigs.CHANNEL_TYPE.get();
 
-        // return switch (preference) {
-        //     case MIXED -> metInstrumentVolume() ? stereo.get() : mono;
+        return switch (preference) {
+            case MIXED -> metInstrumentVolume() ? stereo.get() : mono;
 
-        //     case STEREO -> stereo.get();
-        //     case MONO -> mono;
-        // };
-        return stereo.get();
+            case STEREO -> stereo.get();
+            case MONO -> mono;
+        };
     }
 
     /**
@@ -129,9 +128,8 @@ public class NoteSound {
 
         final double distanceFromPlayer = Math.sqrt(pos.distToCenterSqr((Position)player.position()));
         
-        //TODO: Re-implement preferences
-        // if (ModClientConfigs.STOP_MUSIC_ON_PLAY.get() && (distanceFromPlayer < NoteSound.STOP_SOUND_DISTANCE))
-        //     minecraft.getMusicManager().stopPlaying();
+        if (ModClientConfigs.STOP_MUSIC_ON_PLAY.get() && (distanceFromPlayer < NoteSound.STOP_SOUND_DISTANCE))
+            minecraft.getMusicManager().stopPlaying();
 
         final Level level = minecraft.level;
 

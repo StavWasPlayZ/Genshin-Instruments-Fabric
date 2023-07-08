@@ -40,16 +40,15 @@ public abstract class ModItems {
 
     private static void addToItemGroups(final Item item) {
         // All shall go to the instruments and toold tab
-        addToItemGroup(ModCreativeModeTabs.INSTRUMENTS, item);
-        addToItemGroup(CreativeModeTabs.TOOLS_AND_UTILITIES, item);
+        addToTab(ModCreativeModeTabs.INSTRUMENTS, item);
+        addToTab(CreativeModeTabs.TOOLS_AND_UTILITIES, item);
     }
 
-    private static void addToItemGroup(final CreativeModeTab tab, final Item item) {
-        // addToItemGroup(Registries.CREATIVE_MODE_TAB., item);
+    private static void addToTab(final CreativeModeTab tab, final Item item) {
+        addToTab(BuiltInRegistries.CREATIVE_MODE_TAB.getResourceKey(tab).get(), item);
     }
-    private static void addToItemGroup(final ResourceKey<CreativeModeTab> group, final Item item) {
-        // All shall go to the instruments and toold tab
-        ItemGroupEvents.modifyEntriesEvent(group).register((content) -> content.accept(item));
+    private static void addToTab(final ResourceKey<CreativeModeTab> tab, final Item item) {
+        ItemGroupEvents.modifyEntriesEvent(tab).register((content) -> content.accept(item));
     }
 
 

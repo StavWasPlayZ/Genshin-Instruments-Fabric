@@ -22,7 +22,8 @@ public class ModPacketHandler {
 
 
     @SuppressWarnings("unchecked")
-    public static void register() {
+    public static void registerClientPackets() {
+        
         for (final Class<ModPacket> packetType : ACCEPTABLE_PACKETS) {
             try {
 
