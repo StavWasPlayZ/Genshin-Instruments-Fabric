@@ -61,17 +61,6 @@ public class InstrumentItem extends Item {
         
         return InteractionResultHolder.success(pPlayer.getItemInHand(pUsedHand));
     }
-
-    //TODO Re-implement animations
-    // @Override
-    // public UseAnim getUseAnimation(ItemStack pStack) {
-    //     return UseAnim.CUSTOM;
-    // }
-    // @Override
-    // public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-    //     consumer.accept(new ClientInstrumentItem());
-    // }
-    
     
 
     @FunctionalInterface
