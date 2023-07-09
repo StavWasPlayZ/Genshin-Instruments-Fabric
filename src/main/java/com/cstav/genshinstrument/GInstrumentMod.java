@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
+import com.cstav.genshinstrument.criteria.ModCriteria;
 import com.cstav.genshinstrument.event.ClientEvents;
 import com.cstav.genshinstrument.item.ModItems;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
@@ -21,6 +22,8 @@ public class GInstrumentMod implements ModInitializer, ClientModInitializer {
 
 	@Override
 	public void onInitialize() {
+		ModCriteria.register();
+		
 		ModSounds.regsiter();
 
 		ModCreativeModeTabs.regsiter();
