@@ -13,9 +13,10 @@ public class ModCriteria {
     public static final InstrumentPlayedTrigger INSTRUMENT_PLAYED_TRIGGER = CriteriaTriggers.register(new InstrumentPlayedTrigger());
 
     public static void register() {
-        InstrumentPlayedEvent.ByPlayer.EVENT.register((args) ->
-            INSTRUMENT_PLAYED_TRIGGER.trigger((ServerPlayer)args.player, new ItemStack(BuiltInRegistries.ITEM.get(args.instrumentId)))
-        );
+        InstrumentPlayedEvent.ByPlayer.EVENT.register((args) -> {
+            if (!args.isClientSide)
+                INSTRUMENT_PLAYED_TRIGGER.trigger((ServerPlayer)args.player, new ItemStack(BuiltInRegistries.ITEM.get(args.instrumentId)));
+        });
     }
     
 }

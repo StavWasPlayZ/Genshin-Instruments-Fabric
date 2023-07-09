@@ -53,7 +53,9 @@ public class ServerUtil {
         );
 
         // Fire a player-specific event
-        InstrumentPlayedEvent.EVENT.invoker().triggered(new ByPlayerArgs(sound, player, hand, instrumentId, false));
+        InstrumentPlayedEvent.ByPlayer.EVENT.invoker().triggered(
+            new ByPlayerArgs(sound, player, hand, instrumentId, false)
+        );
     }
 
     /**
@@ -87,7 +89,9 @@ public class ServerUtil {
             level.gameEvent(null, GameEvent.INSTRUMENT_PLAY, pos);
 
         // Fire a generic instrument event
-        InstrumentPlayedEvent.EVENT.invoker().triggered(new InstrumentPlayedEventArgs(sound, (ServerLevel)level, pos, instrumentId, false));
+        InstrumentPlayedEvent.EVENT.invoker().triggered(
+            new InstrumentPlayedEventArgs(sound, (ServerLevel)level, pos, instrumentId, false)
+        );
     }
 
 
