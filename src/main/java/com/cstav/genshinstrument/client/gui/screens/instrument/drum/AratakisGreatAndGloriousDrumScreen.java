@@ -21,8 +21,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 
 @Environment(EnvType.CLIENT)
-//NOTE: There just to make it load on mod setup
-@EventBusSubscriber(bus = Bus.MOD, value = Dist.CLIENT)
 // ikik im funny, long name, thank you
 public class AratakisGreatAndGloriousDrumScreen extends AbstractInstrumentScreen {
     public static final String INSTRUMENT_ID = "glorious_drum";

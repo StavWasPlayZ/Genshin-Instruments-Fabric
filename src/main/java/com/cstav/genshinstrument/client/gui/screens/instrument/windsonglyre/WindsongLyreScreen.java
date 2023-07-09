@@ -12,8 +12,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 
 @Environment(EnvType.CLIENT)
-//NOTE: There just to make it load on mod setup
-@EventBusSubscriber(bus = Bus.MOD, value = Dist.CLIENT)
 public class WindsongLyreScreen extends AbstractGridInstrumentScreen {
     public static final String INSTRUMENT_ID = "windsong_lyre";
 

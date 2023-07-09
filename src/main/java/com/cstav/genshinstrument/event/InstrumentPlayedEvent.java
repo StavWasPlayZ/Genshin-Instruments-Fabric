@@ -22,9 +22,6 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEvent.In
         (listeners) -> args -> ModEvent.handleEvent(listeners, args)
     );
 
-    @Override
-    void triggered(InstrumentPlayedEventArgs args);
-
     @Cancelable
     public static class InstrumentPlayedEventArgs extends EventArgs {
 
@@ -61,9 +58,6 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEvent.In
                 InstrumentPlayedEvent.EVENT.invoker().triggered(args);
             }
         );
-
-        @Override
-        void triggered(ByPlayerArgs args);
 
         @Cancelable
         public static class ByPlayerArgs extends InstrumentPlayedEventArgs {

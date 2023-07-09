@@ -20,7 +20,7 @@
 			"com.cstav.genshinstrument.GInstrumentMod"
 		],
 		"client": [
-			"com.cstav.genshinstrument.GInstrumentMod"
+			"com.cstav.genshinstrument.client.ClientInitiator"
 		]
 	},
 	"mixins": [

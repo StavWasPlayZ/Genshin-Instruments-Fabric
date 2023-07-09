@@ -7,15 +7,16 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.cstav.genshinstrument.GInstrumentMod;
+import com.cstav.genshinstrument.event.impl.EventArgs;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 
 /**
  * <p>Responsible for loading and processing the instrument style JSON object
@@ -28,7 +29,6 @@ import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
  * This class must be initialized during mod setup.
  */
 @Environment(EnvType.CLIENT)
-@EventBusSubscriber(modid = GInstrumentMod.MODID, bus = Bus.MOD, value = Dist.CLIENT)
 public class InstrumentThemeLoader {
     private static final ArrayList<InstrumentThemeLoader> LOADERS = new ArrayList<>();
     private static final Color DEF_NOTE_PRESSED_THEME = new Color(255, 249, 239);
@@ -95,28 +95,24 @@ public class InstrumentThemeLoader {
     }
 
 
-    @SubscribeEvent
-    public static void registerReloadEvent(final RegisterClientReloadListenersEvent event) {
-        event.registerReloadListener(new ResourceManagerReloadListener() {
+    public static void onResourcesReload(EventArgs.Empty empty) {
+        final ResourceManager rManager = Minecraft.getInstance().getResourceManager();
 
-            @Override
-            public void onResourceManagerReload(ResourceManager resourceManager) {
-                for (final InstrumentThemeLoader instrumentLoader : LOADERS) {
-                    try {
-                        // Call all load listeners on the current loader
-                        for (final Consumer<JsonObject> listener : instrumentLoader.listeners)
-                            listener.accept(JsonParser.parseReader(
-                                resourceManager.getResource(instrumentLoader.getInstrumentStyleLocation()).get().openAsReader()
-                            ).getAsJsonObject());
+        for (final InstrumentThemeLoader instrumentLoader : LOADERS) {
+            try {
+                // Call all load listeners on the current loader
+                for (final Consumer<JsonObject> listener : instrumentLoader.listeners)
+                    listener.accept(JsonParser.parseReader(
+                        rManager.getResource(instrumentLoader.getInstrumentStyleLocation()).get().openAsReader()
+                    ).getAsJsonObject());
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        continue;
-                    }
-                }
+                GInstrumentMod.LOGGER.info("Loaded instrument style from "+instrumentLoader.InstrumentStyleLocation);
+
+            } catch (IOException e) {
+                GInstrumentMod.LOGGER.error("Unable to load instrument styler for " + instrumentLoader.InstrumentStyleLocation, e);
+                continue;
             }
-            
-        });
+        }
     }
 
 

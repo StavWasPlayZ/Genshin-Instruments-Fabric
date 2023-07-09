@@ -1,22 +1,18 @@
 package com.cstav.genshinstrument.client.gui.screens.instrument.floralzither;
 
-import com.cstav.genshinstrument.Main;
+import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractGridInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.InstrumentThemeLoader;
 import com.cstav.genshinstrument.client.gui.screens.options.instrument.AbstractInstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.gui.screens.options.instrument.FloralZitherOptionsScreen;
 import com.cstav.genshinstrument.sound.NoteSound;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
 @Environment(EnvType.CLIENT)
-//NOTE: There just to make it load on mod setup
-@EventBusSubscriber(bus = Bus.MOD, value = Dist.CLIENT)
 public class FloralZitherScreen extends AbstractGridInstrumentScreen {
     public static final String INSTRUMENT_ID = "floral_zither";
     

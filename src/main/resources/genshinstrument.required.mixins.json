@@ -2,6 +2,9 @@
 	"required": true,
 	"package": "com.cstav.genshinstrument.mixin.required",
 	"compatibilityLevel": "JAVA_17",
+	"client": [
+		"ResourcesLoaderInjector"
+	],
 	"mixins": [
 		"EntityNBTInjector"
 	],

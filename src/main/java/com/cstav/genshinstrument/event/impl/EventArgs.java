@@ -27,4 +27,15 @@ public abstract class EventArgs {
         return isCancelable(getClass());
     }
 
+
+    /**
+     * Empty arguments representing a non-cancelable event
+     */
+    public static final class Empty extends EventArgs {}
+    /**
+     * Empty arguments representing a cancelable event
+     */
+    @Cancelable
+    public static final class EmptyCancelable extends EventArgs {}
+
 }
