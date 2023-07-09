@@ -7,8 +7,8 @@ import com.cstav.genshinstrument.util.ModEntityData;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.PacketType;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 
 public class NotifyInstrumentOpenPacket implements ModPacket {
     public static final PacketType<NotifyInstrumentOpenPacket> TYPE = ModPacket.type(NotifyInstrumentOpenPacket.class);
@@ -33,7 +33,7 @@ public class NotifyInstrumentOpenPacket implements ModPacket {
 
 
     @Override
-    public void handle(LocalPlayer player, PacketSender responseSender) {
+    public void handle(Player player, PacketSender responseSender) {
         ModEntityData.setInstrumentOpen(player.level().getPlayerByUUID(playerUUID), isOpen);
     }
     

@@ -8,10 +8,12 @@ public interface ModEvent<T extends EventArgs> {
 
     public static <E extends ModEvent<T>, T extends EventArgs> void handleEvent(E[] listeners, T args) {
         for (final E listener : listeners) {
-            listener.triggered(args);
-            
+
             if (args.isCanceled())
                 return;
+
+            listener.triggered(args);
+            
         }
     }
 

@@ -5,9 +5,9 @@ import com.cstav.genshinstrument.GInstrumentMod;
 import net.fabricmc.fabric.api.networking.v1.FabricPacket;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.PacketType;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * An interface for all packets under the Genshin Instruments mod.
@@ -15,7 +15,7 @@ import net.minecraft.resources.ResourceLocation;
  * and a constructor that takes a {@link FriendlyByteBuf}.
  */
 public interface ModPacket extends FabricPacket {
-    public void handle(LocalPlayer player, PacketSender responseSender);
+    public void handle(Player player, PacketSender responseSender);
 
     @Override
     default PacketType<?> getType() {
