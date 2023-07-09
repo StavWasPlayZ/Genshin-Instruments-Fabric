@@ -2,6 +2,8 @@ package com.cstav.genshinstrument.client.config;
 
 import com.cstav.genshinstrument.client.config.enumType.InstrumentChannelType;
 import com.cstav.genshinstrument.client.config.enumType.ZitherSoundType;
+import com.cstav.genshinstrument.client.config.enumType.label.DrumNoteLabel;
+import com.cstav.genshinstrument.client.config.enumType.label.NoteGridLabel;
 import com.cstav.genshinstrument.sound.NoteSound;
 
 import net.fabricmc.api.EnvType;
@@ -17,12 +19,12 @@ public class ModClientConfigs {
     public static final ForgeConfigSpec CONFIGS;
 
     public static final DoubleValue PITCH;
-    // public static final EnumValue<NoteGridLabel> GRID_LABEL_TYPE;
+    public static final EnumValue<NoteGridLabel> GRID_LABEL_TYPE;
     public static final EnumValue<InstrumentChannelType> CHANNEL_TYPE;
     public static final BooleanValue STOP_MUSIC_ON_PLAY, EMIT_RING_ANIMATION, SHARED_INSTRUMENT;
 
     public static final EnumValue<ZitherSoundType> ZITHER_SOUND_TYPE;
-    // public static final EnumValue<DrumNoteLabel> DRUM_LABEL_TYPE;
+    public static final EnumValue<DrumNoteLabel> DRUM_LABEL_TYPE;
 
 
     static {
@@ -32,7 +34,7 @@ public class ModClientConfigs {
         PITCH = configBuilder.defineInRange("instrument_pitch",
             1, doubleMe(NoteSound.MIN_PITCH), doubleMe(NoteSound.MAX_PITCH)
         );
-        // GRID_LABEL_TYPE = configBuilder.defineEnum("label_type", NoteGridLabel.KEYBOARD_LAYOUT);
+        GRID_LABEL_TYPE = configBuilder.defineEnum("label_type", NoteGridLabel.KEYBOARD_LAYOUT);
         CHANNEL_TYPE = configBuilder.defineEnum("channel_type", InstrumentChannelType.MIXED);
 
         STOP_MUSIC_ON_PLAY = configBuilder.comment(
@@ -44,7 +46,7 @@ public class ModClientConfigs {
 
 
         ZITHER_SOUND_TYPE = configBuilder.defineEnum("zither_sound_type", ZitherSoundType.NEW);
-        // DRUM_LABEL_TYPE = configBuilder.defineEnum("drum_label_type", DrumNoteLabel.KEYBOARD_LAYOUT);
+        DRUM_LABEL_TYPE = configBuilder.defineEnum("drum_label_type", DrumNoteLabel.KEYBOARD_LAYOUT);
 
 
         CONFIGS = configBuilder.build();

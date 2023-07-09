@@ -1,69 +1,65 @@
-// package com.cstav.genshinstrument.networking.packets.instrument;
+package com.cstav.genshinstrument.networking.packets.instrument;
 
-// import java.util.Optional;
-// import java.util.UUID;
-// import java.util.function.Supplier;
+import java.util.Optional;
+import java.util.UUID;
 
-// import com.cstav.genshinstrument.networking.ModPacket;
-// import com.cstav.genshinstrument.sound.NoteSound;
+import com.cstav.genshinstrument.networking.ModPacket;
+import com.cstav.genshinstrument.sound.NoteSound;
 
-// import net.minecraft.core.BlockPos;
-// import net.minecraft.network.FriendlyByteBuf;
-// import net.minecraft.resources.ResourceLocation;
-// import net.minecraft.world.InteractionHand;
-// import net.minecraftforge.network.NetworkDirection;
-// import net.minecraftforge.network.NetworkEvent.Context;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.fabricmc.fabric.api.networking.v1.PacketType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 
-// public class PlayNotePacket implements ModPacket {
-//     public static final NetworkDirection NETWORK_DIRECTION = NetworkDirection.PLAY_TO_CLIENT;
+public class PlayNotePacket implements ModPacket {
+    public static final PacketType<PlayNotePacket> TYPE = ModPacket.type(PlayNotePacket.class);
 
 
-//     private final BlockPos blockPos;
-//     private final NoteSound sound;
-//     private final float pitch;
-//     private final ResourceLocation instrumentId;
+    private final BlockPos blockPos;
+    private final NoteSound sound;
+    private final float pitch;
+    private final ResourceLocation instrumentId;
     
-//     private final Optional<UUID> playerUUID;
-//     private final Optional<InteractionHand> hand;
+    private final Optional<UUID> playerUUID;
+    private final Optional<InteractionHand> hand;
 
-//     public PlayNotePacket(BlockPos pos, NoteSound sound, float pitch, ResourceLocation instrumentId,
-//       Optional<UUID> playerUUID, Optional<InteractionHand> hand) {
-//         this.blockPos = pos;
-//         this.sound = sound;
-//         this.pitch = pitch;
-//         this.instrumentId = instrumentId;
+    public PlayNotePacket(BlockPos pos, NoteSound sound, float pitch, ResourceLocation instrumentId,
+      Optional<UUID> playerUUID, Optional<InteractionHand> hand) {
+        this.blockPos = pos;
+        this.sound = sound;
+        this.pitch = pitch;
+        this.instrumentId = instrumentId;
 
-//         this.playerUUID = playerUUID;
-//         this.hand = hand;
-//     }
-//     public PlayNotePacket(FriendlyByteBuf buf) {
-//         blockPos = buf.readBlockPos();
-//         sound = NoteSound.readFromNetwork(buf);
-//         pitch = buf.readFloat();
-//         instrumentId = buf.readResourceLocation();
+        this.playerUUID = playerUUID;
+        this.hand = hand;
+    }
+    public PlayNotePacket(FriendlyByteBuf buf) {
+        blockPos = buf.readBlockPos();
+        sound = NoteSound.readFromNetwork(buf);
+        pitch = buf.readFloat();
+        instrumentId = buf.readResourceLocation();
 
-//         playerUUID = buf.readOptional(FriendlyByteBuf::readUUID);
-//         hand = buf.readOptional((fbb) -> fbb.readEnum(InteractionHand.class));
-//     }
+        playerUUID = buf.readOptional(FriendlyByteBuf::readUUID);
+        hand = buf.readOptional((fbb) -> fbb.readEnum(InteractionHand.class));
+    }
 
-//     @Override
-//     public void toBytes(FriendlyByteBuf buf) {
-//         buf.writeBlockPos(blockPos);
-//         sound.writeToNetwork(buf);
-//         buf.writeFloat(pitch);
-//         buf.writeResourceLocation(instrumentId);
+    @Override
+    public void write(FriendlyByteBuf buf) {
+        buf.writeBlockPos(blockPos);
+        sound.writeToNetwork(buf);
+        buf.writeFloat(pitch);
+        buf.writeResourceLocation(instrumentId);
 
-//         buf.writeOptional(playerUUID, FriendlyByteBuf::writeUUID);
-//         buf.writeOptional(hand, FriendlyByteBuf::writeEnum);
-//     }
+        buf.writeOptional(playerUUID, FriendlyByteBuf::writeUUID);
+        buf.writeOptional(hand, FriendlyByteBuf::writeEnum);
+    }
 
 
-//     @Override
-//     public boolean handle(final Supplier<Context> supplier) {
-//         supplier.get().enqueueWork(() ->
-//             sound.playAtPos(pitch, playerUUID.orElse(null), hand.orElse(null), instrumentId, blockPos)
-//         );
-
-//         return true;
-//     }
-// }
+    @Override
+    public void handle(Player player, PacketSender responseSender) {
+        sound.playAtPos(pitch, playerUUID.orElse(null), hand.orElse(null), instrumentId, blockPos);
+    }
+}

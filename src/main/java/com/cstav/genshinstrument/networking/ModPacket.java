@@ -15,7 +15,11 @@ import net.minecraft.world.entity.player.Player;
  * and a constructor that takes a {@link FriendlyByteBuf}.
  */
 public interface ModPacket extends FabricPacket {
-    public void handle(Player player, PacketSender responseSender);
+    void handle(Player player, PacketSender responseSender);
+    
+    @Override
+    default void write(FriendlyByteBuf buf) {}
+
 
     @Override
     default PacketType<?> getType() {
