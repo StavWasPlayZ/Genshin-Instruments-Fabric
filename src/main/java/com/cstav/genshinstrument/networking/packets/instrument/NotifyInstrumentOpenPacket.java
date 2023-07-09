@@ -1,47 +1,40 @@
-// package com.cstav.genshinstrument.networking.packets.instrument;
+package com.cstav.genshinstrument.networking.packets.instrument;
 
-// import java.util.UUID;
-// import java.util.function.Supplier;
+import java.util.UUID;
 
-// import com.cstav.genshinstrument.capability.instrumentOpen.InstrumentOpenProvider;
-// import com.cstav.genshinstrument.networking.ModPacket;
+import com.cstav.genshinstrument.networking.ModPacket;
+import com.cstav.genshinstrument.util.ModEntityData;
 
-// import net.minecraft.client.Minecraft;
-// import net.minecraft.network.FriendlyByteBuf;
-// import net.minecraftforge.network.NetworkDirection;
-// import net.minecraftforge.network.NetworkEvent.Context;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.fabricmc.fabric.api.networking.v1.PacketType;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.FriendlyByteBuf;
 
-// public class NotifyInstrumentOpenPacket implements ModPacket {
-//     public static final NetworkDirection NETWORK_DIRECTION = NetworkDirection.PLAY_TO_CLIENT;
+public class NotifyInstrumentOpenPacket implements ModPacket {
+    public static final PacketType<NotifyInstrumentOpenPacket> TYPE = ModPacket.type(NotifyInstrumentOpenPacket.class);
 
 
-//     private final UUID playerUUID;
-//     private final boolean isOpen;
-//     public NotifyInstrumentOpenPacket(final UUID playerUUID, final boolean isOpen) {
-//         this.playerUUID = playerUUID;
-//         this.isOpen = isOpen;
-//     }
-//     public NotifyInstrumentOpenPacket(final FriendlyByteBuf buf) {
-//         playerUUID = buf.readUUID();
-//         isOpen = buf.readBoolean();
-//     }
+    private final UUID playerUUID;
+    private final boolean isOpen;
+    public NotifyInstrumentOpenPacket(final UUID playerUUID, final boolean isOpen) {
+        this.playerUUID = playerUUID;
+        this.isOpen = isOpen;
+    }
+    public NotifyInstrumentOpenPacket(final FriendlyByteBuf buf) {
+        playerUUID = buf.readUUID();
+        isOpen = buf.readBoolean();
+    }
     
-//     @Override
-//     public void toBytes(FriendlyByteBuf buf) {
-//         buf.writeUUID(playerUUID);
-//         buf.writeBoolean(isOpen);
-//     }
+    @Override
+    public void write(FriendlyByteBuf buf) {
+        buf.writeUUID(playerUUID);
+        buf.writeBoolean(isOpen);
+    }
 
 
-//     @Override
-//     public boolean handle(Supplier<Context> supplier) {
-//         final Context context = supplier.get();
-
-//         context.enqueueWork(() ->
-//             InstrumentOpenProvider.setOpen(Minecraft.getInstance().level.getPlayerByUUID(playerUUID), isOpen)
-//         );
-
-//         return true;
-//     }
+    @Override
+    public void handle(LocalPlayer player, PacketSender responseSender) {
+        ModEntityData.setInstrumentOpen(player.level().getPlayerByUUID(playerUUID), isOpen);
+    }
     
-// }
+}

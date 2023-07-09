@@ -1,0 +1,11 @@
+{
+	"required": true,
+	"package": "com.cstav.genshinstrument.mixin.required",
+	"compatibilityLevel": "JAVA_17",
+	"mixins": [
+		"EntityNBTInjector"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

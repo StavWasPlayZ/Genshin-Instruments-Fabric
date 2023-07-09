@@ -9,8 +9,24 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
+/**
+ * An interface for all packets under the Genshin Instruments mod.
+ * All its implementers must have a {@code TYPE} field of type {@link PacketType} (see {@link ModPacket#type})
+ * and a constructor that takes a {@link FriendlyByteBuf}.
+ */
 public interface ModPacket extends FabricPacket {
-    public boolean handle(LocalPlayer player, PacketSender responseSender);
+    public void handle(LocalPlayer player, PacketSender responseSender);
+
+    @Override
+    default PacketType<?> getType() {
+        try {
+            return (PacketType<?>)getClass().getField("TYPE").get(null);
+        } catch (Exception e) {
+            GInstrumentMod.LOGGER.info("Failed to fetch packet type of "+getClass().getSimpleName()+". Perhaps a TYPE field is absent?");
+            return null;
+        }
+    }
+
 
     public static <T extends ModPacket> PacketType<T> type(final Class<T> packetType) {
         return PacketType.create(
@@ -26,4 +42,5 @@ public interface ModPacket extends FabricPacket {
             }
         );
     }
+    
 }

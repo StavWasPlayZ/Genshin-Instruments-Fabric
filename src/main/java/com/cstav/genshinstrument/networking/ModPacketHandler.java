@@ -3,6 +3,7 @@ package com.cstav.genshinstrument.networking;
 import java.util.List;
 
 import com.cstav.genshinstrument.GInstrumentMod;
+import com.cstav.genshinstrument.networking.packets.instrument.NotifyInstrumentOpenPacket;
 import com.cstav.genshinstrument.networking.packets.instrument.OpenInstrumentPacket;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -15,9 +16,8 @@ public class ModPacketHandler {
 
     @SuppressWarnings("unchecked")
     private static final List<Class<ModPacket>> ACCEPTABLE_PACKETS = List.of(new Class[] {
-        // InstrumentPacket.class, PlayNotePacket.class, OpenInstrumentPacket.class, CloseInstrumentPacket.class,
-        // NotifyInstrumentOpenPacket.class
-        OpenInstrumentPacket.class
+        // InstrumentPacket.class, PlayNotePacket.class, OpenInstrumentPacket.class, CloseInstrumentPacket.class
+        OpenInstrumentPacket.class, NotifyInstrumentOpenPacket.class
     });
 
 

@@ -24,7 +24,8 @@
 		]
 	},
 	"mixins": [
-		"genshinstrument.optional.mixins.json"
+		"genshinstrument.optional.mixins.json",
+		"genshinstrument.required.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.14.21",

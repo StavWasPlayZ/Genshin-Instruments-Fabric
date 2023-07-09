@@ -42,15 +42,8 @@ public class OpenInstrumentPacket implements ModPacket {
 
     @SuppressWarnings("resource")
     @Override
-    public boolean handle(LocalPlayer player, PacketSender responseSender) {
+    public void handle(LocalPlayer player, PacketSender responseSender) {
         // Minecraft.getInstance().setScreen(OPEN_INSTRUMENT.get(instrumentType).get().apply(hand));
         Minecraft.getInstance().player.sendSystemMessage(Component.literal("test!"));
-
-        return true;
-    }
-
-    @Override
-    public PacketType<OpenInstrumentPacket> getType() {
-        return TYPE;
     }
 }

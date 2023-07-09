@@ -5,6 +5,9 @@ import java.util.UUID;
 
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.config.enumType.InstrumentChannelType;
+import com.cstav.genshinstrument.event.InstrumentPlayedEvent;
+import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEventArgs;
+import com.cstav.genshinstrument.event.InstrumentPlayedEvent.ByPlayer.ByPlayerArgs;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -133,11 +136,15 @@ public class NoteSound {
 
         final Level level = minecraft.level;
 
-        //TODO: Send instrument played event
-        // MinecraftForge.EVENT_BUS.post((playerUUID == null)
-        //     ? new InstrumentPlayedEvent(this, level, pos, instrumentId, true)
-        //     : new InstrumentPlayedEvent.ByPlayer(this, level.getPlayerByUUID(playerUUID), hand, instrumentId, true)
-        // );
+        // Send instrument played event
+        if (playerUUID == null)
+            InstrumentPlayedEvent.EVENT.invoker().triggered(
+                new InstrumentPlayedEventArgs(this, level, pos, instrumentId, true)
+            );
+        else
+            InstrumentPlayedEvent.ByPlayer.EVENT.invoker().triggered(
+                new ByPlayerArgs(this, level.getPlayerByUUID(playerUUID), hand, instrumentId, true)
+            );
         
 
         if (player.getUUID().equals(playerUUID))

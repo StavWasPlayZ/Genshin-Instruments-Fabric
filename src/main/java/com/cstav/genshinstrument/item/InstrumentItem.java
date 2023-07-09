@@ -1,7 +1,9 @@
 package com.cstav.genshinstrument.item;
 
 import com.cstav.genshinstrument.networking.ModPacketHandler;
+import com.cstav.genshinstrument.networking.packets.instrument.NotifyInstrumentOpenPacket;
 import com.cstav.genshinstrument.networking.packets.instrument.OpenInstrumentPacket;
+import com.cstav.genshinstrument.util.ModEntityData;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -47,16 +49,15 @@ public class InstrumentItem extends Item {
         if (!pLevel.isClientSide) {
             onOpenRequest.run((ServerPlayer)pPlayer, pUsedHand);
 
-            //TODO: Re-implement capability stuff
-            // // Update the the capabilty on server
-            // InstrumentOpenProvider.setOpen(pPlayer, true);
-            // // And clients
-            // pLevel.players().forEach((player) ->
-            //     ModPacketHandler.sendToClient(
-            //         new NotifyInstrumentOpenPacket(pPlayer.getUUID(), true),
-            //         (ServerPlayer)player
-            //     )
-            // );
+            // Update the the capabilty on server
+            ModEntityData.setInstrumentOpen(pPlayer, true);
+            // And clients
+            pLevel.players().forEach((player) ->
+                ModPacketHandler.sendToClient(
+                    new NotifyInstrumentOpenPacket(pPlayer.getUUID(), true),
+                    (ServerPlayer)player
+                )
+            );
         }
         
         return InteractionResultHolder.success(pPlayer.getItemInHand(pUsedHand));

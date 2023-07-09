@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
+import com.cstav.genshinstrument.event.ClientEvents;
 import com.cstav.genshinstrument.item.ModItems;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
 import com.cstav.genshinstrument.sound.ModSounds;
@@ -30,6 +31,8 @@ public class GInstrumentMod implements ModInitializer, ClientModInitializer {
 	public void onInitializeClient() {
 		ModPacketHandler.registerClientPackets();
 		ForgeConfigRegistry.INSTANCE.register(MODID, ModConfig.Type.CLIENT, ModClientConfigs.CONFIGS);
+		
+		ClientEvents.register();
 	}
 	
 }
