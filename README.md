@@ -10,4 +10,5 @@ For documentation of gameplay, visit [the mod's curseforge page](https://www.cur
 For full Mod and "in-game" API documentations, visit [the Forge version's repository wiki](https://github.com/StavWasPlayZ/Genshin-Instruments/wiki).
 
 > WhY NoT JuSt uSe mUlTiLoAdEr
+
 I didn't know about it and I regret my life for it its to late to turn back send help
