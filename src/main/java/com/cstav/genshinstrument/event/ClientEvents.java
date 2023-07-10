@@ -3,7 +3,6 @@ package com.cstav.genshinstrument.event;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.NoteButton;
-import com.cstav.genshinstrument.event.InstrumentPlayedEvent.ByPlayer;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.ByPlayer.ByPlayerArgs;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEventArgs;
 import com.cstav.genshinstrument.item.InstrumentItem;
@@ -45,7 +44,7 @@ public abstract class ClientEvents {
             return;
 
         // If this sound was produced by a player, and that player is ourselves - omit.
-        if ((args instanceof ByPlayer) && ((ByPlayerArgs)(args)).player.equals(MINECRAFT.player))
+        if ((args instanceof ByPlayerArgs) && ((ByPlayerArgs)(args)).player.equals(MINECRAFT.player))
             return;
 
         if (!ModClientConfigs.SHARED_INSTRUMENT.get())
