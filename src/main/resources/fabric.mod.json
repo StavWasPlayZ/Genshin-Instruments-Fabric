@@ -21,6 +21,9 @@
 		],
 		"client": [
 			"com.cstav.genshinstrument.client.ClientInitiator"
+		],
+		"modmenu": [
+			"com.cstav.genshinstrument.client.ModMenuImp"
 		]
 	},
 	"mixins": [

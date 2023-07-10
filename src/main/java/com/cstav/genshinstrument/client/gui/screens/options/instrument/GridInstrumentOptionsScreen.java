@@ -6,12 +6,16 @@ import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractG
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.screens.Screen;
 
 @Environment(EnvType.CLIENT)
 public class GridInstrumentOptionsScreen extends AbstractInstrumentOptionsScreen {
 
     public GridInstrumentOptionsScreen(final AbstractGridInstrumentScreen screen) {
         super(screen);
+    }
+    public GridInstrumentOptionsScreen(final Screen lastScreen) {
+        super(lastScreen);
     }
 
 

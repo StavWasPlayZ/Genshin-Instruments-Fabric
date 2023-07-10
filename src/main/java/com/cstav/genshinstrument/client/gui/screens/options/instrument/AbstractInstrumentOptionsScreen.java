@@ -165,7 +165,7 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
 
         final AbstractSliderButton pitchSlider = new AbstractSliderButton(0, 0, getSmallButtonWidth(), 20,
             CommonComponents.EMPTY,
-            Mth.clampedMap(instrumentScreen.getPitch(), NoteSound.MIN_PITCH, NoteSound.MAX_PITCH, 0, 1)) {
+            Mth.clampedMap(getPitch(), NoteSound.MIN_PITCH, NoteSound.MAX_PITCH, 0, 1)) {
 
             final DecimalFormat format = new DecimalFormat("0.00");
             {
@@ -177,7 +177,7 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
             protected void updateMessage() {
                 this.setMessage(
                     Component.translatable("button.genshinstrument.pitch").append(
-                        ": " + format.format(instrumentScreen.getPitch())
+                        ": " + format.format(getPitch())
                     )
                 );
             }
@@ -239,6 +239,12 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
         grid.arrangeElements();
     }
 
+    private float getPitch() {
+        return (instrumentScreen == null)
+            ? ModClientConfigs.PITCH.get().floatValue()
+            : instrumentScreen.getPitch();
+    }
+
 
     // Change handlers
     protected void onLabelChanged(final CycleButton<INoteLabel> button, final INoteLabel label) {
@@ -256,9 +262,11 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
         if (instrumentScreen != null) {
             instrumentScreen.setPitch((float)pitch);
             instrumentScreen.notesIterable().forEach(NoteButton::updateNoteLabel);
-        }
 
-        queueToSave("pitch", () -> savePitch(pitch));
+            queueToSave("pitch", () -> savePitch(pitch));
+        } else {
+            ModClientConfigs.PITCH.set(pitch);
+        }
     }
     protected void savePitch(final double newPitch) {
         ModClientConfigs.PITCH.set(newPitch);
