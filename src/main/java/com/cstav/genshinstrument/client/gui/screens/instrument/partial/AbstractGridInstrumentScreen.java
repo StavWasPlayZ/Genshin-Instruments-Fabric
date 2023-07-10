@@ -1,24 +1,34 @@
 package com.cstav.genshinstrument.client.gui.screens.instrument.partial;
 
+import java.awt.Color;
 import java.util.Map;
 
 import com.cstav.genshinstrument.GInstrumentMod;
+import com.cstav.genshinstrument.client.ClientUtil;
+import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.NoteButton;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.NoteGrid;
 import com.cstav.genshinstrument.client.gui.screens.options.instrument.AbstractInstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.gui.screens.options.instrument.GridInstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.keyMaps.KeyMappings;
 import com.mojang.blaze3d.platform.InputConstants.Key;
+import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.layouts.AbstractLayout;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 
 @Environment(EnvType.CLIENT)
 public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScreen {
-    public static final int DEF_ROWS = 7, DEF_COLUMNS = 3;
+    public static final int DEF_ROWS = 7, DEF_COLUMNS = 3,
+        CLEF_WIDTH = 26, CLEF_HEIGHT = 52;
+
+    protected AbstractLayout grid;
+
+
     public AbstractGridInstrumentScreen(InteractionHand hand) {
         super(hand);
     }
@@ -63,11 +73,62 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
 
     @Override
     protected void init() {
-        final AbstractLayout grid = noteGrid.initNoteGridLayout(.9f, width, height);
+        grid = noteGrid.initNoteGridLayout(.9f, width, height);
         grid.visitWidgets(this::addRenderableWidget);
         
         initOptionsButton(grid.getY() - 15);
         super.init();
+    }
+
+
+    @Override
+    public void render(GuiGraphics gui, int pMouseX, int pMouseY, float pPartialTick) {
+        if (ModClientConfigs.RENDER_BACKGROUND.get()) {
+            RenderSystem.enableBlend();
+            RenderSystem.enableDepthTest();
+
+            ClientUtil.setShaderColor(Color.WHITE, .6f);
+            renderInstrumentBackground(gui);
+            ClientUtil.resetShaderColor();
+        }
+            
+        super.render(gui, pMouseX, pMouseY, pPartialTick);
+    }
+
+
+    /**
+     * Renders the background of this grid instrument.
+     * This render method will only work for a 3-column instrument. Overwrite it
+     * to customize the background.
+     */
+    protected void renderInstrumentBackground(final GuiGraphics gui) {
+        if (columns() != 3)
+            return;
+
+        final int clefX = grid.getX() - NoteButton.getSize() + 8;
+
+        for (int i = 0; i < columns(); i++) {
+            renderClef(gui, i, clefX);
+            renderStaff(gui, i);
+        }
+    }
+
+    protected void renderClef(final GuiGraphics gui, final int index, final int x) {
+        gui.blit(getResourceFromGlob("background/clefs.png"),
+            x, grid.getY() + (NoteButton.getSize() + 16) * index,
+            index * CLEF_WIDTH, 0,
+            CLEF_WIDTH, CLEF_HEIGHT,
+            CLEF_WIDTH*3, CLEF_HEIGHT
+        );
+    }
+
+    protected void renderStaff(final GuiGraphics gui, final int index) {
+        gui.blit(getResourceFromGlob("background/staff.png"),
+            grid.getX() + 2, grid.getY() + 8 + ((NoteButton.getSize() + NoteGrid.PADDING_VERT + 6) * index),
+            0, 0,
+            grid.getWidth() - 5, NoteButton.getSize(),
+            grid.getWidth() - 5, NoteButton.getSize()
+        );
     }
     
 }
