@@ -9,8 +9,7 @@ import net.minecraft.world.entity.player.Player;
 
 /**
  * An interface for all packets under the Genshin Instruments mod.
- * All its implementers must have a {@code TYPE} field of type {@link PacketType} (see {@link ModPacket#type})
- * and a constructor that takes a {@link FriendlyByteBuf}.
+ * All its implementers must have a constructor that takes a {@link FriendlyByteBuf}.
  */
 public interface ModPacket {
     void handle(Player player, PacketSender responseSender);
@@ -31,7 +30,7 @@ public interface ModPacket {
         try {
             return packetType.getDeclaredConstructor(FriendlyByteBuf.class).newInstance(buf);
         } catch (Exception e) {
-            GInstrumentMod.LOGGER.error("Failed to construct PacketType for " + packetType.getSimpleName(), e);
+            GInstrumentMod.LOGGER.error("Failed to construct a packet of type " + packetType.getSimpleName(), e);
             return null;
         }
     }

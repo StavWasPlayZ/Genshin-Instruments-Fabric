@@ -32,6 +32,10 @@ bin/
 
 run/
 
+# my dumb testings
+runs/
+.gradles/
+
 # java
 
 hs_err_*.log

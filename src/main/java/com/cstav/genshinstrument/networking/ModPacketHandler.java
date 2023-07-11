@@ -1,6 +1,7 @@
 package com.cstav.genshinstrument.networking;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import com.cstav.genshinstrument.networking.packets.instrument.CloseInstrumentPacket;
 import com.cstav.genshinstrument.networking.packets.instrument.InstrumentPacket;
@@ -10,9 +11,11 @@ import com.cstav.genshinstrument.networking.packets.instrument.PlayNotePacket;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 
 public class ModPacketHandler {
 
@@ -32,10 +35,9 @@ public class ModPacketHandler {
 
             ClientPlayNetworking.registerGlobalReceiver(
                 ModPacket.getChannelName(packetClass),
-                (client, handler, buf, sender) -> client.execute(() ->
-                    ModPacket.createPacket(packetClass, buf).handle(client.player, sender)
-                )
-            );
+                (client, handler, buf, sender) ->
+                    handlePacket(client.player, sender, buf, packetClass, client::execute)
+                );
 
         }
     }
@@ -44,12 +46,18 @@ public class ModPacketHandler {
 
             ServerPlayNetworking.registerGlobalReceiver(
                 ModPacket.getChannelName(packetClass),
-                (server, player, handler, buf, sender) -> server.execute(() ->
-                    ModPacket.createPacket(packetClass, buf).handle(player, sender)
-                )
+                (server, player, handler, buf, sender) ->
+                    handlePacket(player, sender, buf, packetClass, server::execute)
             );
 
         }
+    }
+
+    public static void handlePacket(Player player, PacketSender sender, FriendlyByteBuf buf,
+            Class<? extends ModPacket> packetClass, Consumer<Runnable> executor) {
+        ModPacket packet = ModPacket.createPacket(packetClass, buf);
+
+        executor.accept(() -> packet.handle(player, sender));
     }
 
 
