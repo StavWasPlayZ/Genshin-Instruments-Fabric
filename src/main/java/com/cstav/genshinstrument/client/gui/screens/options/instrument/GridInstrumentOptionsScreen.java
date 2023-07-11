@@ -7,8 +7,8 @@ import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractG
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.components.CycleButton;
-import net.minecraft.client.gui.layouts.GridLayout;
-import net.minecraft.client.gui.layouts.GridLayout.RowHelper;
+import net.minecraft.client.gui.components.GridWidget;
+import net.minecraft.client.gui.components.GridWidget.RowHelper;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -35,7 +35,7 @@ public class GridInstrumentOptionsScreen extends AbstractInstrumentOptionsScreen
 
 
     @Override
-    protected void initOptionsGrid(GridLayout grid, RowHelper rowHelper) {
+    protected void initOptionsGrid(GridWidget grid, RowHelper rowHelper) {
         super.initOptionsGrid(grid, rowHelper);
 
         final CycleButton<Boolean> renderBackground = CycleButton.booleanBuilder(CommonComponents.OPTION_ON, CommonComponents.OPTION_OFF)

@@ -158,7 +158,7 @@ public class NoteButton extends AbstractButton {
 
     
     @Override
-    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
+    public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();

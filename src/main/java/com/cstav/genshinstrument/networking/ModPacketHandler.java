@@ -2,7 +2,6 @@ package com.cstav.genshinstrument.networking;
 
 import java.util.List;
 
-import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.networking.packets.instrument.CloseInstrumentPacket;
 import com.cstav.genshinstrument.networking.packets.instrument.InstrumentPacket;
 import com.cstav.genshinstrument.networking.packets.instrument.NotifyInstrumentOpenPacket;
@@ -10,9 +9,9 @@ import com.cstav.genshinstrument.networking.packets.instrument.OpenInstrumentPac
 import com.cstav.genshinstrument.networking.packets.instrument.PlayNotePacket;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.FabricPacket;
-import net.fabricmc.fabric.api.networking.v1.PacketType;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 
 public class ModPacketHandler {
@@ -32,8 +31,10 @@ public class ModPacketHandler {
         for (final Class<ModPacket> packetClass : S2C_PACKETS) {
 
             ClientPlayNetworking.registerGlobalReceiver(
-                getPacketType(packetClass),
-                ModPacket::handle
+                ModPacket.getChannelName(packetClass),
+                (client, handler, buf, sender) -> client.execute(() ->
+                    ModPacket.createPacket(packetClass, buf).handle(client.player, sender)
+                )
             );
 
         }
@@ -42,32 +43,27 @@ public class ModPacketHandler {
         for (final Class<ModPacket> packetClass : C2S_PACKETS) {
 
             ServerPlayNetworking.registerGlobalReceiver(
-                getPacketType(packetClass),
-                ModPacket::handle
+                ModPacket.getChannelName(packetClass),
+                (server, player, handler, buf, sender) -> server.execute(() ->
+                    ModPacket.createPacket(packetClass, buf).handle(player, sender)
+                )
             );
 
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private static PacketType<ModPacket> getPacketType(final Class<ModPacket> packetClass) {
-        try {
 
-            return (PacketType<ModPacket>)(packetClass.getField("TYPE").get(null));
-
-        } catch (Exception e) {
-            GInstrumentMod.LOGGER.error("Failed to register packet type " + packetClass.getSimpleName(), e);
-            return null;
-        }
+    public static void sendToServer(final ModPacket packet) {
+        ClientPlayNetworking.send(packet.getChannelName(), getPacketBuf(packet));
+    }
+    public static void sendToClient(final ModPacket packet, final ServerPlayer player) {
+        ServerPlayNetworking.send(player, packet.getChannelName(), getPacketBuf(packet));
     }
 
-
-    public static void sendToServer(final FabricPacket packet) {
-        ClientPlayNetworking.send(packet);
+    private static FriendlyByteBuf getPacketBuf(final ModPacket packet) {
+        final FriendlyByteBuf buf = PacketByteBufs.create();
+        packet.write(buf);
+        return buf;
     }
-    public static void sendToClient(final FabricPacket packet, final ServerPlayer player) {
-        ServerPlayNetworking.send(player, packet);
-    }
-    
 
 }

@@ -7,7 +7,6 @@ import com.cstav.genshinstrument.networking.ModPacket;
 import com.cstav.genshinstrument.sound.NoteSound;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.fabricmc.fabric.api.networking.v1.PacketType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -15,9 +14,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 
 public class PlayNotePacket implements ModPacket {
-    public static final PacketType<PlayNotePacket> TYPE = ModPacket.type(PlayNotePacket.class);
-
-
+    
     private final BlockPos blockPos;
     private final NoteSound sound;
     private final float pitch;

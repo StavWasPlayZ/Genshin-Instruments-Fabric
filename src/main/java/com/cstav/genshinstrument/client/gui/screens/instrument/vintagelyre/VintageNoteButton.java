@@ -30,8 +30,8 @@ public class VintageNoteButton extends NoteGridButton {
     }
 
     @Override
-    public void renderWidget(PoseStack poseStack, int pMouseX, int pMouseY, float pPartialTick) {
-        super.renderWidget(poseStack, pMouseX, pMouseY, pPartialTick);
+    public void renderButton(PoseStack poseStack, int pMouseX, int pMouseY, float pPartialTick) {
+        super.renderButton(poseStack, pMouseX, pMouseY, pPartialTick);
 
         if (!shouldRenderThingy())
             return;
@@ -39,7 +39,7 @@ public class VintageNoteButton extends NoteGridButton {
         final int textureWidth = (int)(width * TEXTURE_MULTIPLIER),
             textureHeight = (int)(height * TEXTURE_MULTIPLIER);
 
-            
+
         ClientUtil.displaySprite(thingyLocation);
 
         GuiComponent.blit(poseStack,

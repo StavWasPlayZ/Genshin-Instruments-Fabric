@@ -6,7 +6,6 @@ import com.cstav.genshinstrument.util.ModEntityData;
 import com.cstav.genshinstrument.util.ServerUtil;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.fabricmc.fabric.api.networking.v1.PacketType;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -14,8 +13,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 
 public class InstrumentPacket implements ModPacket {
-    public static final PacketType<InstrumentPacket> TYPE = ModPacket.type(InstrumentPacket.class);
-
 
     private final NoteSound sound;
     private final InteractionHand hand;

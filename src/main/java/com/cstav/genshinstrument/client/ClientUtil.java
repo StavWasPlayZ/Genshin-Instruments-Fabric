@@ -44,4 +44,8 @@ public class ClientUtil {
         RenderSystem.setShaderTexture(0, location);
     }
 
+    public static ResourceLocation withSuffix(final ResourceLocation resource, final String suffix) {
+        return new ResourceLocation(resource.getNamespace(), resource.getPath()+suffix);
+    }
+
 }

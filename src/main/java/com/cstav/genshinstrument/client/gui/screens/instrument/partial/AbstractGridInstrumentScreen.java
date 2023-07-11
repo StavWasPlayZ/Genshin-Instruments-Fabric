@@ -18,7 +18,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.layouts.AbstractLayout;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 
@@ -27,7 +27,7 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
     public static final int DEF_ROWS = 7, DEF_COLUMNS = 3,
         CLEF_WIDTH = 26, CLEF_HEIGHT = 52;
 
-    protected AbstractLayout grid;
+    protected AbstractWidget grid;
 
 
     public AbstractGridInstrumentScreen(InteractionHand hand) {
@@ -74,8 +74,8 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
 
     @Override
     protected void init() {
-        grid = noteGrid.initNoteGridLayout(.9f, width, height);
-        grid.visitWidgets(this::addRenderableWidget);
+        grid = noteGrid.initNoteGridWidget(.9f, width, height);
+        addRenderableWidget(grid);
         
         initOptionsButton(grid.getY() - 15);
         super.init();
@@ -116,7 +116,7 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
 
     protected void renderClef(final PoseStack poseStack, final int index, final int x) {
         ClientUtil.displaySprite(getResourceFromGlob("background/clefs.png"));
-        
+
         GuiComponent.blit(poseStack,
             x, grid.getY() + (NoteButton.getSize() + 16) * index,
             index * CLEF_WIDTH, 0,
@@ -127,7 +127,7 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
 
     protected void renderStaff(final PoseStack poseStack, final int index) {
         ClientUtil.displaySprite(getResourceFromGlob("background/staff.png"));
-        
+
         GuiComponent.blit(poseStack,
             grid.getX() + 2, grid.getY() + 8 + ((NoteButton.getSize() + NoteGrid.PADDING_VERT + 6) * index),
             0, 0,
