@@ -1,7 +1,6 @@
 package com.cstav.genshinstrument.criteria;
 
-//TODO uncomment when InstrumentPacket is introduced
-// import com.cstav.genshinstrument.networking.packets.instrument.InstrumentPacket;
+import com.cstav.genshinstrument.networking.packets.instrument.InstrumentPacket;
 import com.google.gson.JsonObject;
 
 import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;

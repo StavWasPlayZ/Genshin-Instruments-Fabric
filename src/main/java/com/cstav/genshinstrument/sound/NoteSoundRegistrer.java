@@ -2,6 +2,8 @@ package com.cstav.genshinstrument.sound;
 
 import java.util.Optional;
 
+import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractGridInstrumentScreen;
+
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -75,9 +77,7 @@ public abstract class NoteSoundRegistrer {
     }
 
     public static NoteSound[] createInstrumentNotes(ResourceLocation baseNoteLocation, boolean hasStereo) {
-        //TODO: Update default rows when grid exists
-        // return createInstrumentNotes(soundRegistrer, baseNoteLocation, hasStereo, AbstractGridInstrumentScreen.DEF_ROWS, AbstractGridInstrumentScreen.DEF_COLUMNS);
-        return createInstrumentNotes(baseNoteLocation, hasStereo, 7, 3);
+        return createInstrumentNotes(baseNoteLocation, hasStereo, AbstractGridInstrumentScreen.DEF_ROWS, AbstractGridInstrumentScreen.DEF_COLUMNS);
     }
     public static NoteSound[] createInstrumentNotes(final ResourceLocation baseNoteLocation) {
         return createInstrumentNotes(baseNoteLocation, false);
