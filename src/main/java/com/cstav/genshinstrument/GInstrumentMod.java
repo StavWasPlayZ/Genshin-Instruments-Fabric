@@ -21,7 +21,6 @@ public class GInstrumentMod implements ModInitializer {
 		
 		ModSounds.regsiter();
 
-		ModCreativeModeTabs.regsiter();
 		ModItems.register();
 	}
 	

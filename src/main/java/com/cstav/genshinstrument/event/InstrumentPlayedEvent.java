@@ -67,7 +67,7 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEvent.In
             public final InteractionHand hand;
     
             public ByPlayerArgs(NoteSound sound, Player player, InteractionHand hand, ResourceLocation instrumentId, boolean isClientSide) {
-                super(sound, player.level(), player.blockPosition(), instrumentId, isClientSide);
+                super(sound, player.getLevel(), player.blockPosition(), instrumentId, isClientSide);
                 this.player = player;
                 this.hand = hand;
     

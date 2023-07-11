@@ -13,10 +13,11 @@ import com.cstav.genshinstrument.client.gui.screens.options.instrument.GridInstr
 import com.cstav.genshinstrument.client.keyMaps.KeyMappings;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.layouts.AbstractLayout;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -82,17 +83,17 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
 
 
     @Override
-    public void render(GuiGraphics gui, int pMouseX, int pMouseY, float pPartialTick) {
+    public void render(PoseStack poseStack, int pMouseX, int pMouseY, float pPartialTick) {
         if (ModClientConfigs.RENDER_BACKGROUND.get()) {
             RenderSystem.enableBlend();
             RenderSystem.enableDepthTest();
 
             ClientUtil.setShaderColor(Color.WHITE, .6f);
-            renderInstrumentBackground(gui);
+            renderInstrumentBackground(poseStack);
             ClientUtil.resetShaderColor();
         }
             
-        super.render(gui, pMouseX, pMouseY, pPartialTick);
+        super.render(poseStack, pMouseX, pMouseY, pPartialTick);
     }
 
 
@@ -101,20 +102,22 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
      * This render method will only work for a 3-column instrument. Overwrite it
      * to customize the background.
      */
-    protected void renderInstrumentBackground(final GuiGraphics gui) {
+    protected void renderInstrumentBackground(final PoseStack poseStack) {
         if (columns() != 3)
             return;
 
         final int clefX = grid.getX() - NoteButton.getSize() + 8;
 
         for (int i = 0; i < columns(); i++) {
-            renderClef(gui, i, clefX);
-            renderStaff(gui, i);
+            renderClef(poseStack, i, clefX);
+            renderStaff(poseStack, i);
         }
     }
 
-    protected void renderClef(final GuiGraphics gui, final int index, final int x) {
-        gui.blit(getResourceFromGlob("background/clefs.png"),
+    protected void renderClef(final PoseStack poseStack, final int index, final int x) {
+        ClientUtil.displaySprite(getResourceFromGlob("background/clefs.png"));
+        
+        GuiComponent.blit(poseStack,
             x, grid.getY() + (NoteButton.getSize() + 16) * index,
             index * CLEF_WIDTH, 0,
             CLEF_WIDTH, CLEF_HEIGHT,
@@ -122,8 +125,10 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
         );
     }
 
-    protected void renderStaff(final GuiGraphics gui, final int index) {
-        gui.blit(getResourceFromGlob("background/staff.png"),
+    protected void renderStaff(final PoseStack poseStack, final int index) {
+        ClientUtil.displaySprite(getResourceFromGlob("background/staff.png"));
+        
+        GuiComponent.blit(poseStack,
             grid.getX() + 2, grid.getY() + 8 + ((NoteButton.getSize() + NoteGrid.PADDING_VERT + 6) * index),
             0, 0,
             grid.getWidth() - 5, NoteButton.getSize(),

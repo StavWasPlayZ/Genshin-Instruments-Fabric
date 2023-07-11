@@ -7,7 +7,7 @@ version = project.mod_version
 group = project.maven_group
 
 base {
-	archivesName = project.archives_base_name+"-fabric"
+	archivesName = project.archives_base_name+"-fabric-"+project.minecraft_version
 }
 
 repositories {
@@ -26,6 +26,11 @@ repositories {
 			url "https://cursemaven.com"
 		}
 		maven { url 'https://maven.terraformersmc.com/releases/' }
+
+		maven {
+			name = "Fuzs Mod Resources"
+			url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
+		}
 	}
 }
 
@@ -38,10 +43,10 @@ dependencies {
 	}
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
+	modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${project.forge_config_api_port_version}"
+
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
-	modImplementation "curse.maven:forge-config-api-port-fabric-547434:${project.forge_config_api_port_version}"
 
 	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 	

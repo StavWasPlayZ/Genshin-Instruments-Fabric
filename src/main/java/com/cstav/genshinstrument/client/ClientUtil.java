@@ -7,6 +7,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.resources.ResourceLocation;
 
 @Environment(EnvType.CLIENT)
 public class ClientUtil {
@@ -34,6 +36,12 @@ public class ClientUtil {
     }
     public static void resetShaderColor() {
         setShaderColor(Color.WHITE);
+    }
+
+
+    public static void displaySprite(final ResourceLocation location) {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, location);
     }
 
 }

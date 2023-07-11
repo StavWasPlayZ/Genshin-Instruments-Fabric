@@ -34,7 +34,7 @@ public class NotifyInstrumentOpenPacket implements ModPacket {
 
     @Override
     public void handle(Player player, PacketSender responseSender) {
-        ModEntityData.setInstrumentOpen(player.level().getPlayerByUUID(playerUUID), isOpen);
+        ModEntityData.setInstrumentOpen(player.getLevel().getPlayerByUUID(playerUUID), isOpen);
     }
     
 }

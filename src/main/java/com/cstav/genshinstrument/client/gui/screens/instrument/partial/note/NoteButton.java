@@ -15,11 +15,12 @@ import com.cstav.genshinstrument.networking.packets.instrument.InstrumentPacket;
 import com.cstav.genshinstrument.sound.NoteSound;
 import com.cstav.genshinstrument.util.CommonUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -155,13 +156,15 @@ public class NoteButton extends AbstractButton {
     }
 
 
+    
     @Override
-    public void renderWidget(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
+    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
 
         rings.removeIf((ring) -> !ring.isPlaying());
-        rings.forEach((ring) -> ring.render(gui));
+        rings.forEach((ring) -> ring.render(poseStack));
 
         final InstrumentThemeLoader theme = instrumentScreen.getThemeLoader();
         final Color
@@ -172,6 +175,7 @@ public class NoteButton extends AbstractButton {
 
         
         // Button
+        ClientUtil.displaySprite(noteBgLocation);
 
         // width = full color, width * 2 = border, 0 = normal
         int blitOffset =
@@ -183,7 +187,7 @@ public class NoteButton extends AbstractButton {
                 (width * 2)
             : 0;
         
-        gui.blit(noteBgLocation,
+        GuiComponent.blit(poseStack,
             this.getX(), this.getY(),
             blitOffset, 0,
             width, height,
@@ -191,10 +195,12 @@ public class NoteButton extends AbstractButton {
         );
 
         // Note
+        ClientUtil.displaySprite(noteLocation);
+
         final int noteWidth = width/2, noteHeight = height/2;
         ClientUtil.setShaderColor((isPlaying() && !foreignPlaying) ? pressedNoteTheme : labelTheme);
 
-        gui.blit(noteLocation,
+        GuiComponent.blit(poseStack,
             this.getX() + noteWidth/2, this.getY() + noteHeight/2,
             //NOTE: I have no clue whatsoever how on earth these 1.025 and .9 multipliers actually work.
             // Like seriously wtf why fkuaherjgaeorg i hate maths
@@ -209,8 +215,8 @@ public class NoteButton extends AbstractButton {
         // Label
         //FIXME: All text rendered this way are making their way to the top of
         // the render stack, for some reason
-        gui.drawCenteredString(
-            minecraft.font, getMessage(),
+        drawCenteredString(
+            poseStack, minecraft.font, getMessage(),
             textX, textY,
             ((isPlaying() && !foreignPlaying) ? pressedNoteTheme : noteTheme).getRGB()
         );

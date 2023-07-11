@@ -6,7 +6,6 @@ import com.cstav.genshinstrument.ModCreativeModeTabs;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -43,11 +42,7 @@ public abstract class ModItems {
         addToTab(ModCreativeModeTabs.INSTRUMENTS, item);
         addToTab(CreativeModeTabs.TOOLS_AND_UTILITIES, item);
     }
-
     private static void addToTab(final CreativeModeTab tab, final Item item) {
-        addToTab(BuiltInRegistries.CREATIVE_MODE_TAB.getResourceKey(tab).get(), item);
-    }
-    private static void addToTab(final ResourceKey<CreativeModeTab> tab, final Item item) {
         ItemGroupEvents.modifyEntriesEvent(tab).register((content) -> content.accept(item));
     }
 
