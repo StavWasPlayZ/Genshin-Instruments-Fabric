@@ -20,7 +20,7 @@ import net.minecraft.world.entity.player.Player;
 public class ModPacketHandler {
 
     @SuppressWarnings("unchecked")
-    private static final List<Class<ModPacket>>
+    public static final List<Class<ModPacket>>
         S2C_PACKETS = List.of(new Class[] {
             PlayNotePacket.class, OpenInstrumentPacket.class, NotifyInstrumentOpenPacket.class
         }),
@@ -30,17 +30,6 @@ public class ModPacketHandler {
     ;
 
 
-    public static void registerClientPackets() {
-        for (final Class<ModPacket> packetClass : S2C_PACKETS) {
-
-            ClientPlayNetworking.registerGlobalReceiver(
-                ModPacket.getChannelName(packetClass),
-                (client, handler, buf, sender) ->
-                    handlePacket(client.player, sender, buf, packetClass, client::execute)
-                );
-
-        }
-    }
     public static void registerServerPackets() {
         for (final Class<ModPacket> packetClass : C2S_PACKETS) {
 

@@ -188,8 +188,11 @@ public abstract class AbstractInstrumentScreen extends Screen {
      * Unlocks any focused {@link NoteButton}s
      */
     private void unlockFocused() {
-        if ((getFocused() != null) && (getFocused() instanceof NoteButton))
-            ((NoteButton)getFocused()).locked = false;
+        for (final NoteButton note : notesIterable())
+            if (note.locked) {
+                note.locked = false;
+                return;
+            }
     }
 
 
