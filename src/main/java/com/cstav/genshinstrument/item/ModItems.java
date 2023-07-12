@@ -1,14 +1,9 @@
 package com.cstav.genshinstrument.item;
 
 import com.cstav.genshinstrument.GInstrumentMod;
-import com.cstav.genshinstrument.ModCreativeModeTabs;
 
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 
 public abstract class ModItems {
@@ -30,20 +25,8 @@ public abstract class ModItems {
     
     
     private static Item register(final String id, final Item item) {
-        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(GInstrumentMod.MODID, id), item);
-        addToItemGroups(item);
-
+        Registry.register(Registry.ITEM, new ResourceLocation(GInstrumentMod.MODID, id), item);
         return item;
-    }
-
-
-    private static void addToItemGroups(final Item item) {
-        // All shall go to the instruments and toold tab
-        addToTab(ModCreativeModeTabs.INSTRUMENTS, item);
-        addToTab(CreativeModeTabs.TOOLS_AND_UTILITIES, item);
-    }
-    private static void addToTab(final CreativeModeTab tab, final Item item) {
-        ItemGroupEvents.modifyEntriesEvent(tab).register((content) -> content.accept(item));
     }
 
 

@@ -43,7 +43,11 @@ dependencies {
 	}
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${project.forge_config_api_port_version}"
+	implementation "org.joml:joml:${project.jomlVersion}"
+	implementation 'com.electronwill.night-config:core:3.6.5'
+	implementation 'com.electronwill.night-config:toml:3.6.5'
+
+	modImplementation "net.minecraftforge:forgeconfigapiport-fabric:${project.forge_config_api_port_version}"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"

@@ -77,7 +77,7 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
         grid = noteGrid.initNoteGridWidget(.9f, width, height);
         addRenderableWidget(grid);
         
-        initOptionsButton(grid.getY() - 15);
+        initOptionsButton(grid.y - 15);
         super.init();
     }
 
@@ -106,7 +106,7 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
         if (columns() != 3)
             return;
 
-        final int clefX = grid.getX() - NoteButton.getSize() + 8;
+        final int clefX = grid.x - NoteButton.getSize() + 8;
 
         for (int i = 0; i < columns(); i++) {
             renderClef(poseStack, i, clefX);
@@ -118,7 +118,7 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
         ClientUtil.displaySprite(getResourceFromGlob("background/clefs.png"));
 
         GuiComponent.blit(poseStack,
-            x, grid.getY() + (NoteButton.getSize() + 16) * index,
+            x, grid.y + (NoteButton.getSize() + 16) * index,
             index * CLEF_WIDTH, 0,
             CLEF_WIDTH, CLEF_HEIGHT,
             CLEF_WIDTH*3, CLEF_HEIGHT
@@ -129,7 +129,7 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
         ClientUtil.displaySprite(getResourceFromGlob("background/staff.png"));
 
         GuiComponent.blit(poseStack,
-            grid.getX() + 2, grid.getY() + 8 + ((NoteButton.getSize() + NoteGrid.PADDING_VERT + 6) * index),
+            grid.x + 2, grid.y + 8 + ((NoteButton.getSize() + NoteGrid.PADDING_VERT + 6) * index),
             0, 0,
             grid.getWidth() - 5, NoteButton.getSize(),
             grid.getWidth() - 5, NoteButton.getSize()

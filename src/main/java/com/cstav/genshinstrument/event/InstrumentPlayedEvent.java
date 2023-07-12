@@ -8,7 +8,7 @@ import com.cstav.genshinstrument.sound.NoteSound;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -41,7 +41,7 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEvent.In
             this.instrumentId = instrumentId;
 
             // Handle provided invalid id
-            if (!BuiltInRegistries.ITEM.containsKey(instrumentId))
+            if (!Registry.ITEM.containsKey(instrumentId))
                 setCanceled(true);
         }
     }
@@ -74,7 +74,7 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEvent.In
                 instrument = (hand == null) ? null : player.getItemInHand(hand);
     
                 // Handle provided unmatching id
-                if (!instrumentId.equals(BuiltInRegistries.ITEM.getKey(instrument.getItem())))
+                if (!instrumentId.equals(Registry.ITEM.getKey(instrument.getItem())))
                     setCanceled(true);
             }
         }

@@ -1,5 +1,6 @@
 package com.cstav.genshinstrument.item;
 
+import com.cstav.genshinstrument.ModCreativeModeTabs;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
 import com.cstav.genshinstrument.networking.packets.instrument.NotifyInstrumentOpenPacket;
 import com.cstav.genshinstrument.networking.packets.instrument.OpenInstrumentPacket;
@@ -23,9 +24,11 @@ public class InstrumentItem extends Item {
      * @param onOpenRequest A server-side event fired when the player has requested to interact
      * with the instrument.
      * It should should send a packet to the given player for opening this instrument's screen.
+     * 
+     * This item will automatically be added to the {@link ModCreativeModeTabs#INSTRUMENTS instruments} creative tab.
      */
     public InstrumentItem(final ServerPlayerRunnable onOpenRequest) {
-        this(onOpenRequest, new Properties());
+        this(onOpenRequest, new Properties().tab(ModCreativeModeTabs.INSTRUMENTS));
     }
     /**
      * @param onOpenRequest A server-side event fired when the player has requested to interact

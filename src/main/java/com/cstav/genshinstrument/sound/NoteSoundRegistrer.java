@@ -2,11 +2,10 @@ package com.cstav.genshinstrument.sound;
 
 import java.util.Optional;
 
-import com.cstav.genshinstrument.client.ClientUtil;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractGridInstrumentScreen;
+import com.cstav.genshinstrument.util.CommonUtil;
 
 import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 
@@ -25,7 +24,7 @@ public abstract class NoteSoundRegistrer {
      * @see ModSounds#registerNote(String, boolean)
      */
     public static NoteSound registerInstrument(ResourceLocation soundLocation, int note, boolean hasStereo) {
-        return registerNote(ClientUtil.withSuffix(soundLocation, "_note_"+note), hasStereo);
+        return registerNote(CommonUtil.withSuffix(soundLocation, "_note_"+note), hasStereo);
     }
     /**
      * Creates a {@link NoteSound} with null sounds, that will get filled
@@ -40,7 +39,7 @@ public abstract class NoteSoundRegistrer {
             registerSound(soundLocation),
             // Stereo (if exists)
             hasStereo
-                ? Optional.of(registerSound(ClientUtil.withSuffix(soundLocation, STEREO_SUFFIX)))
+                ? Optional.of(registerSound(CommonUtil.withSuffix(soundLocation, STEREO_SUFFIX)))
                 : Optional.empty()
         );
     }
@@ -49,11 +48,11 @@ public abstract class NoteSoundRegistrer {
     }
 
     private static SoundEvent registerSound(final ResourceLocation soundLocation) {
-        return Registry.register(BuiltInRegistries.SOUND_EVENT, soundLocation, createSoundUnsafe(soundLocation));
+        return Registry.register(Registry.SOUND_EVENT, soundLocation, createSoundUnsafe(soundLocation));
     }
 
     public static SoundEvent createSoundUnsafe(final ResourceLocation location) {
-        return SoundEvent.createVariableRangeEvent(location);
+        return new SoundEvent(location);
     }
 
 

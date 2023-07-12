@@ -123,11 +123,11 @@ public class NoteButton extends AbstractButton {
      * This is done for the animations to work properly - for them to stick to the same position.
      */
     public void initPos() {
-        initX = getX();
-        initY = getY();
+        initX = x;
+        initY = y;
 
-        textX = getX() + width/2;
-        textY = getY() + height/2 + 7;
+        textX = x + width/2;
+        textY = y + height/2 + 7;
     }
 
     public int getInitX() {
@@ -142,7 +142,8 @@ public class NoteButton extends AbstractButton {
     }
     public void moveToCenter() {
         final Point center = getCenter();
-        setPosition(center.x, center.y);
+        x = center.x;
+        y = center.y;
     }
 
 
@@ -188,7 +189,7 @@ public class NoteButton extends AbstractButton {
             : 0;
         
         GuiComponent.blit(poseStack,
-            this.getX(), this.getY(),
+            this.x, this.y,
             blitOffset, 0,
             width, height,
             width*3, height
@@ -201,7 +202,7 @@ public class NoteButton extends AbstractButton {
         ClientUtil.setShaderColor((isPlaying() && !foreignPlaying) ? pressedNoteTheme : labelTheme);
 
         GuiComponent.blit(poseStack,
-            this.getX() + noteWidth/2, this.getY() + noteHeight/2,
+            this.x + noteWidth/2, this.y + noteHeight/2,
             //NOTE: I have no clue whatsoever how on earth these 1.025 and .9 multipliers actually work.
             // Like seriously wtf why fkuaherjgaeorg i hate maths
             //NOTE: Moved said numbers to the randomAss vars
@@ -273,7 +274,7 @@ public class NoteButton extends AbstractButton {
     
 
     @Override
-    protected void updateWidgetNarration(final NarrationElementOutput neo) {
+    public void updateNarration(final NarrationElementOutput neo) {
         neo.add(NarratedElementType.TITLE, getMessage());
     }
 

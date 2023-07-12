@@ -1,5 +1,7 @@
 package com.cstav.genshinstrument.client;
 
+import com.cstav.genshinstrument.mixin.util.IFpsAccessor;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -31,7 +33,7 @@ public abstract class AnimationController {
         if (!isPlaying())
             return;
 
-        final int fps = minecraft.getFps();
+        final int fps = ((IFpsAccessor)(minecraft)).getFps();
         final float targetTime = fps * duration;
             
         if (animTime++ >= targetTime) {

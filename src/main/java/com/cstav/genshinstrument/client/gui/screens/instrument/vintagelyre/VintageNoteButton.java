@@ -43,7 +43,7 @@ public class VintageNoteButton extends NoteGridButton {
         ClientUtil.displaySprite(thingyLocation);
 
         GuiComponent.blit(poseStack,
-            getX() - 1, getY() - 5,
+            x - 1, y - 5,
             isPlaying() ? textureWidth/2 : 0, 0,
             textureWidth/2,  textureHeight,
             textureWidth, textureHeight

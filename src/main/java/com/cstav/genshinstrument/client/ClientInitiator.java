@@ -11,12 +11,17 @@ import com.cstav.genshinstrument.client.gui.screens.instrument.vintagelyre.Vinta
 import com.cstav.genshinstrument.client.gui.screens.instrument.windsonglyre.WindsongLyreScreen;
 import com.cstav.genshinstrument.event.ClientEvents;
 import com.cstav.genshinstrument.event.ResourcesLoadedEvent;
+import com.cstav.genshinstrument.networking.ModPacket;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
 
-import fuzs.forgeconfigapiport.api.config.v2.ForgeConfigRegistry;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraftforge.api.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 
+@Environment(EnvType.CLIENT)
 public class ClientInitiator implements ClientModInitializer {
 
 	private static final List<Class<?>> LOAD_ME = List.of(
@@ -27,8 +32,9 @@ public class ClientInitiator implements ClientModInitializer {
     
 	@Override
 	public void onInitializeClient() {
-		ModPacketHandler.registerClientPackets();
-		ForgeConfigRegistry.INSTANCE.register(GInstrumentMod.MODID, ModConfig.Type.CLIENT, ModClientConfigs.CONFIGS);
+
+		registerClientPackets();
+		ModLoadingContext.registerConfig(GInstrumentMod.MODID, ModConfig.Type.CLIENT, ModClientConfigs.CONFIGS);
 		
 		ClientEvents.register();
 
@@ -47,4 +53,15 @@ public class ClientInitiator implements ClientModInitializer {
 		ResourcesLoadedEvent.EVENT.register(InstrumentThemeLoader::onResourcesReload);
 	}
     
+	private static void registerClientPackets() {
+        for (final Class<ModPacket> packetClass : ModPacketHandler.S2C_PACKETS) {
+
+            ClientPlayNetworking.registerGlobalReceiver(
+                ModPacket.getChannelName(packetClass),
+                (client, handler, buf, sender) ->
+                    ModPacketHandler.handlePacket(client.player, sender, buf, packetClass, client::execute)
+                );
+
+        }
+    }
 }

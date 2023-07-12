@@ -3,12 +3,12 @@ package com.cstav.genshinstrument.client.gui.screens.options.instrument;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.config.enumType.label.NoteGridLabel;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractGridInstrumentScreen;
+import com.cstav.genshinstrument.client.gui.screens.options.widget.copied.GridWidget;
+import com.cstav.genshinstrument.client.gui.screens.options.widget.copied.GridWidget.RowHelper;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.components.CycleButton;
-import net.minecraft.client.gui.components.GridWidget;
-import net.minecraft.client.gui.components.GridWidget.RowHelper;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
