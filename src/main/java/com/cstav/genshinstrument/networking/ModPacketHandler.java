@@ -3,11 +3,15 @@ package com.cstav.genshinstrument.networking;
 import java.util.List;
 
 import com.cstav.genshinstrument.GInstrumentMod;
+import com.cstav.genshinstrument.networking.buttonidentifier.DrumNoteIdentifier;
+import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
+import com.cstav.genshinstrument.networking.buttonidentifier.NoteGridButtonIdentifier;
 import com.cstav.genshinstrument.networking.packets.instrument.CloseInstrumentPacket;
 import com.cstav.genshinstrument.networking.packets.instrument.InstrumentPacket;
 import com.cstav.genshinstrument.networking.packets.instrument.NotifyInstrumentOpenPacket;
 import com.cstav.genshinstrument.networking.packets.instrument.OpenInstrumentPacket;
 import com.cstav.genshinstrument.networking.packets.instrument.PlayNotePacket;
+import com.cstav.genshinstrument.util.ServerUtil;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.FabricPacket;
@@ -26,6 +30,19 @@ public class ModPacketHandler {
             InstrumentPacket.class, CloseInstrumentPacket.class
         })
     ;
+
+    @SuppressWarnings("unchecked")
+    private static final List<Class<? extends NoteButtonIdentifier>> ACCEPTABLE_IDENTIFIERS = List.of(new Class[] {
+        NoteButtonIdentifier.class, NoteGridButtonIdentifier.class, DrumNoteIdentifier.class
+    });
+
+    /**
+     * @see ServerUtil#getValidNoteIdentifier
+     */
+    public static Class<? extends NoteButtonIdentifier> getValidIdentifier(String classType)
+            throws ClassNotFoundException {
+        return ServerUtil.getValidNoteIdentifier(classType, ACCEPTABLE_IDENTIFIERS);
+    }
 
 
     public static void registerClientPackets() {

@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.Optional;
 
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent;
-import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEventArgs;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.ByPlayer.ByPlayerArgs;
+import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEventArgs;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
+import com.cstav.genshinstrument.networking.buttonidentifier.DefaultNoteButtonIdentifier;
+import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.networking.packets.instrument.PlayNotePacket;
 import com.cstav.genshinstrument.sound.NoteSound;
 
@@ -32,14 +34,31 @@ public class ServerUtil {
      * @param player The player producing the sounds
      * @param hand The hand of the player producing the sounds
      * @param sound The sound tp initiate
+     * @param sound The sound to initiate
+     * @param instrumentId The ID of the instrument initiating the sound
      * @param pitch The pitch of the sound to initiate
      */
     public static void sendPlayNotePackets(ServerPlayer player, InteractionHand hand,
-      NoteSound sound, ResourceLocation instrumentId, float pitch) {
+            NoteSound sound, ResourceLocation instrumentId, float pitch) {
+
+        sendPlayNotePackets(player, hand, sound, instrumentId, new DefaultNoteButtonIdentifier(sound), pitch);
+    }
+    /**
+     * Sends {@link PlayNotePacket}s in the specified {@link ServerUtil#PLAY_DISTANCE}.
+     * This method treats the sound as it was produced by a player.
+     * @param player The player producing the sounds
+     * @param hand The hand of the player producing the sounds
+     * @param sound The sound tp initiate
+     * @param pitch The pitch of the sound to initiate
+     */
+    public static void sendPlayNotePackets(ServerPlayer player, InteractionHand hand,
+            NoteSound sound, ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, float pitch) {
+
         for (final Player listener : noteListeners(player.level(), player.blockPosition()))
             ModPacketHandler.sendToClient(
                 new PlayNotePacket(
-                    player.blockPosition(), sound, pitch, instrumentId,
+                    player.blockPosition(), sound, pitch,
+                    instrumentId, noteIdentifier,
                     Optional.of(player.getUUID()), Optional.of(hand)
                 ),
                 (ServerPlayer)listener
@@ -54,7 +73,7 @@ public class ServerUtil {
 
         // Fire a player-specific event
         InstrumentPlayedEvent.ByPlayer.EVENT.invoker().triggered(
-            new ByPlayerArgs(sound, player, hand, instrumentId, false)
+            new ByPlayerArgs(sound, player, hand, instrumentId, noteIdentifier, false)
         );
     }
 
@@ -64,13 +83,30 @@ public class ServerUtil {
      * @param level The world that the sound should initiate in
      * @param pos The position of the sound to initiate
      * @param sound The sound to initiate
+     * @param instrumentId The ID of the instrument initiating the sound
      * @param pitch The pitch of the sound to initiate
      */
     public static void sendPlayNotePackets(Level level, BlockPos pos, NoteSound sound, ResourceLocation instrumentId, float pitch) {
+        sendPlayNotePackets(level, pos, sound, instrumentId, new DefaultNoteButtonIdentifier(sound), pitch);
+    }
+    /**
+     * Sends {@link PlayNotePacket}s in the specified {@link ServerUtil#PLAY_DISTANCE}.
+     * This method treats the sound as it was NOT produced by a player.
+     * @param level The world that the sound should initiate in
+     * @param pos The position of the sound to initiate
+     * @param sound The sound to initiate
+     * @param instrumentId The ID of the instrument initiating the sound
+     * @param noteIdentifier The identifier of the note
+     * @param pitch The pitch of the sound to initiate
+     */
+    public static void sendPlayNotePackets(Level level, BlockPos pos, NoteSound sound,
+            ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, float pitch) {
+
         for (final Player listener : noteListeners(level, pos))
             ModPacketHandler.sendToClient(
                 new PlayNotePacket(
-                    pos, sound, pitch, instrumentId,
+                    pos, sound, pitch,
+                    instrumentId, noteIdentifier,
                     Optional.empty(), Optional.empty()
                 ),
                 (ServerPlayer)listener
@@ -90,7 +126,7 @@ public class ServerUtil {
 
         // Fire a generic instrument event
         InstrumentPlayedEvent.EVENT.invoker().triggered(
-            new InstrumentPlayedEventArgs(sound, (ServerLevel)level, pos, instrumentId, false)
+            new InstrumentPlayedEventArgs(sound, (ServerLevel)level, pos, instrumentId, noteIdentifier, false)
         );
     }
 
@@ -99,6 +135,27 @@ public class ServerUtil {
         return CommonUtil.getPlayersInArea(level,
             new AABB(pos).inflate(PLAY_DISTANCE)
         );
+    }
+
+
+    /**
+     * Gets a {@link NoteButtonIdentifier} as described by the {@code classType} destination.
+     * Will only return a class type if it is valid and included in the {@code acceptableIdentifiers} list.
+     * @param classType The class name of the requested identifiers
+     * @param acceptableIdentifiers
+     * 
+     * @return The class of the requested identifier
+     * @throws ClassNotFoundException If the requested class was not found in the provided {@code acceptableIdentifiers} list
+     */
+    public static Class<? extends NoteButtonIdentifier> getValidNoteIdentifier(String classType,
+            List<Class<? extends NoteButtonIdentifier>> acceptableIdentifiers) throws ClassNotFoundException {
+
+        for (final Class<? extends NoteButtonIdentifier> identifier : acceptableIdentifiers) {
+            if (identifier.getName().equals(classType))
+                return identifier;
+        }
+
+        throw new ClassNotFoundException("Class type "+classType+" could not be evaluated as part of the acceptable identifiers");
     }
 
 }

@@ -2,6 +2,7 @@ package com.cstav.genshinstrument.client.gui.screens.instrument.partial;
 
 import java.awt.Color;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.ClientUtil;
@@ -11,6 +12,8 @@ import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.Note
 import com.cstav.genshinstrument.client.gui.screens.options.instrument.AbstractInstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.gui.screens.options.instrument.GridInstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.keyMaps.KeyMappings;
+import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
+import com.cstav.genshinstrument.networking.buttonidentifier.NoteGridButtonIdentifier;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.systems.RenderSystem;
 
@@ -38,6 +41,33 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
     }
     public int rows() {
         return DEF_ROWS;
+    }
+    
+
+    /**
+     * <p>
+     * If the given identifier is of type {@link NoteGridButtonIdentifier},
+     * uses the optimal method to obtain the described {@link NoteButton}.
+     * </p>
+     * Otherwise, uses {@link AbstractInstrumentScreen#getNoteButton the regular linear method}.
+     * @return The {@link NoteButton} as described by the given identifier
+     */
+    @Override
+    public NoteButton getNoteButton(final NoteButtonIdentifier noteIdentifier) throws IndexOutOfBoundsException, NoSuchElementException {
+        if (!(noteIdentifier instanceof NoteGridButtonIdentifier))
+            return super.getNoteButton(noteIdentifier);
+
+        return getNoteButton((NoteGridButtonIdentifier)noteIdentifier);
+    }
+    /**
+     * Gets a {@link NoteButton} based on the location of the note as described by the given identifier.
+     */
+    public NoteButton getNoteButton(final NoteGridButtonIdentifier noteIdentifier) throws IndexOutOfBoundsException {
+        return getNoteButton(noteIdentifier.row, noteIdentifier.column);
+    }
+
+    public NoteButton getNoteButton(final int row, final int column) throws IndexOutOfBoundsException {
+        return noteGrid.getNoteButton(row, column);
     }
 
     
