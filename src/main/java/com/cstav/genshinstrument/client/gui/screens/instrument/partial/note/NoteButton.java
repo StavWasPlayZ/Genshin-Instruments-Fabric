@@ -173,7 +173,7 @@ public abstract class NoteButton extends AbstractButton {
         final Point center = getCenter();
         setPosition(center.x, center.y);
     }
-    
+
 
     public NoteNotation getNotation() {
         return NoteNotation.NONE;
@@ -189,6 +189,8 @@ public abstract class NoteButton extends AbstractButton {
         return noteAnimation.isPlaying();
     }
 
+
+    //#region Rendering
 
     @Override
     public void renderWidget(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
@@ -304,6 +306,7 @@ public abstract class NoteButton extends AbstractButton {
         );
     }
 
+    //#endregion
 
 
     public boolean locked = false;
