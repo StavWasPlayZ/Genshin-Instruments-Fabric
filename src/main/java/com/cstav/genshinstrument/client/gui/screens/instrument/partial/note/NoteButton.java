@@ -166,17 +166,17 @@ public abstract class NoteButton extends AbstractButton {
         return initY;
     }
 
-    public NoteNotation getNotation() {
-        return NoteNotation.NONE;
-    }
-
-
     public Point getCenter() {
         return ClientUtil.getInitCenter(initX, initY, getSize(), width);
     }
     public void moveToCenter() {
         final Point center = getCenter();
         setPosition(center.x, center.y);
+    }
+    
+
+    public NoteNotation getNotation() {
+        return NoteNotation.NONE;
     }
 
 
