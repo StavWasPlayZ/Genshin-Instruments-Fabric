@@ -17,7 +17,7 @@ import net.minecraft.network.chat.Component;
 
 @Environment(EnvType.CLIENT)
 public class FloralZitherOptionsScreen extends GridInstrumentOptionsScreen {
-    private static final String SOUND_TYPE_KEY = "label.genshinstrument.zither.soundType";
+    private static final String SOUND_TYPE_KEY = "button.genshinstrument.zither.soundType";
     private final static int SPACE_BEFORE = 50, SPACER_HEIGHT = 0, PADDING = 20;
 
     public FloralZitherOptionsScreen(final FloralZitherScreen screen) {
@@ -57,7 +57,7 @@ public class FloralZitherOptionsScreen extends GridInstrumentOptionsScreen {
         super.render(gui, pMouseX, pMouseY, pPartialTick);
         
         gui.drawCenteredString(font,
-            Component.translatable("button.genshinstrument.zither_options"),
+            Component.translatable("label.genshinstrument.zither_options"),
             width/2, heightBefore + SPACE_BEFORE + SPACER_HEIGHT
         , Color.WHITE.getRGB());
     }
