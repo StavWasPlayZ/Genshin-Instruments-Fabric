@@ -31,7 +31,6 @@ import net.minecraft.resources.ResourceLocation;
 public abstract class NoteButton extends AbstractButton {
 
     public static final String NOTE_BG_FILENAME = "note_bg.png";
-    private final ResourceLocation accidentalsLocation = getResourceFromRoot("accidentals.png");
 
     private static final double
         FLAT_TEXTURE_HEIGHT_MULTIPLIER = 3.7f/1.3f,
@@ -75,7 +74,7 @@ public abstract class NoteButton extends AbstractButton {
 
     protected final int noteTextureRow, rowsInNoteTexture;
     protected final ResourceLocation rootLocation,
-        noteLocation, noteBgLocation;
+        noteLocation, noteBgLocation, accidentalsLocation;
 
     private NoteLabelSupplier labelSupplier;
     private int noteTextureWidth = 56;
@@ -102,6 +101,7 @@ public abstract class NoteButton extends AbstractButton {
 
         noteLocation = instrumentScreen.getNotesLocation();
         noteBgLocation = getResourceFromRoot(NOTE_BG_FILENAME);
+        accidentalsLocation = getResourceFromRoot("accidentals.png");
     }
     public NoteButton(NoteSound sound,
       NoteLabelSupplier labelSupplier, int noteTextureRow, int rowsInNoteTexture,
