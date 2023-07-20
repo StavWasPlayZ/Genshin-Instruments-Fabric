@@ -89,7 +89,7 @@ public class InstrumentThemeLoader {
         try {
             return getter.apply(element);
         } catch (Exception e) {
-            e.printStackTrace();
+            GInstrumentMod.LOGGER.error("Error retrieving property from JSON element", e);
             return def;
         }
     }
@@ -99,17 +99,19 @@ public class InstrumentThemeLoader {
         final ResourceManager rManager = Minecraft.getInstance().getResourceManager();
 
         for (final InstrumentThemeLoader instrumentLoader : LOADERS) {
+            final ResourceLocation styleLocation = instrumentLoader.getInstrumentStyleLocation();
             try {
+
                 // Call all load listeners on the current loader
                 for (final Consumer<JsonObject> listener : instrumentLoader.listeners)
                     listener.accept(JsonParser.parseReader(
-                        rManager.getResource(instrumentLoader.getInstrumentStyleLocation()).get().openAsReader()
+                        rManager.getResource(styleLocation).get().openAsReader()
                     ).getAsJsonObject());
 
-                GInstrumentMod.LOGGER.info("Loaded instrument style from "+instrumentLoader.InstrumentStyleLocation);
+                GInstrumentMod.LOGGER.info("Loaded instrument style from "+styleLocation);
 
             } catch (IOException e) {
-                GInstrumentMod.LOGGER.error("Unable to load instrument styler for " + instrumentLoader.InstrumentStyleLocation, e);
+                GInstrumentMod.LOGGER.error("Unable to load instrument styler for " + styleLocation, e);
                 continue;
             }
         }
