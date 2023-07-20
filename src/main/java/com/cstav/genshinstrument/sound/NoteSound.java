@@ -8,7 +8,7 @@ import com.cstav.genshinstrument.client.config.enumType.InstrumentChannelType;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.ByPlayer.ByPlayerArgs;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEventArgs;
-import com.cstav.genshinstrument.event.InstrumentPlayedEvent.ByPlayer.ByPlayerArgs;
+import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

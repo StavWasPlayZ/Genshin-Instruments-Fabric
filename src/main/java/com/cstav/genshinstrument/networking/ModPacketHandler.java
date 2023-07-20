@@ -48,16 +48,6 @@ public class ModPacketHandler {
     }
 
 
-    public static void registerClientPackets() {
-        for (final Class<ModPacket> packetClass : S2C_PACKETS) {
-
-            ClientPlayNetworking.registerGlobalReceiver(
-                getPacketType(packetClass),
-                ModPacket::handle
-            );
-
-        }
-    }
     public static void registerServerPackets() {
 		GInstrumentMod.LOGGER.info("registring server packets");
         for (final Class<ModPacket> packetClass : C2S_PACKETS) {

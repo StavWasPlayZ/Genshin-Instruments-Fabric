@@ -6,8 +6,6 @@ import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.Note
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.NoteNotation;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.label.NoteLabelSupplier;
 import com.cstav.genshinstrument.sound.NoteSound;
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
