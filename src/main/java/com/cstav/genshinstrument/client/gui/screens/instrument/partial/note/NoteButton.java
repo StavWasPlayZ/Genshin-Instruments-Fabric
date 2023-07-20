@@ -291,7 +291,7 @@ public abstract class NoteButton extends AbstractButton {
     }
 
     protected void renderAccidental(final PoseStack poseStack, int index) {
-        renderAccidental(pos, index, 0, 0);
+        renderAccidental(poseStack, index, 0, 0);
     }
     protected void renderAccidental(PoseStack poseStack, int index, int offsetX, int offsetY) {
         final int textureWidth = (int)(width * FLAT_TEXTURE_WIDTH_MULTIPLIER * (
@@ -303,7 +303,10 @@ public abstract class NoteButton extends AbstractButton {
 
         final int spritePartHeight = textureHeight/3;
 
-        gui.blit(accidentalsLocation,
+
+        ClientUtil.displaySprite(accidentalsLocation);
+
+        blit(poseStack,
             getX() - 9 + offsetX, getY() - 6 + offsetY,
             // Handle sharp imperfections
             isPlaying() ? textureWidth/2 : 0, (spritePartHeight) * index - index,

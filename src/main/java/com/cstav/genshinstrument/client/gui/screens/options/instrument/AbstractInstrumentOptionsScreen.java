@@ -132,13 +132,13 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
 
 
         initOptionsGrid(grid, rowHelper);
+        
         grid.pack();
-
-        FrameLayout.alignInRectangle(grid, 0, 0, width, height, 0.5f, 0);
-        grid.visitWidgets(this::addRenderableWidget);
-
-        grid.arrangeElements();
+        FrameWidget.alignInRectangle(grid, 0, 0, width, height, 0.5f, 0);
         grid.setY(40);
+        
+        grid.pack();
+        addRenderableWidget(grid);
 
 
         final Button doneBtn = Button.builder(CommonComponents.GUI_DONE, (btn) -> onClose())
@@ -150,7 +150,7 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
     }
 
 
-    protected void initAudioSection(final GridLayout grid, final RowHelper rowHelper) {
+    protected void initAudioSection(final GridWidget grid, final RowHelper rowHelper) {
         final CycleButton<InstrumentChannelType> instrumentChannel = CycleButton.<InstrumentChannelType>builder((soundType) ->
             Component.translatable(SOUND_CHANNEL_KEY +"."+ soundType.toString().toLowerCase())
         )
@@ -211,7 +211,7 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
         rowHelper.addChild(stopMusic);
     }
 
-    protected void initVisualsSection(final GridLayout grid, final RowHelper rowHelper) {
+    protected void initVisualsSection(final GridWidget grid, final RowHelper rowHelper) {
 
         final CycleButton<Boolean> emitRing = CycleButton.booleanBuilder(CommonComponents.OPTION_ON, CommonComponents.OPTION_OFF)
             .withInitialValue(ModClientConfigs.EMIT_RING_ANIMATION.get())
@@ -258,10 +258,10 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
      * @param grid The settings grid to add the widgets to
      * @param rowHelper A row helper for the specified {@code grid}
      */
-    protected void initOptionsGrid(final GridLayout grid, final RowHelper rowHelper) {
+    protected void initOptionsGrid(final GridWidget grid, final RowHelper rowHelper) {
         initAudioSection(grid, rowHelper);
 
-        rowHelper.addChild(SpacerElement.height(15), 2);
+        rowHelper.addChild(SpacerWidget.height(15), 2);
         
         initVisualsSection(grid, rowHelper);
     }

@@ -3,7 +3,6 @@ package com.cstav.genshinstrument.networking;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.networking.buttonidentifier.DrumNoteIdentifier;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteGridButtonIdentifier;
