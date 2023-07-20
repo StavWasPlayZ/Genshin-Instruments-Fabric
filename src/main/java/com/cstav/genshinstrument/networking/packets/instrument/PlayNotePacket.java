@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.cstav.genshinstrument.networking.ModPacket;
+import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.sound.NoteSound;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -22,16 +23,19 @@ public class PlayNotePacket implements ModPacket {
     private final NoteSound sound;
     private final float pitch;
     private final ResourceLocation instrumentId;
+    private final NoteButtonIdentifier noteIdentifier;
     
     private final Optional<UUID> playerUUID;
     private final Optional<InteractionHand> hand;
 
     public PlayNotePacket(BlockPos pos, NoteSound sound, float pitch, ResourceLocation instrumentId,
-      Optional<UUID> playerUUID, Optional<InteractionHand> hand) {
+            NoteButtonIdentifier noteIdentifier, Optional<UUID> playerUUID, Optional<InteractionHand> hand) {
+
         this.blockPos = pos;
         this.sound = sound;
         this.pitch = pitch;
         this.instrumentId = instrumentId;
+        this.noteIdentifier = noteIdentifier;
 
         this.playerUUID = playerUUID;
         this.hand = hand;
@@ -41,6 +45,7 @@ public class PlayNotePacket implements ModPacket {
         sound = NoteSound.readFromNetwork(buf);
         pitch = buf.readFloat();
         instrumentId = buf.readResourceLocation();
+        noteIdentifier = NoteButtonIdentifier.readIdentifier(buf);
 
         playerUUID = buf.readOptional(FriendlyByteBuf::readUUID);
         hand = buf.readOptional((fbb) -> fbb.readEnum(InteractionHand.class));
@@ -52,6 +57,7 @@ public class PlayNotePacket implements ModPacket {
         sound.writeToNetwork(buf);
         buf.writeFloat(pitch);
         buf.writeResourceLocation(instrumentId);
+        noteIdentifier.writeToNetwork(buf);
 
         buf.writeOptional(playerUUID, FriendlyByteBuf::writeUUID);
         buf.writeOptional(hand, FriendlyByteBuf::writeEnum);
@@ -60,6 +66,9 @@ public class PlayNotePacket implements ModPacket {
 
     @Override
     public void handle(Player player, PacketSender responseSender) {
-        sound.playAtPos(pitch, playerUUID.orElse(null), hand.orElse(null), instrumentId, blockPos);
+        sound.playAtPos(
+            pitch, playerUUID.orElse(null), hand.orElse(null),
+            instrumentId, noteIdentifier, blockPos
+        );
     }
 }

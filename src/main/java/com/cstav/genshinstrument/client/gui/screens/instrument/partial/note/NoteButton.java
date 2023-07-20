@@ -1,6 +1,5 @@
 package com.cstav.genshinstrument.client.gui.screens.instrument.partial.note;
 
-import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -11,6 +10,8 @@ import com.cstav.genshinstrument.client.gui.screens.instrument.partial.Instrumen
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.animation.NoteAnimationController;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.label.NoteLabelSupplier;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
+import com.cstav.genshinstrument.networking.buttonidentifier.DefaultNoteButtonIdentifier;
+import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.networking.packets.instrument.InstrumentPacket;
 import com.cstav.genshinstrument.sound.NoteSound;
 import com.cstav.genshinstrument.util.CommonUtil;
@@ -28,8 +29,16 @@ import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.resources.ResourceLocation;
 
 @Environment(EnvType.CLIENT)
-public class NoteButton extends AbstractButton {
+public abstract class NoteButton extends AbstractButton {
+
     public static final String NOTE_BG_FILENAME = "note_bg.png";
+
+    private static final double
+        FLAT_TEXTURE_HEIGHT_MULTIPLIER = 3.7f/1.3f,
+        FLAT_TEXTURE_WIDTH_MULTIPLIER = 1.7f/1.3f,
+        SHARP_MULTIPLIER = .8f,
+        DOUBLE_SHARP_MULTIPLIER = .9f
+    ;
 
 
     @SuppressWarnings("resource")
@@ -51,13 +60,22 @@ public class NoteButton extends AbstractButton {
     protected final NoteAnimationController noteAnimation = new NoteAnimationController(.15f, 9, this);
     protected final ArrayList<NoteRing> rings = new ArrayList<>();
 
+
+    /**
+     * <p>Returns the identifier of this button.</p>
+     * You may use the {@link DefaultNoteButtonIdentifier default implementation} if you're too lazy.
+    */
+    public NoteButtonIdentifier getIdentifier() {
+        return new DefaultNoteButtonIdentifier(getSound());
+    }
+
     
-    public NoteSound sound;
+    private NoteSound sound;
     public final AbstractInstrumentScreen instrumentScreen;
 
     protected final int noteTextureRow, rowsInNoteTexture;
     protected final ResourceLocation rootLocation,
-        noteLocation, noteBgLocation;
+        noteLocation, noteBgLocation, accidentalsLocation;
 
     private NoteLabelSupplier labelSupplier;
     private int noteTextureWidth = 56;
@@ -84,6 +102,7 @@ public class NoteButton extends AbstractButton {
 
         noteLocation = instrumentScreen.getNotesLocation();
         noteBgLocation = getResourceFromRoot(NOTE_BG_FILENAME);
+        accidentalsLocation = getResourceFromRoot("accidentals.png");
     }
     public NoteButton(NoteSound sound,
       NoteLabelSupplier labelSupplier, int noteTextureRow, int rowsInNoteTexture,
@@ -98,13 +117,24 @@ public class NoteButton extends AbstractButton {
 
     public void setLabelSupplier(final NoteLabelSupplier labelSupplier) {
         this.labelSupplier = labelSupplier;
-        setMessage(labelSupplier.get(this));
+        updateNoteLabel();
     }
     public NoteLabelSupplier getLabelSupplier() {
         return labelSupplier;
     }
     public void updateNoteLabel() {
-        setMessage(labelSupplier.get(this));
+        setMessage(getLabelSupplier().get(this));
+    }
+
+    public NoteSound getSound() {
+        return sound;
+    }
+    public void setSound(NoteSound sound) {
+        this.sound = sound;
+
+        // Update the sound for the sound (default) identifier
+        if (getIdentifier() instanceof DefaultNoteButtonIdentifier)
+            ((DefaultNoteButtonIdentifier)getIdentifier()).setSound(sound);
     }
 
 
@@ -146,6 +176,11 @@ public class NoteButton extends AbstractButton {
     }
 
 
+    public NoteNotation getNotation() {
+        return NoteNotation.NONE;
+    }
+
+
     public void init() {
         initPos();
         setLabelSupplier(labelSupplier);
@@ -156,7 +191,8 @@ public class NoteButton extends AbstractButton {
     }
 
 
-    
+    //#region Rendering
+
     @Override
     public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
         RenderSystem.enableBlend();
@@ -166,15 +202,19 @@ public class NoteButton extends AbstractButton {
         rings.removeIf((ring) -> !ring.isPlaying());
         rings.forEach((ring) -> ring.render(poseStack));
 
-        final InstrumentThemeLoader theme = instrumentScreen.getThemeLoader();
-        final Color
-            noteTheme = theme.getNoteTheme(),
-            pressedNoteTheme = theme.getPressedNoteTheme(),
-            labelTheme = theme.getLabelTheme()
-        ;
+        renderNoteButton(poseStack, instrumentScreen.getThemeLoader());
 
+        noteAnimation.update();
+    }
+    protected void renderNoteButton(PoseStack stack, final InstrumentThemeLoader themeLoader) {
+        renderNote(stack, themeLoader);
+        renderSymbol(stack, themeLoader);
+        renderLabel(stack, themeLoader);
         
-        // Button
+        renderAccidentals(stack);
+    }
+
+    protected void renderNote(final PoseStack stack, final InstrumentThemeLoader themeLoader) {
         ClientUtil.displaySprite(noteBgLocation);
 
         // width = full color, width * 2 = border, 0 = normal
@@ -187,20 +227,25 @@ public class NoteButton extends AbstractButton {
                 (width * 2)
             : 0;
         
-        GuiComponent.blit(poseStack,
+        GuiComponent.blit(stack,
             this.getX(), this.getY(),
             blitOffset, 0,
             width, height,
             width*3, height
         );
-
-        // Note
+    }
+    // "Symbol" so that I can call the above "Note"
+    protected void renderSymbol(final PoseStack stack, final InstrumentThemeLoader themeLoader) {
         ClientUtil.displaySprite(noteLocation);
 
+        ClientUtil.setShaderColor((isPlaying() && !foreignPlaying)
+            ? themeLoader.getPressedNoteTheme()
+            : themeLoader.getLabelTheme()
+        );
+        
         final int noteWidth = width/2, noteHeight = height/2;
-        ClientUtil.setShaderColor((isPlaying() && !foreignPlaying) ? pressedNoteTheme : labelTheme);
 
-        GuiComponent.blit(poseStack,
+        GuiComponent.blit(stack,
             this.getX() + noteWidth/2, this.getY() + noteHeight/2,
             //NOTE: I have no clue whatsoever how on earth these 1.025 and .9 multipliers actually work.
             // Like seriously wtf why fkuaherjgaeorg i hate maths
@@ -211,19 +256,66 @@ public class NoteButton extends AbstractButton {
         );
 
         ClientUtil.resetShaderColor();
-
-        // Label
+    }
+    protected void renderLabel(final PoseStack stack, final InstrumentThemeLoader themeLoader) {
         //FIXME: All text rendered this way are making their way to the top of
         // the render stack, for some reason
         drawCenteredString(
-            poseStack, minecraft.font, getMessage(),
+            stack, minecraft.font, getMessage(),
             textX, textY,
-            ((isPlaying() && !foreignPlaying) ? pressedNoteTheme : noteTheme).getRGB()
+            ((isPlaying() && !foreignPlaying)
+                ? themeLoader.getPressedNoteTheme()
+                : themeLoader.getNoteTheme()
+            ).getRGB()
         );
+    }
+    protected void renderAccidentals(final PoseStack stack) {
+        switch (getNotation()) {
+            case NONE: break;
+
+            case FLAT:
+                renderAccidental(stack, 0);
+                break;
+            case SHARP:
+                renderAccidental(stack, 1);
+                break;
+            case DOUBLE_FLAT:
+                renderAccidental(stack, 0, -6, -3);
+                renderAccidental(stack, 0, 5, 2);
+                break;
+            case DOUBLE_SHARP:
+                renderAccidental(stack, 2, -1, 0);
+                break;
+
+        }
+    }
+
+    protected void renderAccidental(final PoseStack stack, int index) {
+        renderAccidental(stack, index, 0, 0);
+    }
+    protected void renderAccidental(PoseStack stack, int index, int offsetX, int offsetY) {
+        final int textureWidth = (int)(width * FLAT_TEXTURE_WIDTH_MULTIPLIER * (
+            (index == 1) ? SHARP_MULTIPLIER : (index == 2) ? DOUBLE_SHARP_MULTIPLIER : 1
+        )),
+        textureHeight = (int)(height * FLAT_TEXTURE_HEIGHT_MULTIPLIER * (
+            (index == 1) ? SHARP_MULTIPLIER : (index == 2) ? DOUBLE_SHARP_MULTIPLIER : 1
+        ));
+
+        final int spritePartHeight = textureHeight/3;
         
 
-        noteAnimation.update();
+        ClientUtil.displaySprite(accidentalsLocation);
+
+        blit(stack,
+            getX() - 9 + offsetX, getY() - 6 + offsetY,
+            // Handle sharp imperfections
+            isPlaying() ? textureWidth/2 : 0, (spritePartHeight) * index - index,
+            textureWidth/2,  spritePartHeight + ((index == 1) ? 3 : 0),
+            textureWidth - (((index != 0) && isPlaying()) ? 1 : 0), textureHeight
+        );
     }
+
+    //#endregion
 
 
     public boolean locked = false;
@@ -237,7 +329,8 @@ public class NoteButton extends AbstractButton {
         ModPacketHandler.sendToServer(
             new InstrumentPacket(
                 sound, instrumentScreen.getPitch(),
-                instrumentScreen.interactionHand, instrumentScreen.getInstrumentId()
+                instrumentScreen.interactionHand,
+                instrumentScreen.getInstrumentId(), getIdentifier()
             )
         );
 
@@ -276,6 +369,19 @@ public class NoteButton extends AbstractButton {
     protected void updateWidgetNarration(final NarrationElementOutput neo) {
         neo.add(NarratedElementType.TITLE, getMessage());
     }
+
+
+    /**
+     * <p>Check whether an object is equal to this {@link NoteButton}.</p>
+     * 
+     * An object will only be equal to this note if it is of type {@link NoteButton}
+     * and both their identifiers {@link NoteButtonIdentifier#matches match}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        return getIdentifier().matches(obj);
+    }
+
 
 
     // Doesn't exist for some reason
