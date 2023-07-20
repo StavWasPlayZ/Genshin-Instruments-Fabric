@@ -3,6 +3,7 @@ package com.cstav.genshinstrument.event;
 import com.cstav.genshinstrument.event.impl.Cancelable;
 import com.cstav.genshinstrument.event.impl.EventArgs;
 import com.cstav.genshinstrument.event.impl.ModEvent;
+import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.sound.NoteSound;
 
 import net.fabricmc.fabric.api.event.Event;
@@ -30,15 +31,19 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEvent.In
         public final boolean isClientSide;
 
         public final ResourceLocation instrumentId;
+        public final NoteButtonIdentifier noteIdentifier;
         public final BlockPos pos;
         
 
-        public InstrumentPlayedEventArgs(NoteSound sound, Level level, BlockPos pos, ResourceLocation instrumentId, boolean isClientSide) {
+        public InstrumentPlayedEventArgs(NoteSound sound, Level level, BlockPos pos,
+                ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, boolean isClientSide) {
+
             this.sound = sound;
             this.level = level;
             this.pos = pos;
             this.isClientSide = isClientSide;
             this.instrumentId = instrumentId;
+            this.noteIdentifier = noteIdentifier;
 
             // Handle provided invalid id
             if (!Registry.ITEM.containsKey(instrumentId))
@@ -66,8 +71,10 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEvent.In
             public final ItemStack instrument;
             public final InteractionHand hand;
     
-            public ByPlayerArgs(NoteSound sound, Player player, InteractionHand hand, ResourceLocation instrumentId, boolean isClientSide) {
-                super(sound, player.getLevel(), player.blockPosition(), instrumentId, isClientSide);
+            public ByPlayerArgs(NoteSound sound, Player player, InteractionHand hand,
+                    ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, boolean isClientSide) {
+
+                super(sound, player.getLevel(), player.blockPosition(), instrumentId, noteIdentifier, isClientSide);
                 this.player = player;
                 this.hand = hand;
     

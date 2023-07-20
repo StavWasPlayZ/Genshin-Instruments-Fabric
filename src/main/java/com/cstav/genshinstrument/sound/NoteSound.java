@@ -8,6 +8,7 @@ import com.cstav.genshinstrument.client.config.enumType.InstrumentChannelType;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.ByPlayer.ByPlayerArgs;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEventArgs;
+import com.cstav.genshinstrument.event.InstrumentPlayedEvent.ByPlayer.ByPlayerArgs;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -125,7 +126,9 @@ public class NoteSound {
      * @param pos The position at which the sound was fired from
      */
     @Environment(EnvType.CLIENT)
-    public void playAtPos(float pitch, UUID playerUUID, InteractionHand hand, ResourceLocation instrumentId, BlockPos pos) {
+    public void playAtPos(float pitch, UUID playerUUID, InteractionHand hand,
+            ResourceLocation instrumentId, NoteButtonIdentifier buttonIdentifier, BlockPos pos) {
+                
         final Minecraft minecraft = Minecraft.getInstance();
         final Player player = minecraft.player;
 
@@ -139,11 +142,14 @@ public class NoteSound {
         // Send instrument played event
         if (playerUUID == null)
             InstrumentPlayedEvent.EVENT.invoker().triggered(
-                new InstrumentPlayedEventArgs(this, level, pos, instrumentId, true)
+                new InstrumentPlayedEventArgs(this, level, pos, instrumentId, buttonIdentifier, true)
             );
         else
             InstrumentPlayedEvent.ByPlayer.EVENT.invoker().triggered(
-                new ByPlayerArgs(this, level.getPlayerByUUID(playerUUID), hand, instrumentId, true)
+                new ByPlayerArgs(
+                    this, level.getPlayerByUUID(playerUUID), hand,
+                    instrumentId, buttonIdentifier, true
+                )
             );
         
 

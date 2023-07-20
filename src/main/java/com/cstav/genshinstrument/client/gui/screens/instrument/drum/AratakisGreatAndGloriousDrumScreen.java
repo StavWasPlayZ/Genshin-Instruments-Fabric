@@ -73,6 +73,7 @@ public class AratakisGreatAndGloriousDrumScreen extends AbstractInstrumentScreen
         layout1.pack();
         layout2.pack();
 
+        
         addRenderableWidget(layout1);
         addRenderableWidget(layout2);
 

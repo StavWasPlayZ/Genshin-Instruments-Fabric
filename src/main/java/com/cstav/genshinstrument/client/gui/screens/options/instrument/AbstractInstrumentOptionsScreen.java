@@ -11,6 +11,7 @@ import com.cstav.genshinstrument.client.config.enumType.InstrumentChannelType;
 import com.cstav.genshinstrument.client.config.enumType.label.NoteGridLabel;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.NoteButton;
+import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.label.AbsGridLabels;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.label.INoteLabel;
 import com.cstav.genshinstrument.client.gui.screens.options.widget.copied.GridWidget;
 import com.cstav.genshinstrument.client.gui.screens.options.widget.copied.GridWidget.RowHelper;
@@ -37,9 +38,12 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
 
     private static final String SOUND_CHANNEL_KEY = "button.genshinstrument.audioChannels",
         STOP_MUSIC_KEY = "button.genshinstrument.stop_music_on_play";
-    private static final double PITCH_STEP = .05;
+
+    public static final double PITCH_STEP = .05;
+
 
     protected final HashMap<String, Runnable> APPLIED_OPTIONS = new HashMap<>();
+    
     /**
      * Queues the given option to later be saved,
      * such that when the client closes this screen - the given runnable will run.
@@ -101,6 +105,7 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
     }
     public AbstractInstrumentOptionsScreen(final Screen lastScreen) {
         super(Component.translatable("button.genshinstrument.instrumentOptions"));
+
         this.isOverlay = false;
         
         this.instrumentScreen = null;
@@ -125,6 +130,7 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
             .alignHorizontallyCenter();
         final RowHelper rowHelper = grid.createRowHelper(2);
 
+
         initOptionsGrid(grid, rowHelper);
         
         grid.pack();
@@ -132,25 +138,23 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
         grid.setX((width - grid.getWidth()) / 2);
         grid.pack();
 
-        addRenderableWidget(grid);
-        
+        FrameLayout.alignInRectangle(grid, 0, 0, width, height, 0.5f, 0);
+        grid.visitWidgets(this::addRenderableWidget);
+
+        grid.arrangeElements();
         grid.setY(40);
 
 
-        final Button doneBtn = new Button(
-            (width - getSmallButtonWidth())/2,
-            Math.min(grid.y + grid.getHeight() + 60, height - getButtonHeight() - 15),
-            getSmallButtonWidth(), getButtonHeight(),  CommonComponents.GUI_DONE, (btn) -> onClose());
+        final Button doneBtn = Button.builder(CommonComponents.GUI_DONE, (btn) -> onClose())
+            .width(getSmallButtonWidth())
+            .pos((width - getSmallButtonWidth())/2, Math.min(grid.getY() + grid.getHeight() + 50, height - getButtonHeight() - 15))
+            .build();
         addRenderableWidget(doneBtn);
         
     }
-    /**
-     * Fills the settings grid with all the necessary widgets, buttons and such
-     * @param grid The settings grid to add the widgets to
-     * @param rowHelper A row helper for the specified {@code grid}
-     */
-    protected void initOptionsGrid(final GridWidget grid, final RowHelper rowHelper) {
 
+
+    protected void initAudioSection(final GridLayout grid, final RowHelper rowHelper) {
         final CycleButton<InstrumentChannelType> instrumentChannel = CycleButton.<InstrumentChannelType>builder((soundType) ->
             Component.translatable(SOUND_CHANNEL_KEY +"."+ soundType.toString().toLowerCase())
         )
@@ -181,6 +185,7 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
                 this.setMessage(
                     Component.translatable("button.genshinstrument.pitch").append(
                         ": " + format.format(getPitch())
+                            + " ("+AbsGridLabels.getNoteName(getPitch(), AbstractInstrumentScreen.DEFAULT_NOTE_LAYOUT, 0)+")"
                     )
                 );
             }
@@ -208,21 +213,9 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
                 Component.translatable(STOP_MUSIC_KEY), this::onMusicStopChanged
             );
         rowHelper.addChild(stopMusic);
+    }
 
-
-        rowHelper.addChild(SpacerWidget.height(15), 2);
-        
-        
-        if (labels != null) {
-            final CycleButton<INoteLabel> labelType = CycleButton.<INoteLabel>builder((label) -> Component.translatable(label.getKey()))
-                .withValues(labels)
-                .withInitialValue(currLabel)
-                .create(0, 0,
-                    getSmallButtonWidth(), getButtonHeight(),
-                    Component.translatable("button.genshinstrument.label"), this::onLabelChanged
-                );
-            rowHelper.addChild(labelType);
-        }
+    protected void initVisualsSection(final GridLayout grid, final RowHelper rowHelper) {
 
         final CycleButton<Boolean> emitRing = CycleButton.booleanBuilder(CommonComponents.OPTION_ON, CommonComponents.OPTION_OFF)
             .withInitialValue(ModClientConfigs.EMIT_RING_ANIMATION.get())
@@ -240,6 +233,41 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
                 Component.translatable("button.genshinstrument.shared_instrument"), this::onSharedInstrumentChanged
             );
         rowHelper.addChild(sharedInstrument);
+
+        final CycleButton<Boolean> accurateAccidentals = CycleButton.booleanBuilder(CommonComponents.OPTION_ON, CommonComponents.OPTION_OFF)
+            .withInitialValue(ModClientConfigs.ACCURATE_ACCIDENTALS.get())
+            .withTooltip((value) -> Tooltip.create(Component.translatable("button.genshinstrument.accurate_accidentals.tooltip")))
+            .create(0, 0,
+                getSmallButtonWidth(), getButtonHeight(),
+                Component.translatable("button.genshinstrument.accurate_accidentals"), this::onAccurateAccidentalsChanged
+            );
+        rowHelper.addChild(accurateAccidentals);
+
+
+        if (labels != null) {
+            final CycleButton<INoteLabel> labelType = CycleButton.<INoteLabel>builder((label) -> Component.translatable(label.getKey()))
+                .withValues(labels)
+                .withInitialValue(currLabel)
+                .create(0, 0,
+                    getBigButtonWidth(), getButtonHeight(),
+                    Component.translatable("button.genshinstrument.label"), this::onLabelChanged
+                );
+            rowHelper.addChild(labelType, 2);
+        }
+    }
+
+
+    /**
+     * Fills the settings grid with all the necessary widgets, buttons and such
+     * @param grid The settings grid to add the widgets to
+     * @param rowHelper A row helper for the specified {@code grid}
+     */
+    protected void initOptionsGrid(final GridLayout grid, final RowHelper rowHelper) {
+        initAudioSection(grid, rowHelper);
+
+        rowHelper.addChild(SpacerElement.height(15), 2);
+        
+        initVisualsSection(grid, rowHelper);
     }
 
     private <T> TooltipSupplier<T> tooltip(final Function<T, Component> text) {
@@ -247,7 +275,7 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
     }
 
     private float getPitch() {
-        return (instrumentScreen == null)
+        return (!isOverlay)
             ? ModClientConfigs.PITCH.get().floatValue()
             : instrumentScreen.getPitch();
     }
@@ -255,7 +283,7 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
 
     // Change handlers
     protected void onLabelChanged(final CycleButton<INoteLabel> button, final INoteLabel label) {
-        if (instrumentScreen != null)
+        if (isOverlay)
             instrumentScreen.notesIterable().forEach((note) -> note.setLabelSupplier(label.getLabelSupplier()));
 
         queueToSave("note_label", () -> saveLabel(label));
@@ -266,7 +294,7 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
     }
 
     protected void onPitchChanged(final AbstractSliderButton slider, final double pitch) {
-        if (instrumentScreen != null) {
+        if (isOverlay) {
             instrumentScreen.setPitch((float)pitch);
             instrumentScreen.notesIterable().forEach(NoteButton::updateNoteLabel);
 
@@ -291,6 +319,12 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
     }
     protected void onSharedInstrumentChanged(final CycleButton<Boolean> button, final boolean value) {
         ModClientConfigs.SHARED_INSTRUMENT.set(value);
+    }
+    protected void onAccurateAccidentalsChanged(final CycleButton<Boolean> button, final boolean value) {
+        ModClientConfigs.ACCURATE_ACCIDENTALS.set(value);
+
+        if (isOverlay)
+            instrumentScreen.notesIterable().forEach(NoteButton::updateNoteLabel);
     }
 
 
@@ -322,6 +356,8 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
     protected void onSave() {
         for (final Runnable runnable : APPLIED_OPTIONS.values())
             runnable.run();
+
+        ModClientConfigs.CONFIGS.save();
     }
 
 

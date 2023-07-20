@@ -78,7 +78,7 @@ public class NoteGrid implements Iterable<NoteButton> {
 
         for (int i = 0; i < columns; i++)
             for (int j = 0; j < rows; j++)
-                notes[i][j].sound = getSoundAt(noteSounds, j, i);
+                notes[i][j].setSound(getSoundAt(noteSounds, j, i));
     }
 
 
@@ -119,7 +119,7 @@ public class NoteGrid implements Iterable<NoteButton> {
     }
 
 
-    public NoteButton getNote(final int row, final int column) {
+    public NoteButton getNoteButton(final int row, final int column) {
         return notes[column][row];
     }
 
