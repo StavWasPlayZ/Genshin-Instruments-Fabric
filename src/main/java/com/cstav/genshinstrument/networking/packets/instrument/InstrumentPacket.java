@@ -1,6 +1,7 @@
 package com.cstav.genshinstrument.networking.packets.instrument;
 
 import com.cstav.genshinstrument.networking.ModPacket;
+import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.sound.NoteSound;
 import com.cstav.genshinstrument.util.ModEntityData;
 import com.cstav.genshinstrument.util.ServerUtil;
@@ -22,20 +23,24 @@ public class InstrumentPacket implements ModPacket {
     private final float pitch;
 
     private final ResourceLocation instrumentId;
+    private final NoteButtonIdentifier noteIdentifier;
 
-    public InstrumentPacket(NoteSound sound, float pitch, InteractionHand hand, ResourceLocation instrumentId) {
+    public InstrumentPacket(NoteSound sound, float pitch, InteractionHand hand,
+            ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier) {
         this.sound = sound;
         this.hand = hand;
         this.pitch = pitch;
-
+        
         this.instrumentId = instrumentId;
+        this.noteIdentifier = noteIdentifier;
     }
     public InstrumentPacket(FriendlyByteBuf buf) {
         sound = NoteSound.readFromNetwork(buf);
         hand = buf.readEnum(InteractionHand.class);
         pitch = buf.readFloat();
-
+        
         instrumentId = buf.readResourceLocation();
+        noteIdentifier = NoteButtonIdentifier.readIdentifier(buf);
     }
 
     @Override
@@ -45,6 +50,7 @@ public class InstrumentPacket implements ModPacket {
         buf.writeFloat(pitch);
 
         buf.writeResourceLocation(instrumentId);
+        noteIdentifier.writeToNetwork(buf);
     }
 
 
@@ -53,7 +59,7 @@ public class InstrumentPacket implements ModPacket {
         if (!ModEntityData.isInstrumentOpen(player))
             return;
 
-        ServerUtil.sendPlayNotePackets((ServerPlayer)player, hand, sound, instrumentId, pitch);
+            ServerUtil.sendPlayNotePackets((ServerPlayer)player, hand, sound, instrumentId, noteIdentifier, pitch);
     }
     
 }
