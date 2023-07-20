@@ -138,11 +138,14 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
         grid.setX((width - grid.getWidth()) / 2);
         grid.pack();
 
+        addRenderableWidget(grid);
+
 
         final Button doneBtn = new Button(
             (width - getSmallButtonWidth())/2,
             Math.min(grid.y + grid.getHeight() + 60, height - getButtonHeight() - 15),
-            getSmallButtonWidth(), getButtonHeight(),  CommonComponents.GUI_DONE, (btn) -> onClose());
+            getSmallButtonWidth(), getButtonHeight(),  CommonComponents.GUI_DONE, (btn) -> onClose()
+        );
         addRenderableWidget(doneBtn);
         
     }
