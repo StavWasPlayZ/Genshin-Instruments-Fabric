@@ -3,6 +3,7 @@ package com.cstav.genshinstrument.client.gui.screens.options.instrument;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.config.enumType.label.NoteGridLabel;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractGridInstrumentScreen;
+import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.label.INoteLabel;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -33,7 +34,14 @@ public class GridInstrumentOptionsScreen extends AbstractInstrumentOptionsScreen
         return ModClientConfigs.GRID_LABEL_TYPE.get();
     }
 
+    @Override
+    protected void saveLabel(final INoteLabel newLabel) {
+        if (newLabel instanceof NoteGridLabel)
+            ModClientConfigs.GRID_LABEL_TYPE.set((NoteGridLabel)newLabel);
+    }
 
+
+    
     @Override
     protected void initVisualsSection(GridWidget grid, RowHelper rowHelper) {
         final CycleButton<Boolean> renderBackground = CycleButton.booleanBuilder(CommonComponents.OPTION_ON, CommonComponents.OPTION_OFF)
