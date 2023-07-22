@@ -39,7 +39,7 @@ public class ServerUtil {
      * @param pitch The pitch of the sound to initiate
      */
     public static void sendPlayNotePackets(ServerPlayer player, InteractionHand hand,
-            NoteSound sound, ResourceLocation instrumentId, float pitch) {
+            NoteSound sound, ResourceLocation instrumentId, int pitch) {
 
         sendPlayNotePackets(player, hand, sound, instrumentId, new DefaultNoteButtonIdentifier(sound), pitch);
     }
@@ -52,7 +52,7 @@ public class ServerUtil {
      * @param pitch The pitch of the sound to initiate
      */
     public static void sendPlayNotePackets(ServerPlayer player, InteractionHand hand,
-            NoteSound sound, ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, float pitch) {
+            NoteSound sound, ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, int pitch) {
 
         for (final Player listener : noteListeners(player.level(), player.blockPosition()))
             ModPacketHandler.sendToClient(
@@ -86,7 +86,7 @@ public class ServerUtil {
      * @param instrumentId The ID of the instrument initiating the sound
      * @param pitch The pitch of the sound to initiate
      */
-    public static void sendPlayNotePackets(Level level, BlockPos pos, NoteSound sound, ResourceLocation instrumentId, float pitch) {
+    public static void sendPlayNotePackets(Level level, BlockPos pos, NoteSound sound, ResourceLocation instrumentId, int pitch) {
         sendPlayNotePackets(level, pos, sound, instrumentId, new DefaultNoteButtonIdentifier(sound), pitch);
     }
     /**
@@ -100,7 +100,7 @@ public class ServerUtil {
      * @param pitch The pitch of the sound to initiate
      */
     public static void sendPlayNotePackets(Level level, BlockPos pos, NoteSound sound,
-            ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, float pitch) {
+            ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, int pitch) {
 
         for (final Player listener : noteListeners(level, pos))
             ModPacketHandler.sendToClient(
