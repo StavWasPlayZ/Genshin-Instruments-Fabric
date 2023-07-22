@@ -231,12 +231,15 @@ public abstract class AbstractInstrumentScreen extends Screen {
             }
     }
     /**
-     * Unlocks the {@link NoteButton} who matches with the given keycode
+     * Unlocks a {@link NoteButton} based on its corresponding key.
+     * If not present, will perform {@link AbstractInstrumentScreen#unlockFocused} instead.
      */
-    private void unlockFocused(final int keycode) {
-        final NoteButton note = getNoteByKey(keycode);
+    private void unlockFocused(final int keyCode) {
+        final NoteButton note = getNoteByKey(keyCode);
 
-        if (note != null)
+        if (note == null)
+            unlockFocused();
+        else
             note.locked = false;
     }
 
