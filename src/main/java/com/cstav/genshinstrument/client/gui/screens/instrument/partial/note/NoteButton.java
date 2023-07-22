@@ -138,7 +138,7 @@ public abstract class NoteButton extends AbstractButton {
 
     @Override
     public void renderWidget(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
-        noteRenderer.renderNoteButton(gui, instrumentScreen.getThemeLoader());
+        noteRenderer.render(gui, mouseX, mouseY, partialTick, instrumentScreen.getThemeLoader());
     }
 
 

@@ -17,6 +17,7 @@ import com.ibm.icu.text.DecimalFormat;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
@@ -308,10 +309,13 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
 
     @Override
     public void render(GuiGraphics gui, int pMouseX, int pMouseY, float pPartialTick) {
-        if (isOverlay)
-            instrumentScreen.render(gui, pMouseX, pMouseY, pPartialTick);
-
-
+        if (isOverlay) {
+            instrumentScreen.render(gui, Integer.MAX_VALUE, Integer.MAX_VALUE, pPartialTick);
+            // Push the options screen infront
+            gui.pose().translate(0, 0, 1);
+        }
+        
+        
         renderBackground(gui);
         gui.drawCenteredString(font, title, width/2, 20, Color.WHITE.getRGB());
         
@@ -357,6 +361,15 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
             instrumentScreen.keyReleased(p_94715_, p_94716_, p_94717_);
 
         return super.keyReleased(p_94715_, p_94716_, p_94717_);
+    }
+
+    // Also resizing
+    @Override
+    public void resize(Minecraft minecraft, int width, int height) {
+        if (isOverlay)
+            instrumentScreen.resize(minecraft, width, height);
+            
+        super.resize(minecraft, width, height);
     }
 
 
