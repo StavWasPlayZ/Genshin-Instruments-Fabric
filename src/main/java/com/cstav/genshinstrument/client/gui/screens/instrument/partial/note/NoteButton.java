@@ -19,6 +19,7 @@ import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.network.chat.Component;
 
 @Environment(EnvType.CLIENT)
 public abstract class NoteButton extends AbstractButton {
@@ -78,6 +79,15 @@ public abstract class NoteButton extends AbstractButton {
     public void updateNoteLabel() {
         setMessage(getLabelSupplier().get(this));
     }
+
+    // Handle incompatibility with some mods that perform early loading of widgets
+    // *cough cough* no names *cough* Visual Overhaul *cough*
+    @Override
+    public Component getMessage() {
+        final Component message = super.getMessage();
+        return (message == null) ? Component.empty() : message;
+    }
+    
 
     public NoteSound getSound() {
         return sound;
