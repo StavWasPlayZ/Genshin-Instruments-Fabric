@@ -39,12 +39,5 @@ public class DrumNoteButton extends NoteButton {
             13, .34f, 1.01f
         );
     }
-    
-
-    //NOTE: testing purposes only!
-    @Override
-    public String toString() {
-        return "NoteGridButton[Side: "+(isRight ? "Right" : "Left")+", Button type: "+btnType+"]";
-    }
 
 }

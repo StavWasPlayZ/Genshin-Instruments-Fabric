@@ -44,11 +44,4 @@ public class NoteGridButton extends NoteButton {
         );
     }
 
-
-    //NOTE: testing purposes only!
-    @Override
-    public String toString() {
-        return "NoteGridButton[Position: (Row: "+row+", Column: "+column+")]";
-    }
-
 }

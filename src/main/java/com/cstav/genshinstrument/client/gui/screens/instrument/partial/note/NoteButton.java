@@ -2,9 +2,7 @@ package com.cstav.genshinstrument.client.gui.screens.instrument.partial.note;
 
 import java.awt.Point;
 
-import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.ClientUtil;
-import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.label.NoteLabelSupplier;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
@@ -82,32 +80,12 @@ public abstract class NoteButton extends AbstractButton {
         setMessage(getLabelSupplier().get(this));
     }
 
-    //NOTE: For debug purposes only!
+    // Handle incompatibility with some mods that perform early loading of widgets
+    // *cough cough* no names *cough* Visual Overhaul *cough*
     @Override
     public Component getMessage() {
         final Component message = super.getMessage();
-
-        try {
-            if (message == null)
-                throw new NullPointerException();
-        } catch (NullPointerException e) {
-            GInstrumentMod.LOGGER.error("Empty label recieved during the gathering of a note button's message!");
-
-            if (getLabelSupplier() == null)
-                GInstrumentMod.LOGGER.info("Label supplier itself is null!");
-            else
-                GInstrumentMod.LOGGER.info("Label supplier result: "+getLabelSupplier().get(this));
-            
-            GInstrumentMod.LOGGER.info("Drum label supplier as given in configs: "+ModClientConfigs.DRUM_LABEL_TYPE.get());
-            GInstrumentMod.LOGGER.info("Grid label supplier as given in configs: "+ModClientConfigs.GRID_LABEL_TYPE.get());
-
-            GInstrumentMod.LOGGER.info("Note button in question: "+this);
-            
-            GInstrumentMod.LOGGER.error("Walkthrogh detais of the exception is as follows:", e);
-            return Component.empty();
-        }
-
-        return message;
+        return (message == null) ? Component.empty() : message;
     }
 
 
