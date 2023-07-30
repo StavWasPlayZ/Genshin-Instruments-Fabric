@@ -2,6 +2,7 @@ package com.cstav.genshinstrument.client.gui.screens.instrument.partial.note;
 
 import java.awt.Point;
 
+import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.ClientUtil;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.label.NoteLabelSupplier;
@@ -19,6 +20,7 @@ import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.network.chat.Component;
 
 @Environment(EnvType.CLIENT)
 public abstract class NoteButton extends AbstractButton {
@@ -78,6 +80,27 @@ public abstract class NoteButton extends AbstractButton {
     public void updateNoteLabel() {
         setMessage(getLabelSupplier().get(this));
     }
+
+    //NOTE: For debug purposes only!
+    @Override
+    public Component getMessage() {
+        final Component message = super.getMessage();
+
+        try {
+            if (message == null)
+                throw new NullPointerException();
+        } catch (NullPointerException e) {
+            GInstrumentMod.LOGGER.error("Exception occured during the gathering of a note button's message!");
+            GInstrumentMod.LOGGER.info("Label supplier result: "+getLabelSupplier().get(this));
+            GInstrumentMod.LOGGER.info("Note button in question: "+this);
+            GInstrumentMod.LOGGER.error("Walkthrogh detais of the exception are as follows:", e);
+
+            return Component.empty();
+        }
+
+        return message;
+    }
+
 
     public NoteSound getSound() {
         return sound;
@@ -206,5 +229,4 @@ public abstract class NoteButton extends AbstractButton {
     public void setHeight(final int height) {
         this.height = height;
     }
-
 }
