@@ -90,10 +90,10 @@ public abstract class NoteButton extends AbstractButton {
             if (message == null)
                 throw new NullPointerException();
         } catch (NullPointerException e) {
-            GInstrumentMod.LOGGER.error("Exception occured during the gathering of a note button's message!");
+            GInstrumentMod.LOGGER.error("Empty label recieved during the gathering of a note button's message!");
             GInstrumentMod.LOGGER.info("Label supplier result: "+getLabelSupplier().get(this));
             GInstrumentMod.LOGGER.info("Note button in question: "+this);
-            GInstrumentMod.LOGGER.error("Walkthrogh detais of the exception are as follows:", e);
+            GInstrumentMod.LOGGER.error("Walkthrogh detais of the exception is as follows:", e);
 
             return Component.empty();
         }
