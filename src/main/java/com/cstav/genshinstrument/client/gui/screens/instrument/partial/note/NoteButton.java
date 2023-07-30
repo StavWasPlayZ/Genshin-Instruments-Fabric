@@ -95,8 +95,8 @@ public abstract class NoteButton extends AbstractButton {
 
             if (getLabelSupplier() == null) {
                 GInstrumentMod.LOGGER.info("Label supplier itself is null!");
-                GInstrumentMod.LOGGER.info("Label supplier as given in configs: "+ModClientConfigs.DRUM_LABEL_TYPE.get());
-                GInstrumentMod.LOGGER.info("Label supplier as given in configs: "+ModClientConfigs.GRID_LABEL_TYPE.get());
+                GInstrumentMod.LOGGER.info("Drum label supplier as given in configs: "+ModClientConfigs.DRUM_LABEL_TYPE.get());
+                GInstrumentMod.LOGGER.info("Grid label supplier as given in configs: "+ModClientConfigs.GRID_LABEL_TYPE.get());
             }
             else
                 GInstrumentMod.LOGGER.info("Label supplier result: "+getLabelSupplier().get(this));
