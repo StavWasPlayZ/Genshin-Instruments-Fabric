@@ -1,15 +1,17 @@
 package com.cstav.genshinstrument.event;
 
+import java.util.Optional;
+
 import com.cstav.genshinstrument.event.impl.Cancelable;
 import com.cstav.genshinstrument.event.impl.EventArgs;
 import com.cstav.genshinstrument.event.impl.ModEvent;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.sound.NoteSound;
+import com.cstav.genshinstrument.util.ModEntityData;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -27,6 +29,8 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEvent.In
     public static class InstrumentPlayedEventArgs extends EventArgs {
 
         public final NoteSound sound;
+        public final int pitch;
+
         public final Level level;
         public final boolean isClientSide;
 
@@ -35,19 +39,18 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEvent.In
         public final BlockPos pos;
         
 
-        public InstrumentPlayedEventArgs(NoteSound sound, Level level, BlockPos pos,
+        public InstrumentPlayedEventArgs(NoteSound sound, int pitch, Level level, BlockPos pos,
                 ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, boolean isClientSide) {
-
+                    
             this.sound = sound;
+            this.pitch = pitch;
+
             this.level = level;
             this.pos = pos;
             this.isClientSide = isClientSide;
+
             this.instrumentId = instrumentId;
             this.noteIdentifier = noteIdentifier;
-
-            // Handle provided invalid id
-            if (!BuiltInRegistries.ITEM.containsKey(instrumentId))
-                setCanceled(true);
         }
     }
 
@@ -67,22 +70,31 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEvent.In
         @Cancelable
         public static class ByPlayerArgs extends InstrumentPlayedEventArgs {
             public final Player player;
+
+            // The values below will only be supplied if initiated from an item
             /** The instrument held by the player who initiated the sound */
-            public final ItemStack instrument;
-            public final InteractionHand hand;
+            public final Optional<ItemStack> itemInstrument;
+            /** The hand holding the instrument played by this player */
+            public final Optional<InteractionHand> hand;
+
+            public final Optional<BlockPos> blockInstrumentPos;
     
-            public ByPlayerArgs(NoteSound sound, Player player, InteractionHand hand,
+            public ByPlayerArgs(NoteSound sound, int pitch, Player player, BlockPos pos, Optional<InteractionHand> hand,
                     ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, boolean isClientSide) {
 
-                super(sound, player.level(), player.blockPosition(), instrumentId, noteIdentifier, isClientSide);
+                super(sound, pitch, player.level(), pos, instrumentId, noteIdentifier, isClientSide);
                 this.player = player;
-                this.hand = hand;
     
-                instrument = (hand == null) ? null : player.getItemInHand(hand);
+                if (hand.isPresent()) {
+                    this.hand = hand;
+                    itemInstrument = Optional.of((hand == null) ? null : player.getItemInHand(hand.get()));
     
-                // Handle provided unmatching id
-                if (!instrumentId.equals(BuiltInRegistries.ITEM.getKey(instrument.getItem())))
-                    setCanceled(true);
+                    blockInstrumentPos = Optional.empty();
+                } else {
+                    itemInstrument = Optional.empty();
+                    this.hand = Optional.empty();
+                    blockInstrumentPos = Optional.ofNullable(ModEntityData.getInstrumentBlockPos(player));
+                }
             }
         }
     }

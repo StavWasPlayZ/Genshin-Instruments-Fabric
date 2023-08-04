@@ -1,5 +1,7 @@
 package com.cstav.genshinstrument.item;
 
+import static com.cstav.genshinstrument.util.ServerUtil.sendInternalOpenPacket;
+
 import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.ModCreativeModeTabs;
 
@@ -16,17 +18,23 @@ public abstract class ModItems {
     
     public static final Item
         WINDSONG_LYRE = register("windsong_lyre", new InstrumentItem(
-            (player, hand) -> InstrumentItem.sendOpenRequest(player, hand, "windsong_lyre")
+            (player, hand) -> sendInternalOpenPacket(player, hand, "windsong_lyre")
         )),
         VINTAGE_LYRE = register("vintage_lyre", new InstrumentItem(
-            (player, hand) -> InstrumentItem.sendOpenRequest(player, hand, "vintage_lyre")
+            (player, hand) -> sendInternalOpenPacket(player, hand, "vintage_lyre")
         )),
         FLORAL_ZITHER = register("floral_zither", new InstrumentItem(
-            (player, hand) -> InstrumentItem.sendOpenRequest(player, hand, "floral_zither")
+            (player, hand) -> sendInternalOpenPacket(player, hand, "floral_zither")
         )),
         GLORIOUS_DRUM = register("glorious_drum", new InstrumentItem(
-            (player, hand) -> InstrumentItem.sendOpenRequest(player, hand, "glorious_drum")
-        ))
+            (player, hand) -> sendInternalOpenPacket(player, hand, "glorious_drum")
+        )),
+
+        //TODO remove after tests
+        BANJO = register("banjo", new InstrumentItem(
+                (player, hand) -> sendInternalOpenPacket(player, hand, "banjo")
+            )
+        )
     ;
     
     

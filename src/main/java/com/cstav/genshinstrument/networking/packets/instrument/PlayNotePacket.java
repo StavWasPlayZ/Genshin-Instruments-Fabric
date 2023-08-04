@@ -3,8 +3,9 @@ package com.cstav.genshinstrument.networking.packets.instrument;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.cstav.genshinstrument.networking.ModPacket;
+import com.cstav.genshinstrument.networking.IModPacket;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
+import com.cstav.genshinstrument.networking.packets.INoteIdentifierSender;
 import com.cstav.genshinstrument.sound.NoteSound;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -15,8 +16,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 
-public class PlayNotePacket implements ModPacket {
-    public static final PacketType<PlayNotePacket> TYPE = ModPacket.type(PlayNotePacket.class);
+public class PlayNotePacket implements INoteIdentifierSender {
+    public static final PacketType<PlayNotePacket> TYPE = IModPacket.type(PlayNotePacket.class);
 
 
     private final BlockPos blockPos;
@@ -45,7 +46,7 @@ public class PlayNotePacket implements ModPacket {
         sound = NoteSound.readFromNetwork(buf);
         pitch = buf.readInt();
         instrumentId = buf.readResourceLocation();
-        noteIdentifier = NoteButtonIdentifier.readIdentifier(buf);
+        noteIdentifier = readNoteIdentifierFromNetwork(buf);
 
         playerUUID = buf.readOptional(FriendlyByteBuf::readUUID);
         hand = buf.readOptional((fbb) -> fbb.readEnum(InteractionHand.class));
@@ -67,7 +68,7 @@ public class PlayNotePacket implements ModPacket {
     @Override
     public void handle(Player player, PacketSender responseSender) {
         sound.playAtPos(
-            pitch, playerUUID.orElse(null), hand.orElse(null),
+            pitch, playerUUID.orElse(null), hand,
             instrumentId, noteIdentifier, blockPos
         );
     }

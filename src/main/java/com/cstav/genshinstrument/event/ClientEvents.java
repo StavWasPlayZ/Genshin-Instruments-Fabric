@@ -4,13 +4,17 @@ import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractInstrumentScreen;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.ByPlayer.ByPlayerArgs;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEventArgs;
-import com.cstav.genshinstrument.item.InstrumentItem;
 import com.cstav.genshinstrument.sound.NoteSound;
+import com.cstav.genshinstrument.util.ModEntityData;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Block;
 
 @Environment(EnvType.CLIENT)
 public abstract class ClientEvents {
@@ -20,20 +24,32 @@ public abstract class ClientEvents {
     
     public static void register() {
         InstrumentPlayedEvent.EVENT.register(ClientEvents::onInstrumentPlayed);
-        ClientTickEvents.START_CLIENT_TICK.register(ClientEvents::onWorldTick);
+        ClientTickEvents.START_CLIENT_TICK.register(ClientEvents::onClientTick);
+        // Add block arm pose event here
     }
 
+    //TODO implement block arm poses
+    // Handle block instrument arm pose
+    // public static void prePlayerRenderEvent(final RenderPlayerEvent.Pre event) {
+    //     final Player player = event.getEntity();
 
+    //     if (!(ModEntityData.isInstrumentOpen(player) && !ModEntityData.isInstrumentItem(player)))
+    //         return;
+
+
+    //     final Block block = player.level().getBlockState(ModEntityData.getInstrumentBlockPos(player)).getBlock();
+    //     if (!(block instanceof AbstractInstrumentBlock))
+    //         return;
+
+    //         final AbstractInstrumentBlock instrumentBlock = (AbstractInstrumentBlock) block;
+    //         final PlayerModel<AbstractClientPlayer> model = event.getRenderer().getModel();
+    //         model.leftArmPose = model.rightArmPose = instrumentBlock.getClientBlockArmPose();
+    // }
     
     // Responsible for closing the instrument screen when
     // an instrument item is missing from the player's hands
-    public static void onWorldTick(Minecraft mc) {
-        if (!(MINECRAFT.screen instanceof AbstractInstrumentScreen))
-            return;
-            
-        final AbstractInstrumentScreen screen = (AbstractInstrumentScreen) MINECRAFT.screen;
-        if (!(MINECRAFT.player.getItemInHand(screen.interactionHand).getItem() instanceof InstrumentItem))
-            screen.onClose();
+    public static void onClientTick(Minecraft mc) {
+        AbstractInstrumentScreen.getCurrentScreen(mc).ifPresent(AbstractInstrumentScreen::handleAbruptClosing);
     }
 
     

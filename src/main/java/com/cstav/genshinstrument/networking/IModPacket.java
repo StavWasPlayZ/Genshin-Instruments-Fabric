@@ -11,10 +11,10 @@ import net.minecraft.world.entity.player.Player;
 
 /**
  * An interface for all packets under the Genshin Instruments mod.
- * All its implementers must have a {@code TYPE} field of type {@link PacketType} (see {@link ModPacket#type})
+ * All its implementers must have a {@code TYPE} field of type {@link PacketType} (see {@link IModPacket#type})
  * and a constructor that takes a {@link FriendlyByteBuf}.
  */
-public interface ModPacket extends FabricPacket {
+public interface IModPacket extends FabricPacket {
     void handle(Player player, PacketSender responseSender);
     
     @Override
@@ -32,7 +32,7 @@ public interface ModPacket extends FabricPacket {
     }
 
 
-    public static <T extends ModPacket> PacketType<T> type(final Class<T> packetType) {
+    public static <T extends IModPacket> PacketType<T> type(final Class<T> packetType) {
         return PacketType.create(
             new ResourceLocation(GInstrumentMod.MODID, packetType.getSimpleName().toLowerCase()),
 
