@@ -1,4 +1,4 @@
-// Move to the below package:
+//TODO Move to the below package:
 // package com.cstav.genshinstrument.client.gui.screens.instrument.partial.notegrid;
 // Applies to all notegrid implementations, see Forge repository
 package com.cstav.genshinstrument.client.gui.screens.instrument.partial.note;
