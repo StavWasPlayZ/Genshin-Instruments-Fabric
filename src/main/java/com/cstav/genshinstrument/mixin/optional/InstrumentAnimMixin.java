@@ -15,7 +15,6 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
-//TODO convert to event that must return arm pose of sorts
 @Mixin(HumanoidModel.class)
 public abstract class InstrumentAnimMixin {
 
@@ -24,7 +23,7 @@ public abstract class InstrumentAnimMixin {
 	@Shadow
    	private ModelPart leftArm;
 
-	
+
 	@Inject(at = @At("HEAD"), method = "poseLeftArm", cancellable = true)
 	private void injectLeftArmPose(LivingEntity entity, CallbackInfo info) {
 		if (!(entity instanceof Player player))

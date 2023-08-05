@@ -37,8 +37,6 @@ public class NotifyInstrumentOpenPacket implements IModPacket {
     }
 
 
-    //TODO check if the player is local player
-    // replace with Minecraft.getInstance().player if so
     @SuppressWarnings("resource")
     @Override
     public void handle(Player player, PacketSender responseSender) {

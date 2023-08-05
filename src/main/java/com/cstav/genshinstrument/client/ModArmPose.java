@@ -28,10 +28,7 @@ public abstract class ModArmPose {
         args.setCanceled(true);
     }
 
-    public static void poseForBlockInstrument(final PosePlayerArmEventArgs args) {
-        if (!ModEntityData.isInstrumentOpen(args.player) || ModEntityData.isInstrumentItem(args.player))
-			return;
-            
+    public static void poseForBlockInstrument(final PosePlayerArmEventArgs args) {            
         args.arm.xRot = -HAND_HEIGHT_ROT;
 
         args.setCanceled(true);
