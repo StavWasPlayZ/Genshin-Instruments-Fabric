@@ -26,7 +26,7 @@ public class ModSounds {
 
         // TODO remove after tests
         BANJO = new NoteSound[] {
-            new NoteSound(NoteBlockInstrument.BANJO.getSoundEvent().value(), Optional.empty())
+            new NoteSound(NoteBlockInstrument.BANJO.getSoundEvent(), Optional.empty())
         }
     ;
 
