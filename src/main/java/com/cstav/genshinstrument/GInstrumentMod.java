@@ -27,7 +27,6 @@ public class GInstrumentMod implements ModInitializer {
 		ModBlocks.load();
 		ModBlockEntities.load();
 
-		ModCreativeModeTabs.regsiter();
 		ModItems.load();
 	}
 	
