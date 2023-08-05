@@ -1,4 +1,5 @@
 // //TODO implement when new armpose system is implemented
+// //NOTE: Load on ClientInitiator if done through mixin
 // package com.cstav.genshinstrument.client;
 
 // import net.fabricmc.api.EnvType;

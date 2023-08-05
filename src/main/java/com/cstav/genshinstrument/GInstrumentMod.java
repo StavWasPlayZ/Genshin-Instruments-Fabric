@@ -3,6 +3,8 @@ package com.cstav.genshinstrument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.cstav.genshinstrument.block.ModBlockEntities;
+import com.cstav.genshinstrument.block.ModBlocks;
 import com.cstav.genshinstrument.criteria.ModCriteria;
 import com.cstav.genshinstrument.item.ModItems;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
@@ -19,10 +21,14 @@ public class GInstrumentMod implements ModInitializer {
 		ModPacketHandler.registerServerPackets();
 		ModCriteria.register();
 		
-		ModSounds.regsiter();
+		ModSounds.load();
+		
+
+		ModBlocks.load();
+		ModBlockEntities.load();
 
 		ModCreativeModeTabs.regsiter();
-		ModItems.register();
+		ModItems.load();
 	}
 	
 }
