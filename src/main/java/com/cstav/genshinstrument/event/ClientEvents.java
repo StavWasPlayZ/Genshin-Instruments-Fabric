@@ -36,7 +36,7 @@ public abstract class ClientEvents {
 			return;
 
 
-        final Block block = player.level().getBlockState(ModEntityData.getInstrumentBlockPos(player)).getBlock();
+        final Block block = player.getLevel().getBlockState(ModEntityData.getInstrumentBlockPos(player)).getBlock();
         if (block instanceof AbstractInstrumentBlock blockInstrument)
             blockInstrument.onPosePlayerArm(args);
     }
