@@ -1,5 +1,6 @@
 package com.cstav.genshinstrument.networking.buttonidentifier;
 
+import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractGridInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.NoteGridButton;
 
 import net.fabricmc.api.EnvType;
@@ -12,7 +13,7 @@ public class NoteGridButtonIdentifier extends DefaultNoteButtonIdentifier {
     
     @Environment(EnvType.CLIENT)
     public NoteGridButtonIdentifier(final NoteGridButton button) {
-        super(button);
+        super(button, ((AbstractGridInstrumentScreen)button.instrumentScreen).isSSTI());
         this.row = button.row;
         this.column = button.column;
     }
