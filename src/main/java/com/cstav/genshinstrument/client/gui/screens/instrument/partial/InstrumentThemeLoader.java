@@ -1,8 +1,8 @@
 package com.cstav.genshinstrument.client.gui.screens.instrument.partial;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -30,6 +30,8 @@ import net.minecraft.server.packs.resources.ResourceManager;
  */
 @Environment(EnvType.CLIENT)
 public class InstrumentThemeLoader {
+    private static final HashMap<ResourceLocation, JsonObject> CACHES = new HashMap<>();
+
     private static final ArrayList<InstrumentThemeLoader> LOADERS = new ArrayList<>();
     private static final Color DEF_NOTE_PRESSED_THEME = new Color(255, 249, 239);
 
@@ -100,21 +102,41 @@ public class InstrumentThemeLoader {
 
         for (final InstrumentThemeLoader instrumentLoader : LOADERS) {
             final ResourceLocation styleLocation = instrumentLoader.getInstrumentStyleLocation();
+            
             try {
+                JsonObject styleInfo;
+
+                // If it is already cached, then let it be
+                if (CACHES.containsKey(styleLocation)) {
+                    styleInfo = CACHES.get(styleLocation);
+
+                    for (final Consumer<JsonObject> listener : instrumentLoader.listeners)
+                        listener.accept(styleInfo);
+
+                    GInstrumentMod.LOGGER.info("Loaded instrument style from the already cached "+styleLocation);
+                    continue;
+                }
+
+
+                styleInfo = JsonParser.parseReader(
+                    rManager.getResource(styleLocation).get().openAsReader()
+                ).getAsJsonObject();
 
                 // Call all load listeners on the current loader
                 for (final Consumer<JsonObject> listener : instrumentLoader.listeners)
-                    listener.accept(JsonParser.parseReader(
-                        rManager.getResource(styleLocation).get().openAsReader()
-                    ).getAsJsonObject());
+                    listener.accept(styleInfo);
 
-                GInstrumentMod.LOGGER.info("Loaded instrument style from "+styleLocation);
+                
+                CACHES.put(styleLocation, styleInfo);
+                GInstrumentMod.LOGGER.info("Loaded and cached instrument style from "+styleLocation);
 
-            } catch (IOException e) {
-                GInstrumentMod.LOGGER.error("Unable to load instrument styler for " + styleLocation, e);
+            } catch (Exception e) {
+                GInstrumentMod.LOGGER.error("Met an exception upon loading the instrument styler from "+styleLocation, e);
                 continue;
             }
         }
+
+        CACHES.clear();
     }
 
 

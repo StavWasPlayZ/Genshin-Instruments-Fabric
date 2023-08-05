@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 public class ModCreativeModeTabs {
     
     public static final CreativeModeTab
-        INSTRUMENTS = FabricItemGroup.builder(new ResourceLocation(GInstrumentMod.MODID, "instruments_group"))
+        INSTRUMENTS_TAB = FabricItemGroup.builder(new ResourceLocation(GInstrumentMod.MODID, "instruments_group"))
             .icon(() -> new ItemStack(ModItems.FLORAL_ZITHER))
             .title(Component.translatable("genshinstrument.itemGroup.instruments"))
             .build()

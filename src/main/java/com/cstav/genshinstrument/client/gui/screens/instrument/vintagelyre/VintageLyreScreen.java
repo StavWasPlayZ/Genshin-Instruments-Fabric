@@ -43,9 +43,7 @@ public class VintageLyreScreen extends AbstractGridInstrumentScreen {
     
     @Override
     public NoteGrid initNoteGrid() {
-        return new VintageNoteGrid(
-            rows(), columns(), getSounds(), this
-        );
+        return new VintageNoteGrid(getSounds(), this);
     }
     
     
