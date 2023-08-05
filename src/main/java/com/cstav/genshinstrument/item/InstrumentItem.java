@@ -4,8 +4,8 @@ import com.cstav.genshinstrument.client.ModArmPose;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractInstrumentScreen;
 import com.cstav.genshinstrument.event.PosePlayerArmEvent;
 import com.cstav.genshinstrument.event.PosePlayerArmEvent.PosePlayerArmEventArgs;
-import com.cstav.genshinstrument.mixin.util.CommonUtil;
 import com.cstav.genshinstrument.networking.OpenInstrumentPacketSender;
+import com.cstav.genshinstrument.util.CommonUtil;
 import com.cstav.genshinstrument.util.ServerUtil;
 
 import net.fabricmc.api.EnvType;
