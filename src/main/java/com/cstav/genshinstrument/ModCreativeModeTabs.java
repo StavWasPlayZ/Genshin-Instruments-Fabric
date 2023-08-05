@@ -18,7 +18,7 @@ public class ModCreativeModeTabs {
         .build();
 
     public static void regsiter() {
-        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, new ResourceLocation(GInstrumentMod.MODID, "instruments_group"), INSTRUMENTS_TAB);
+        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, new ResourceLocation(GInstrumentMod.MODID, "instruments_tab"), INSTRUMENTS_TAB);
         
     }
 
