@@ -10,7 +10,7 @@ import net.fabricmc.api.Environment;
 @Environment(EnvType.CLIENT)
 public class RingAnimationController extends AnimationController {
 
-    protected final double initSize = NoteButton.getSize() * .8;
+    protected final double initSize;
     protected final float initAlpha = -.08f;
     protected final NoteRing ring;
 
@@ -20,6 +20,8 @@ public class RingAnimationController extends AnimationController {
         super(duration, 1.1f);
         this.ringSizeMultiplier = ringSizeMultiplier;
         this.ring = ring;
+
+        initSize = ring.note.instrumentScreen.getNoteSize() * .8;
     }
 
 
