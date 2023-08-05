@@ -133,7 +133,7 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
     }
 
     @Override
-    public ResourceLocation getNotesLocation() {
+    public ResourceLocation getNoteSymbolsLocation() {
         return new ResourceLocation(GInstrumentMod.MODID, getGlobalRootPath() + "grid_notes.png");
     }
     

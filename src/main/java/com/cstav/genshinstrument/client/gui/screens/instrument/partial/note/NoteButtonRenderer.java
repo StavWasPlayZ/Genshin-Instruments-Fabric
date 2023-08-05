@@ -54,7 +54,7 @@ public class NoteButtonRenderer {
 
         rootLocation = instrumentScreen.getResourceFromRoot("note");
 
-        noteLocation = instrumentScreen.getNoteSymbolesLocation();
+        noteLocation = instrumentScreen.getNoteSymbolsLocation();
         noteBgLocation = getResourceFromRoot("note_bg.png");
         accidentalsLocation = getResourceFromRoot("accidentals.png");
     }

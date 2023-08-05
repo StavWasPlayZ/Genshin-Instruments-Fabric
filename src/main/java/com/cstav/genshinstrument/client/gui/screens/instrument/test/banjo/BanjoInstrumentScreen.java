@@ -50,7 +50,7 @@ public class BanjoInstrumentScreen extends AbstractGridInstrumentScreen {
 
 
     @Override
-    protected ResourceLocation getSourcePath() {
+    public ResourceLocation getSourcePath() {
         return new ResourceLocation(GInstrumentMod.MODID, FloralZitherScreen.INSTRUMENT_ID);
     }
 
