@@ -1,3 +1,6 @@
+//TODO rename "packets" package to packet:
+// package com.cstav.genshinstrument.networking.packet;
+// Applies to all the other residents of the packets package
 package com.cstav.genshinstrument.networking.packets;
 
 import java.util.List;
