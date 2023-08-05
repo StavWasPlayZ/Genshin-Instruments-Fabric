@@ -48,7 +48,7 @@ public abstract class ModItems {
 
     private static void addToItemGroups(final Item item) {
         // All shall go to the instruments and toold tab
-        addToTab(ModCreativeModeTabs.INSTRUMENTS, item);
+        addToTab(ModCreativeModeTabs.INSTRUMENTS_TAB, item);
         addToTab(CreativeModeTabs.TOOLS_AND_UTILITIES, item);
     }
 
@@ -61,7 +61,7 @@ public abstract class ModItems {
 
 
     
-    public static void register() {
+    public static void load() {
         GInstrumentMod.LOGGER.info("Registered all instrument items");
     }
 

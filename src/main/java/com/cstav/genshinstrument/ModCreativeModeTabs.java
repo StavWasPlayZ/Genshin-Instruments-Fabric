@@ -12,13 +12,13 @@ import net.minecraft.world.item.ItemStack;
 
 public class ModCreativeModeTabs {
     
-    public static final CreativeModeTab INSTRUMENTS = FabricItemGroup.builder()
+    public static final CreativeModeTab INSTRUMENTS_TAB = FabricItemGroup.builder()
         .icon(() -> new ItemStack(ModItems.FLORAL_ZITHER))
         .title(Component.translatable("genshinstrument.itemGroup.instruments"))
         .build();
 
     public static void regsiter() {
-        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, new ResourceLocation(GInstrumentMod.MODID, "instruments_group"), INSTRUMENTS);
+        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, new ResourceLocation(GInstrumentMod.MODID, "instruments_group"), INSTRUMENTS_TAB);
         
     }
 

@@ -38,7 +38,7 @@ public class ModSounds {
     }
 
 
-    public static void regsiter() {
+    public static void load() {
         GInstrumentMod.LOGGER.info("Registered all note sounds for instruments");
     }
 
