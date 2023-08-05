@@ -10,8 +10,8 @@ import net.minecraft.world.item.ItemStack;
 public class ModCreativeModeTabs {
     
     public static final CreativeModeTab
-        INSTRUMENTS = FabricItemGroupBuilder.build(
-            new ResourceLocation(GInstrumentMod.MODID, "instruments_group"),
+        INSTRUMENTS_TAB = FabricItemGroupBuilder.build(
+            new ResourceLocation(GInstrumentMod.MODID, "instruments_tab"),
             () -> new ItemStack(ModItems.FLORAL_ZITHER)
         )
     ;

@@ -11,8 +11,6 @@ import com.cstav.genshinstrument.client.gui.screens.options.instrument.AbstractI
 import com.cstav.genshinstrument.client.gui.screens.options.instrument.DrumOptionsScren;
 import com.cstav.genshinstrument.client.gui.screens.options.widget.copied.LinearLayoutWidget;
 import com.cstav.genshinstrument.client.gui.screens.options.widget.copied.LinearLayoutWidget.Orientation;
-import com.cstav.genshinstrument.sound.ModSounds;
-import com.cstav.genshinstrument.sound.NoteSound;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 
 import net.fabricmc.api.EnvType;
@@ -34,7 +32,7 @@ public class AratakisGreatAndGloriousDrumScreen extends AbstractInstrumentScreen
     }
 
     @Override
-    public ResourceLocation getNotesLocation() {
+    public ResourceLocation getNoteSymbolsLocation() {
         return getResourceFromRoot("note/notes.png");
     }
 
@@ -58,8 +56,8 @@ public class AratakisGreatAndGloriousDrumScreen extends AbstractInstrumentScreen
     protected void init() {
         initOptionsButton(height/2 + 25);
 
-        final LinearLayoutWidget layout1 = createRow(DrumButtonType.DON, 2.25f),
-            layout2 = createRow(DrumButtonType.KA, 1.5f);
+        final LinearLayoutWidget layout1 = createRow(DrumButtonType.DON, 2),
+            layout2 = createRow(DrumButtonType.KA, 1.3f);
 
         // Make layout magic
         layout1.pack();
@@ -68,7 +66,7 @@ public class AratakisGreatAndGloriousDrumScreen extends AbstractInstrumentScreen
         layout1.x = (width - layout1.getWidth()) / 2;
         layout1.y = (int)(height * .8f);
         layout2.x = (width - layout2.getWidth()) / 2;
-        layout2.y = layout1.y - layout1.getHeight();
+        layout2.y = layout1.y - layout1.getHeight() / 2;
 
         layout1.pack();
         layout2.pack();
@@ -86,7 +84,7 @@ public class AratakisGreatAndGloriousDrumScreen extends AbstractInstrumentScreen
     private LinearLayoutWidget createRow(DrumButtonType type, float widthPercent) {
         final LinearLayoutWidget layout = new LinearLayoutWidget(
             0, 0,
-            (int)(width/widthPercent), NoteButton.getSize(),
+            (int)(width/widthPercent), getNoteSize(),
             Orientation.HORIZONTAL
         );
 
@@ -103,12 +101,7 @@ public class AratakisGreatAndGloriousDrumScreen extends AbstractInstrumentScreen
 
         return btn;
     }
-
-
-    @Override
-    public NoteSound[] getSounds() {
-        return ModSounds.GLORIOUS_DRUM;
-    }
+    
 
     private static final InstrumentThemeLoader THEME_LOADER = initThemeLoader(GInstrumentMod.MODID, INSTRUMENT_ID);
     @Override

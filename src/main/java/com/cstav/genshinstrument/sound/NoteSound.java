@@ -129,7 +129,7 @@ public class NoteSound {
      * @param pos The position at which the sound was fired from
      */
     @Environment(EnvType.CLIENT)
-    public void playAtPos(int pitch, UUID playerUUID, InteractionHand hand,
+    public void playAtPos(int pitch, UUID playerUUID, Optional<InteractionHand> hand,
             ResourceLocation instrumentId, NoteButtonIdentifier buttonIdentifier, BlockPos pos) {
                 
         final Minecraft minecraft = Minecraft.getInstance();
@@ -145,12 +145,14 @@ public class NoteSound {
         // Send instrument played event
         if (playerUUID == null)
             InstrumentPlayedEvent.EVENT.invoker().triggered(
-                new InstrumentPlayedEventArgs(this, level, pos, instrumentId, buttonIdentifier, true)
+                new InstrumentPlayedEventArgs(
+                    this, pitch, level, pos, instrumentId, buttonIdentifier, true
+                )
             );
         else
             InstrumentPlayedEvent.ByPlayer.EVENT.invoker().triggered(
                 new ByPlayerArgs(
-                    this, level.getPlayerByUUID(playerUUID), hand,
+                    this, pitch, level.getPlayerByUUID(playerUUID), pos, hand,
                     instrumentId, buttonIdentifier, true
                 )
             );
@@ -209,7 +211,7 @@ public class NoteSound {
      * </a>
      */
     public static float getPitchByNoteOffset(final int pitch) {
-        return (float)Math.pow(2, (double)pitch/LabelUtil.NOTES_PER_SCALE);
+        return (float)Math.pow(2, (double)pitch / LabelUtil.NOTES_PER_SCALE);
     }
 
 

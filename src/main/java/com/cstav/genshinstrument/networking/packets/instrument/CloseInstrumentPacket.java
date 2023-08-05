@@ -1,6 +1,6 @@
 package com.cstav.genshinstrument.networking.packets.instrument;
 
-import com.cstav.genshinstrument.networking.ModPacket;
+import com.cstav.genshinstrument.networking.IModPacket;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
 import com.cstav.genshinstrument.util.ModEntityData;
 
@@ -9,15 +9,15 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
-public class CloseInstrumentPacket implements ModPacket {
+public class CloseInstrumentPacket implements IModPacket {
     
     public CloseInstrumentPacket() {}
     public CloseInstrumentPacket(FriendlyByteBuf buf) {}
 
-
+    
     @Override
     public void handle(Player player, PacketSender responseSender) {
-        ModEntityData.setInstrumentOpen(player, false);
+        ModEntityData.setInstrumentClosed(player);
 
         for (final Player oPlayer : player.getLevel().players())
             ModPacketHandler.sendToClient(new NotifyInstrumentOpenPacket(player.getUUID(), false), (ServerPlayer)oPlayer);

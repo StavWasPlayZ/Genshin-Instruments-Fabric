@@ -9,16 +9,17 @@ import net.minecraft.world.entity.player.Player;
 
 /**
  * An interface for all packets under the Genshin Instruments mod.
- * All its implementers must have a constructor that takes a {@link FriendlyByteBuf}.
+ * All its implementers must have a {@code TYPE} field of type {@link PacketType} (see {@link IModPacket#type})
+ * and a constructor that takes a {@link FriendlyByteBuf}.
  */
-public interface ModPacket {
+public interface IModPacket {
     void handle(Player player, PacketSender responseSender);
     
     default void write(FriendlyByteBuf buf) {}
     
 
 
-    public static ResourceLocation getChannelName(final Class<? extends ModPacket> packetType) {
+    public static ResourceLocation getChannelName(final Class<? extends IModPacket> packetType) {
         return new ResourceLocation(GInstrumentMod.MODID, packetType.getSimpleName().toLowerCase());
     }
     public default ResourceLocation getChannelName() {
@@ -26,7 +27,7 @@ public interface ModPacket {
     }
 
 
-    public static ModPacket createPacket(final Class<? extends ModPacket> packetType, final FriendlyByteBuf buf) {
+    public static IModPacket createPacket(final Class<? extends IModPacket> packetType, final FriendlyByteBuf buf) {
         try {
             return packetType.getDeclaredConstructor(FriendlyByteBuf.class).newInstance(buf);
         } catch (Exception e) {

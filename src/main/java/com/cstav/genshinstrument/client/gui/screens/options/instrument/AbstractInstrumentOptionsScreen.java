@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
 
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.config.enumType.InstrumentChannelType;
-import com.cstav.genshinstrument.client.config.enumType.label.NoteGridLabel;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.NoteButton;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.label.INoteLabel;
@@ -86,7 +85,16 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
     public final boolean isOverlay;
 
     protected final @Nullable INoteLabel[] labels;
-    protected final @Nullable INoteLabel currLabel;
+    protected @Nullable INoteLabel currLabel;
+
+    /**
+     * Override to {@code false} tp disable the pitch slider from the options.
+     * @apiNote SSTI-type instruments do not want a pitch slider. They tend to max out from beginning to end.
+     */
+    public boolean isPitchSliderEnabled() {
+        return true;
+    }
+
     
     public final @Nullable AbstractInstrumentScreen instrumentScreen;
 
@@ -98,7 +106,6 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
         lastScreen = null;
 
         labels = getLabels();
-        currLabel = getCurrentLabel();
     }
     public AbstractInstrumentOptionsScreen(final Screen lastScreen) {
         super(Component.translatable("button.genshinstrument.instrumentOptions"));
@@ -108,13 +115,13 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
         this.instrumentScreen = null;
         this.lastScreen = lastScreen;
 
-        // Default to NoteGridLabel's values
-        labels = NoteGridLabel.values();
-        currLabel = ModClientConfigs.GRID_LABEL_TYPE.get();
+        labels = getLabels();
     }
 
     @Override
     protected void init() {
+        currLabel = getCurrentLabel();
+
 
         final GridWidget grid = new GridWidget();
         grid.defaultCellSetting()
@@ -160,36 +167,37 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
                 getBigButtonWidth(), 20, Component.translatable(SOUND_CHANNEL_KEY), this::onChannelTypeChanged);
         rowHelper.addChild(instrumentChannel, 2);
 
-        final AbstractSliderButton pitchSlider = new AbstractSliderButton(0, 0, getSmallButtonWidth(), 20,
-            CommonComponents.EMPTY,
-            Mth.clampedMap(getPitch(), NoteSound.MIN_PITCH, NoteSound.MAX_PITCH, 0, 1)) {
+        if (isPitchSliderEnabled()) {
+            final AbstractSliderButton pitchSlider = new AbstractSliderButton(0, 0, getSmallButtonWidth(), 20,
+                CommonComponents.EMPTY,
+                Mth.clampedMap(getPitch(), NoteSound.MIN_PITCH, NoteSound.MAX_PITCH, 0, 1)) {
 
-            final DecimalFormat format = new DecimalFormat("0.00");
-            {
-                pitch = getPitch();
-                updateMessage();
-            }
+                final DecimalFormat format = new DecimalFormat("0.00");
+                {
+                    pitch = getPitch();
+                    updateMessage();
+                }
 
+                private int pitch;
 
-            private int pitch;
+                @Override
+                protected void updateMessage() {
+                    this.setMessage(
+                        Component.translatable("button.genshinstrument.pitch").append(": "
+                            + LabelUtil.getNoteName(pitch, AbstractInstrumentScreen.DEFAULT_NOTE_LAYOUT, 0)
+                            + " ("+format.format(NoteSound.getPitchByNoteOffset(pitch))+")"
+                        )
+                    );
+                }
 
-            @Override
-            protected void updateMessage() {
-                this.setMessage(
-                    Component.translatable("button.genshinstrument.pitch").append(": "
-                        + LabelUtil.getNoteName(pitch, AbstractInstrumentScreen.DEFAULT_NOTE_LAYOUT, 0)
-                        + " ("+format.format(NoteSound.getPitchByNoteOffset(pitch))+")"
-                )
-                );
-            }
-            
-            @Override
-            protected void applyValue() {
-                pitch = (int)Mth.clampedLerp(NoteSound.MIN_PITCH, NoteSound.MAX_PITCH, value);
-                onPitchChanged(this, pitch);
-            }
-        };
-        rowHelper.addChild(pitchSlider);
+                @Override
+                protected void applyValue() {
+                    pitch = (int)Mth.clampedLerp(NoteSound.MIN_PITCH, NoteSound.MAX_PITCH, value);
+                    onPitchChanged(this, pitch);
+                }
+            };
+            rowHelper.addChild(pitchSlider);
+        }
 
         final CycleButton<Boolean> stopMusic = CycleButton.booleanBuilder(CommonComponents.OPTION_ON, CommonComponents.OPTION_OFF)
             .withInitialValue(ModClientConfigs.STOP_MUSIC_ON_PLAY.get())
@@ -220,14 +228,14 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
             );
         rowHelper.addChild(sharedInstrument);
 
-        final CycleButton<Boolean> accurateAccidentals = CycleButton.booleanBuilder(CommonComponents.OPTION_ON, CommonComponents.OPTION_OFF)
-            .withInitialValue(ModClientConfigs.ACCURATE_ACCIDENTALS.get())
-            .withTooltip(tooltip((value) -> Component.translatable("button.genshinstrument.accurate_accidentals.tooltip")))
+        final CycleButton<Boolean> accurateNotes = CycleButton.booleanBuilder(CommonComponents.OPTION_ON, CommonComponents.OPTION_OFF)
+            .withInitialValue(ModClientConfigs.ACCURATE_NOTES.get())
+            .withTooltip(tooltip((value) -> Component.translatable("button.genshinstrument.accurate_notes.tooltip")))
             .create(0, 0,
                 getSmallButtonWidth(), getButtonHeight(),
-                Component.translatable("button.genshinstrument.accurate_accidentals"), this::onAccurateAccidentalsChanged
+                Component.translatable("button.genshinstrument.accurate_notes"), this::onAccurateNotesChanged
             );
-        rowHelper.addChild(accurateAccidentals);
+        rowHelper.addChild(accurateNotes);
 
 
         if (labels != null) {
@@ -303,8 +311,8 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
     protected void onSharedInstrumentChanged(final CycleButton<Boolean> button, final boolean value) {
         ModClientConfigs.SHARED_INSTRUMENT.set(value);
     }
-    protected void onAccurateAccidentalsChanged(final CycleButton<Boolean> button, final boolean value) {
-        ModClientConfigs.ACCURATE_ACCIDENTALS.set(value);
+    protected void onAccurateNotesChanged(final CycleButton<Boolean> button, final boolean value) {
+        ModClientConfigs.ACCURATE_NOTES.set(value);
 
         if (isOverlay)
             instrumentScreen.notesIterable().forEach(NoteButton::updateNoteLabel);
