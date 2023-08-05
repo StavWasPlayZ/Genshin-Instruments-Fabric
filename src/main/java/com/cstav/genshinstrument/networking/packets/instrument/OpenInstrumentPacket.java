@@ -7,7 +7,6 @@ import java.util.function.Supplier;
 
 import com.cstav.genshinstrument.client.gui.screens.instrument.drum.AratakisGreatAndGloriousDrumScreen;
 import com.cstav.genshinstrument.client.gui.screens.instrument.floralzither.FloralZitherScreen;
-import com.cstav.genshinstrument.client.gui.screens.instrument.test.banjo.BanjoInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screens.instrument.vintagelyre.VintageLyreScreen;
 import com.cstav.genshinstrument.client.gui.screens.instrument.windsonglyre.WindsongLyreScreen;
 import com.cstav.genshinstrument.networking.IModPacket;
@@ -25,10 +24,10 @@ public class OpenInstrumentPacket implements IModPacket {
         "windsong_lyre", () -> WindsongLyreScreen::new,
         "vintage_lyre", () -> VintageLyreScreen::new,
         "floral_zither", () -> FloralZitherScreen::new,
-        "glorious_drum", () -> AratakisGreatAndGloriousDrumScreen::new,
+        "glorious_drum", () -> AratakisGreatAndGloriousDrumScreen::new
 
-        //TODO remove after tests
-        "banjo", () -> BanjoInstrumentScreen::new
+        // //TODO remove after tests
+        // "banjo", () -> BanjoInstrumentScreen::new
     );
 
     protected Map<String, Supplier<Function<InteractionHand, Screen>>> getInstrumentMap() {
