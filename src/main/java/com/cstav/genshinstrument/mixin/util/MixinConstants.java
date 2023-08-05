@@ -9,6 +9,4 @@ public abstract class MixinConstants {
      */
     public static final String ROOT_CAP = GInstrumentMod.MODID+":instrument_caps";
 
-    public static final float HAND_HEIGHT_ROT = .9f;
-
 }

@@ -13,7 +13,6 @@ import com.cstav.genshinstrument.client.gui.screens.instrument.windsonglyre.Wind
 import com.cstav.genshinstrument.networking.IModPacket;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.fabricmc.fabric.api.networking.v1.PacketType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.FriendlyByteBuf;
@@ -21,8 +20,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 
 public class OpenInstrumentPacket implements IModPacket {
-    public static final PacketType<OpenInstrumentPacket> TYPE = IModPacket.type(OpenInstrumentPacket.class);
-
+    
     private static final Map<String, Supplier<Function<InteractionHand, Screen>>> INSTRUMENT_MAP = Map.of(
         "windsong_lyre", () -> WindsongLyreScreen::new,
         "vintage_lyre", () -> VintageLyreScreen::new,

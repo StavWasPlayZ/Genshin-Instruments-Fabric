@@ -23,12 +23,7 @@ public interface IModPacket extends FabricPacket {
 
     @Override
     default PacketType<?> getType() {
-        try {
-            return (PacketType<?>)getClass().getField("TYPE").get(null);
-        } catch (Exception e) {
-            GInstrumentMod.LOGGER.info("Failed to fetch packet type of "+getClass().getSimpleName()+". Perhaps a TYPE field is absent?");
-            return null;
-        }
+        return type(getClass());
     }
 
 

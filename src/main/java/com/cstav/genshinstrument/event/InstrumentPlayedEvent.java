@@ -2,6 +2,8 @@ package com.cstav.genshinstrument.event;
 
 import java.util.Optional;
 
+import com.cstav.genshinstrument.event.InstrumentPlayedEvent.ByPlayer.ByPlayerArgs;
+import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEventArgs;
 import com.cstav.genshinstrument.event.impl.Cancelable;
 import com.cstav.genshinstrument.event.impl.EventArgs;
 import com.cstav.genshinstrument.event.impl.ModEvent;
@@ -19,7 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 @FunctionalInterface
-public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEvent.InstrumentPlayedEventArgs> {
+public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEventArgs> {
 
     Event<InstrumentPlayedEvent> EVENT = EventFactory.createArrayBacked(InstrumentPlayedEvent.class,
         (listeners) -> args -> ModEvent.handleEvent(listeners, args)
@@ -57,7 +59,7 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEvent.In
 
 
     @FunctionalInterface
-    public interface ByPlayer extends ModEvent<ByPlayer.ByPlayerArgs> {
+    public interface ByPlayer extends ModEvent<ByPlayerArgs> {
 
         Event<ByPlayer> EVENT = EventFactory.createArrayBacked(ByPlayer.class,
             (listeners) -> args -> {

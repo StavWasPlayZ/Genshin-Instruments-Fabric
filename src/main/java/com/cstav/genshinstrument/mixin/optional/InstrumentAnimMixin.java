@@ -6,13 +6,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.cstav.genshinstrument.item.InstrumentItem;
-import com.cstav.genshinstrument.mixin.util.MixinConstants;
-import com.cstav.genshinstrument.util.ModEntityData;
+import com.cstav.genshinstrument.event.PosePlayerArmEvent;
+import com.cstav.genshinstrument.event.PosePlayerArmEvent.HandType;
+import com.cstav.genshinstrument.event.PosePlayerArmEvent.PosePlayerArmEventArgs;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
@@ -25,34 +24,29 @@ public abstract class InstrumentAnimMixin {
 	@Shadow
    	private ModelPart leftArm;
 
-	//TODO find a method that is for both hands or split them
+	
 	@Inject(at = @At("HEAD"), method = "poseLeftArm", cancellable = true)
-	private void injectInstrumentUseAnim(LivingEntity entity, CallbackInfo info) {
-		if (!(entity instanceof Player))
+	private void injectLeftArmPose(LivingEntity entity, CallbackInfo info) {
+		if (!(entity instanceof Player player))
             return;
 
-		boolean isInRight = isInstrumentInHand(entity, InteractionHand.MAIN_HAND),
-			isInLeft = isInstrumentInHand(entity, InteractionHand.OFF_HAND);
+		final PosePlayerArmEventArgs args = new PosePlayerArmEventArgs(player, HandType.LEFT, leftArm);
+		PosePlayerArmEvent.EVENT.invoker().triggered(args);
 
-		if (!(isInLeft || isInRight))
-			return;
-
-		if (!ModEntityData.isInstrumentOpen((Player)entity))
-			return;
-
-		
-		rightArm.xRot = -MixinConstants.HAND_HEIGHT_ROT;
-		rightArm.zRot = -0.35f;
-		
-		leftArm.xRot = -MixinConstants.HAND_HEIGHT_ROT;
-		leftArm.zRot = 0.85f;
-
-		info.cancel();
+		if (args.isCanceled())
+			info.cancel();
 	}
 
+	@Inject(at = @At("HEAD"), method = "poseRightArm", cancellable = true)
+	private void injectRightArmPose(LivingEntity entity, CallbackInfo info) {
+		if (!(entity instanceof Player player))
+            return;
 
-	private static boolean isInstrumentInHand(final LivingEntity entity, final InteractionHand hand) {
-		return entity.getItemInHand(hand).getItem() instanceof InstrumentItem;
+		final PosePlayerArmEventArgs args = new PosePlayerArmEventArgs(player, HandType.RIGHT, rightArm);
+		PosePlayerArmEvent.EVENT.invoker().triggered(args);
+
+		if (args.isCanceled())
+			info.cancel();
 	}
 
 }

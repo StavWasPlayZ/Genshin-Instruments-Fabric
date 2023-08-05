@@ -1,43 +1,40 @@
-// //TODO implement when new armpose system is implemented
-// //NOTE: Load on ClientInitiator if done through mixin
-// package com.cstav.genshinstrument.client;
+package com.cstav.genshinstrument.client;
 
-// import net.fabricmc.api.EnvType;
-// import net.fabricmc.api.Environment;
-// import net.minecraft.client.model.HumanoidModel;
-// import net.minecraft.client.model.HumanoidModel.ArmPose;
-// import net.minecraft.world.entity.HumanoidArm;
-// import net.minecraft.world.entity.LivingEntity;
-// import net.minecraftforge.client.IArmPoseTransformer;
+import com.cstav.genshinstrument.event.PosePlayerArmEvent.HandType;
+import com.cstav.genshinstrument.event.PosePlayerArmEvent.PosePlayerArmEventArgs;
+import com.cstav.genshinstrument.util.ModEntityData;
 
-// @Environment(EnvType.CLIENT)
-// public abstract class ModArmPose {
-//     public static final float HAND_HEIGHT_ROT = .9f;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.model.geom.ModelPart;
 
-//     public static void register() {}
+@Environment(EnvType.CLIENT)
+public abstract class ModArmPose {
+    public static final float HAND_HEIGHT_ROT = .9f;
 
+    public static void poseForItemInstrument(final PosePlayerArmEventArgs args) {
+        if (!ModEntityData.isInstrumentOpen(args.player) || !ModEntityData.isInstrumentItem(args.player))
+			return;
+            
+        final ModelPart arm = args.arm;
+        if (args.hand == HandType.LEFT) {
+            arm.xRot = -HAND_HEIGHT_ROT;
+            arm.zRot = 0.85f;
+        } else {
+            arm.xRot = -HAND_HEIGHT_ROT;
+            arm.zRot = -0.35f;
+        }
 
-//     public static final ArmPose PLAYING_ITEM_INSTRUMENT = ArmPose.create("playing_item_instrument", true, new IArmPoseTransformer() {
+        args.setCanceled(true);
+    }
 
-//         @Override
-//         public void applyTransform(HumanoidModel<?> model, LivingEntity entity, HumanoidArm arm) {
-//             model.rightArm.xRot = -HAND_HEIGHT_ROT;
-//             model.rightArm.zRot = -0.35f;
+    public static void poseForBlockInstrument(final PosePlayerArmEventArgs args) {
+        if (!ModEntityData.isInstrumentOpen(args.player) || ModEntityData.isInstrumentItem(args.player))
+			return;
+            
+        args.arm.xRot = -HAND_HEIGHT_ROT;
 
-//             model.leftArm.xRot = -HAND_HEIGHT_ROT;
-//             model.leftArm.zRot = 0.85f;
-//         }
+        args.setCanceled(true);
+    }
 
-//     });
-//     public static final ArmPose PLAYING_BLOCK_INSTRUMENT = ArmPose.create("playing_block_instrument", true, new IArmPoseTransformer() {
-
-//         @Override
-//         public void applyTransform(HumanoidModel<?> model, LivingEntity entity, HumanoidArm arm) {
-//             model.rightArm.xRot = -HAND_HEIGHT_ROT;
-
-//             model.leftArm.xRot = -HAND_HEIGHT_ROT;
-//         }
-
-//     });
-
-// }
+}

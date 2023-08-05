@@ -7,15 +7,12 @@ import com.cstav.genshinstrument.networking.IModPacket;
 import com.cstav.genshinstrument.util.ModEntityData;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.fabricmc.fabric.api.networking.v1.PacketType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 
 public class NotifyInstrumentOpenPacket implements IModPacket {
-    public static final PacketType<NotifyInstrumentOpenPacket> TYPE = IModPacket.type(NotifyInstrumentOpenPacket.class);
-
 
     private final UUID playerUUID;
     private final boolean isOpen;

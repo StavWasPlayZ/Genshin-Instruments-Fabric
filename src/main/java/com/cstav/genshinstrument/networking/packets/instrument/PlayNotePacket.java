@@ -3,13 +3,11 @@ package com.cstav.genshinstrument.networking.packets.instrument;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.cstav.genshinstrument.networking.IModPacket;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.networking.packets.INoteIdentifierSender;
 import com.cstav.genshinstrument.sound.NoteSound;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.fabricmc.fabric.api.networking.v1.PacketType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -17,9 +15,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 
 public class PlayNotePacket implements INoteIdentifierSender {
-    public static final PacketType<PlayNotePacket> TYPE = IModPacket.type(PlayNotePacket.class);
-
-
+    
     private final BlockPos blockPos;
     private final NoteSound sound;
     private final int pitch;

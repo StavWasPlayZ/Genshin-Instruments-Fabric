@@ -5,18 +5,16 @@ import com.cstav.genshinstrument.networking.ModPacketHandler;
 import com.cstav.genshinstrument.util.ModEntityData;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.fabricmc.fabric.api.networking.v1.PacketType;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 public class CloseInstrumentPacket implements IModPacket {
-    public static final PacketType<CloseInstrumentPacket> TYPE = IModPacket.type(CloseInstrumentPacket.class);
 
     public CloseInstrumentPacket() {}
     public CloseInstrumentPacket(FriendlyByteBuf buf) {}
 
-
+    
     @Override
     public void handle(Player player, PacketSender responseSender) {
         ModEntityData.setInstrumentClosed(player);
