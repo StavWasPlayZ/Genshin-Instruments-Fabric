@@ -14,7 +14,7 @@ public class DrumNoteIdentifier extends DefaultNoteButtonIdentifier {
 
     @Environment(EnvType.CLIENT)
     public DrumNoteIdentifier(final DrumNoteButton note) {
-        super(note);
+        super(note, false);
         noteType = note.btnType;
         isRight = note.isRight;
     }

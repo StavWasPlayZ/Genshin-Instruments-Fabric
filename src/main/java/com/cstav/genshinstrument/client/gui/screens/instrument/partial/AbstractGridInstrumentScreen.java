@@ -3,6 +3,7 @@ package com.cstav.genshinstrument.client.gui.screens.instrument.partial;
 import java.awt.Color;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.function.Consumer;
 
 import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.ClientUtil;
@@ -14,13 +15,13 @@ import com.cstav.genshinstrument.client.gui.screens.options.instrument.GridInstr
 import com.cstav.genshinstrument.client.keyMaps.KeyMappings;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteGridButtonIdentifier;
+import com.cstav.genshinstrument.sound.NoteSound;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -42,6 +43,41 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
     }
     public int rows() {
         return DEF_ROWS;
+    }
+
+    /**
+     * <p>Gets the sound array used by this instrument.
+     * Its length must be equal to this Note Grid's {@code row*column}.</p>
+     * Each sound is used on press by the their index on the grid.
+     * @return The array of sounds used by this instruments.
+     */
+    public abstract NoteSound[] getSounds();
+
+
+    /**
+     * <p>
+     * An SSTI instrument is a Singular Sound-Type Instrument, such that
+     * only the <b>first</b> note in {@link AbstractGridInstrumentScreen#getSounds} will get used.
+     * </p><p>
+     * Notes will start with the {@link NoteSound#MIN_PITCH set minimum pitch},
+     * and increment their pitch up by 1 for every new instance.
+     * </p>
+     * This behaviour can be changed by overriding {@link AbstractGridInstrumentScreen#initNoteGrid}.
+     */
+    public boolean isSSTI() {
+        return false;
+    }
+
+    @Override
+    public void setPitch(int pitch) {
+        if (!isSSTI())
+            super.setPitch(pitch);
+    }
+
+    @Override
+    protected void initPitch(Consumer<Integer> pitchConsumer) {
+        if (!isSSTI())
+            super.initPitch(pitchConsumer);
     }
     
 
@@ -78,9 +114,9 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
      * @return The new Note Grid
      */
     public NoteGrid initNoteGrid() {
-        return new NoteGrid(
-            rows(), columns(), getSounds(), this
-        );
+        return isSSTI()
+            ? new NoteGrid(getSounds(), this, NoteSound.MIN_PITCH)
+            : new NoteGrid(getSounds(), this);
     }
 
     public final NoteGrid noteGrid = initNoteGrid();
@@ -97,7 +133,7 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
     }
 
     @Override
-    public ResourceLocation getNotesLocation() {
+    public ResourceLocation getNoteSymbolsLocation() {
         return new ResourceLocation(GInstrumentMod.MODID, getGlobalRootPath() + "grid_notes.png");
     }
     
@@ -132,38 +168,42 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
      * This render method will only work for a 3-column instrument. Overwrite it
      * to customize the background.
      */
-    protected void renderInstrumentBackground(final PoseStack poseStack) {
-        if (columns() != 3)
-            return;
-
-        final int clefX = grid.getX() - NoteButton.getSize() + 8;
+    protected void renderInstrumentBackground(final PoseStack stack) {
+        final int clefX = grid.getX() - getNoteSize() + 8;
 
         for (int i = 0; i < columns(); i++) {
-            renderClef(poseStack, i, clefX);
-            renderStaff(poseStack, i);
+            renderClef(stack, i, clefX);
+            renderStaff(stack, i);
         }
     }
 
-    protected void renderClef(final PoseStack poseStack, final int index, final int x) {
-        ClientUtil.displaySprite(getResourceFromGlob("background/clefs.png"));
-
-        GuiComponent.blit(poseStack,
-            x, grid.getY() + (NoteButton.getSize() + 16) * index,
+    protected void renderClef(final PoseStack stack, final int index, final int x) {
+        ClientUtil.displaySprite(getInternalResourceFromGlob("background/clefs.png"));
+        
+        blit(stack,
+            x, grid.getY() + NoteGrid.getPaddingVert() + getLayerAddition(index) - 5,
             index * CLEF_WIDTH, 0,
             CLEF_WIDTH, CLEF_HEIGHT,
             CLEF_WIDTH*3, CLEF_HEIGHT
         );
     }
 
-    protected void renderStaff(final PoseStack poseStack, final int index) {
-        ClientUtil.displaySprite(getResourceFromGlob("background/staff.png"));
-
-        GuiComponent.blit(poseStack,
-            grid.getX() + 2, grid.getY() + 8 + ((NoteButton.getSize() + NoteGrid.PADDING_VERT + 6) * index),
+    protected void renderStaff(final PoseStack stack, final int index) {
+        ClientUtil.displaySprite(getInternalResourceFromGlob("background/staff.png"));
+        
+        blit(stack,
+            grid.getX() + 2, grid.getY() + NoteGrid.getPaddingVert() + getLayerAddition(index),
             0, 0,
-            grid.getWidth() - 5, NoteButton.getSize(),
-            grid.getWidth() - 5, NoteButton.getSize()
+            grid.getWidth() - 5, getNoteSize(),
+            grid.getWidth() - 5, getNoteSize()
         );
+    }
+
+    /**
+     * Used for background rendering while determining how deep to go down
+     */
+    protected int getLayerAddition(final int index) {
+        return index * (getNoteSize() + NoteGrid.getPaddingVert()*2);
     }
     
 }
