@@ -7,6 +7,7 @@ import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screens.instrument.drum.AratakisGreatAndGloriousDrumScreen;
 import com.cstav.genshinstrument.client.gui.screens.instrument.floralzither.FloralZitherScreen;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.InstrumentThemeLoader;
+import com.cstav.genshinstrument.client.gui.screens.instrument.test.banjo.BanjoInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screens.instrument.vintagelyre.VintageLyreScreen;
 import com.cstav.genshinstrument.client.gui.screens.instrument.windsonglyre.WindsongLyreScreen;
 import com.cstav.genshinstrument.event.ClientEvents;
@@ -20,8 +21,11 @@ import net.minecraftforge.fml.config.ModConfig;
 public class ClientInitiator implements ClientModInitializer {
 
 	private static final List<Class<?>> LOAD_ME = List.of(
-		AratakisGreatAndGloriousDrumScreen.class, FloralZitherScreen.class, VintageLyreScreen.class,
-		WindsongLyreScreen.class
+		WindsongLyreScreen.class, VintageLyreScreen.class,
+		FloralZitherScreen.class, AratakisGreatAndGloriousDrumScreen.class, 
+
+		//TODO remove after tests
+		BanjoInstrumentScreen.class
 	);
 
     

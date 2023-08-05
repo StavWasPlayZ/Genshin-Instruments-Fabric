@@ -10,21 +10,14 @@ public abstract class EventArgs {
         if (isCancelable())
             this.canceled = isCanceled;
         else if (isCanceled)
-            GInstrumentMod.LOGGER.warn("Attempted to cancel uncancelable event" + getClass().getSimpleName() + "!", this);
+            GInstrumentMod.LOGGER.warn("Attempted to cancel uncancelable event " + getClass().getSimpleName() + "!", this);
     }
     public boolean isCanceled() {
         return canceled;
     }
 
-
-    public static boolean isCancelable(final Class<?> eventArgs) {
-        final Class<?> superclass = eventArgs.getClass().getSuperclass();
-
-        return eventArgs.getClass().isAnnotationPresent(Cancelable.class)
-            || ((superclass != null) && isCancelable(superclass));
-    }
     public boolean isCancelable() {
-        return isCancelable(getClass());
+        return getClass().isAnnotationPresent(Cancelable.class);
     }
 
 
