@@ -8,7 +8,6 @@ import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifie
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteGridButtonIdentifier;
 import com.cstav.genshinstrument.networking.packets.instrument.CloseInstrumentPacket;
 import com.cstav.genshinstrument.networking.packets.instrument.InstrumentPacket;
-import com.cstav.genshinstrument.networking.packets.instrument.NotifyInstrumentClosedPacket;
 import com.cstav.genshinstrument.networking.packets.instrument.NotifyInstrumentOpenPacket;
 import com.cstav.genshinstrument.networking.packets.instrument.OpenInstrumentPacket;
 import com.cstav.genshinstrument.networking.packets.instrument.PlayNotePacket;
@@ -24,7 +23,7 @@ public class ModPacketHandler {
     private static final List<Class<IModPacket>>
         S2C_PACKETS = List.of(new Class[] {
             PlayNotePacket.class, OpenInstrumentPacket.class,
-            NotifyInstrumentOpenPacket.class, NotifyInstrumentClosedPacket.class
+            NotifyInstrumentOpenPacket.class
         }),
         C2S_PACKETS = List.of(new Class[] {
             InstrumentPacket.class, CloseInstrumentPacket.class
