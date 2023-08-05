@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.config.enumType.InstrumentChannelType;
-import com.cstav.genshinstrument.client.config.enumType.label.NoteGridLabel;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.NoteButton;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.label.INoteLabel;
@@ -86,7 +85,7 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
     public final boolean isOverlay;
 
     protected final @Nullable INoteLabel[] labels;
-    protected final @Nullable INoteLabel currLabel;
+    protected @Nullable INoteLabel currLabel;
 
     /**
      * Override to {@code false} tp disable the pitch slider from the options.
@@ -107,7 +106,6 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
         lastScreen = null;
 
         labels = getLabels();
-        currLabel = getCurrentLabel();
     }
     public AbstractInstrumentOptionsScreen(final Screen lastScreen) {
         super(Component.translatable("button.genshinstrument.instrumentOptions"));
@@ -117,13 +115,13 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
         this.instrumentScreen = null;
         this.lastScreen = lastScreen;
 
-        // Default to NoteGridLabel's values
-        labels = NoteGridLabel.values();
-        currLabel = ModClientConfigs.GRID_LABEL_TYPE.get();
+        labels = getLabels();
     }
 
     @Override
     protected void init() {
+        currLabel = getCurrentLabel();
+
 
         final GridLayout grid = new GridLayout();
         grid.defaultCellSetting()
