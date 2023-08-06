@@ -37,11 +37,15 @@ public abstract class AbstractInstrumentScreen extends Screen {
 
     @SuppressWarnings("resource")
     public int getNoteSize() {
-        return switch (Minecraft.getInstance().options.guiScale().get()) {
+        final int guiScale = Minecraft.getInstance().options.guiScale().get();
+
+        return switch (guiScale) {
+            case 0 -> 40;
             case 1 -> 35;
             case 2 -> 46;
             case 3 -> 48;
-            default -> 40;
+            case 4 -> 41;
+            default -> guiScale * 18;
         };
     }
     
