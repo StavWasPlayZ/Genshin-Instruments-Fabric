@@ -10,7 +10,6 @@ import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screens.instrument.GenshinConsentScreen;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.NoteButton;
 import com.cstav.genshinstrument.client.gui.screens.options.instrument.AbstractInstrumentOptionsScreen;
-import com.cstav.genshinstrument.item.InstrumentItem;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.networking.packets.instrument.CloseInstrumentPacket;
@@ -29,7 +28,6 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
 
 @Environment(EnvType.CLIENT)
 public abstract class AbstractInstrumentScreen extends Screen {
@@ -37,15 +35,11 @@ public abstract class AbstractInstrumentScreen extends Screen {
 
     @SuppressWarnings("resource")
     public int getNoteSize() {
-        final int guiScale = Minecraft.getInstance().options.guiScale().get();
-
-        return switch (guiScale) {
-            case 0 -> 40;
+        return switch (Minecraft.getInstance().options.guiScale().get()) {
             case 1 -> 35;
             case 2 -> 46;
             case 3 -> 48;
-            case 4 -> 41;
-            default -> guiScale * 18;
+            default -> 40;
         };
     }
     
@@ -106,25 +100,9 @@ public abstract class AbstractInstrumentScreen extends Screen {
      * or, if it is an item, if the item has been ripped out of the player's hands.
      * @return Whether the instrument has closed as a result of this method
      */
-    public boolean handleAbruptClosing() {
-        final Player player = minecraft.player;
-
-        if (!ModEntityData.isInstrumentOpen(player)) {
+    public void handleAbruptClosing() {
+        if (!ModEntityData.isInstrumentOpen(minecraft.player))
             onClose(false);
-            return true;
-        }
-
-        // Handle item not in hand seperately
-        // This is done like so because there is no event (that I know of) for when an item is moved/removed
-        if (
-            (ModEntityData.isInstrumentItem(player) && interactionHand.isPresent())
-            && !(player.getItemInHand(interactionHand.get()).getItem() instanceof InstrumentItem)
-        ) {
-            onClose(true);
-            return true;
-        }
-
-        return false;
     }
     
 
