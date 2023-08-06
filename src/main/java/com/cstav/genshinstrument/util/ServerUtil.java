@@ -143,6 +143,20 @@ public class ServerUtil {
     }
 
 
+    public static void setInstrumentClosed(final Player player) {
+        // Update the the capabilty on server
+        InstrumentEntityData.setClosed(player);
+
+        // And clients
+        player.level().players().forEach((nearbyPlayer) ->
+            ModPacketHandler.sendToClient(
+                new NotifyInstrumentOpenPacket(player.getUUID(), false),
+                (ServerPlayer)nearbyPlayer
+            )
+        );
+    }
+
+
     /**
      * Gets a {@link NoteButtonIdentifier} as described by the {@code classType} destination.
      * Will only return a class type if it is valid and included in the {@code acceptableIdentifiers} list.
@@ -184,9 +198,9 @@ public class ServerUtil {
 
         // Update the the capabilty on server
         if (pos == null)
-            ModEntityData.setInstrumentOpen(player);
+            InstrumentEntityData.setOpen(player);
         else
-            ModEntityData.setInstrumentOpen(player, pos);
+            InstrumentEntityData.setOpen(player, pos);
 
         // And clients
         final Optional<BlockPos> playPos = Optional.ofNullable(pos);

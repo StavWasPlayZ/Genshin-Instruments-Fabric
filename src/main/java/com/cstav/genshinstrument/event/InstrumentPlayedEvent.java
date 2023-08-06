@@ -9,7 +9,7 @@ import com.cstav.genshinstrument.event.impl.EventArgs;
 import com.cstav.genshinstrument.event.impl.ModEvent;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.sound.NoteSound;
-import com.cstav.genshinstrument.util.ModEntityData;
+import com.cstav.genshinstrument.util.InstrumentEntityData;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
@@ -95,7 +95,7 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEventArg
                 } else {
                     itemInstrument = Optional.empty();
                     this.hand = Optional.empty();
-                    blockInstrumentPos = Optional.ofNullable(ModEntityData.getInstrumentBlockPos(player));
+                    blockInstrumentPos = Optional.ofNullable(InstrumentEntityData.getBlockPos(player));
                 }
             }
         }

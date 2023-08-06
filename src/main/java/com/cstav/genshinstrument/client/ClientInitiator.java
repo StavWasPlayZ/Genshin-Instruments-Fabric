@@ -11,6 +11,7 @@ import com.cstav.genshinstrument.client.gui.screens.instrument.vintagelyre.Vinta
 import com.cstav.genshinstrument.client.gui.screens.instrument.windsonglyre.WindsongLyreScreen;
 import com.cstav.genshinstrument.event.ClientEvents;
 import com.cstav.genshinstrument.event.ResourcesLoadedEvent;
+import com.cstav.genshinstrument.item.ItemPoseModifier;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
 
 import fuzs.forgeconfigapiport.api.config.v2.ForgeConfigRegistry;
@@ -31,9 +32,11 @@ public class ClientInitiator implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		ModPacketHandler.registerClientPackets();
+		
 		ForgeConfigRegistry.INSTANCE.register(GInstrumentMod.MODID, ModConfig.Type.CLIENT, ModClientConfigs.CONFIGS);
 		
 		ClientEvents.register();
+		ItemPoseModifier.register();
 
 
 		// Load necessary classes, as listed above
