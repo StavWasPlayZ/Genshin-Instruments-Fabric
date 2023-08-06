@@ -10,7 +10,7 @@ import com.cstav.genshinstrument.networking.buttonidentifier.DefaultNoteButtonId
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.networking.packets.instrument.InstrumentPacket;
 import com.cstav.genshinstrument.sound.NoteSound;
-import com.cstav.genshinstrument.util.ModEntityData;
+import com.cstav.genshinstrument.util.InstrumentEntityData;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -152,9 +152,9 @@ public abstract class NoteButton extends AbstractButton {
 
         final Player player = minecraft.player;
 
-        final BlockPos pos = ModEntityData.isInstrumentItem(player)
+        final BlockPos pos = InstrumentEntityData.isItem(player)
             ? player.blockPosition()
-            : ModEntityData.getInstrumentBlockPos(player);
+            : InstrumentEntityData.getBlockPos(player);
 
         // Send sound packet to server
         ModPacketHandler.sendToServer(

@@ -5,7 +5,7 @@ import com.cstav.genshinstrument.event.PosePlayerArmEvent.PosePlayerArmEventArgs
 import com.cstav.genshinstrument.networking.ModPacketHandler;
 import com.cstav.genshinstrument.networking.OpenInstrumentPacketSender;
 import com.cstav.genshinstrument.networking.packets.instrument.NotifyInstrumentOpenPacket;
-import com.cstav.genshinstrument.util.ModEntityData;
+import com.cstav.genshinstrument.util.InstrumentEntityData;
 import com.cstav.genshinstrument.util.ServerUtil;
 
 import net.fabricmc.api.EnvType;
@@ -70,7 +70,7 @@ public abstract class AbstractInstrumentBlock extends BaseEntityBlock {
 
         for (final Player player : pLevel.players()) {
             ibe.users.forEach((user) -> {
-                ModEntityData.setInstrumentClosed(pLevel.getPlayerByUUID(user));
+                InstrumentEntityData.setClosed(pLevel.getPlayerByUUID(user));
                 ModPacketHandler.sendToClient(new NotifyInstrumentOpenPacket(user, false), (ServerPlayer)player);
             });
         }

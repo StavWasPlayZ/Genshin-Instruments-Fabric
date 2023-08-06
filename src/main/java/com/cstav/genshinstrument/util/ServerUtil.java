@@ -145,7 +145,7 @@ public class ServerUtil {
 
     public static void setInstrumentClosed(final Player player) {
         // Update the the capabilty on server
-        ModEntityData.setInstrumentClosed(player);
+        InstrumentEntityData.setClosed(player);
 
         // And clients
         player.level().players().forEach((nearbyPlayer) ->
@@ -198,9 +198,9 @@ public class ServerUtil {
 
         // Update the the capabilty on server
         if (pos == null)
-            ModEntityData.setInstrumentOpen(player);
+            InstrumentEntityData.setOpen(player);
         else
-            ModEntityData.setInstrumentOpen(player, pos);
+            InstrumentEntityData.setOpen(player, pos);
 
         // And clients
         final Optional<BlockPos> playPos = Optional.ofNullable(pos);

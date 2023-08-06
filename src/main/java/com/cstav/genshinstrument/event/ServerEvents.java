@@ -2,7 +2,7 @@ package com.cstav.genshinstrument.event;
 
 import com.cstav.genshinstrument.item.InstrumentItem;
 import com.cstav.genshinstrument.util.CommonUtil;
-import com.cstav.genshinstrument.util.ModEntityData;
+import com.cstav.genshinstrument.util.InstrumentEntityData;
 import com.cstav.genshinstrument.util.ServerUtil;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -20,16 +20,16 @@ public abstract class ServerEvents {
     }
 
     private static void handleAbruptInstrumentClose(final Player player) {
-        if (!ModEntityData.isInstrumentOpen(player))
+        if (!InstrumentEntityData.isOpen(player))
             return;
 
-        if (ModEntityData.isInstrumentItem(player)) {
+        if (InstrumentEntityData.isItem(player)) {
             // This is done like so because there is no event (that I know of) for when an item is moved/removed
             if (CommonUtil.getItemInHands(InstrumentItem.class, player).isEmpty())
                 ServerUtil.setInstrumentClosed(player);
         } else {
             // Close an instrument block if the player is too far away
-            if (ModEntityData.getInstrumentBlockPos(player).closerToCenterThan(player.position(), 5))
+            if (InstrumentEntityData.getBlockPos(player).closerToCenterThan(player.position(), 5))
                 ServerUtil.setInstrumentClosed(player);
         }
     }

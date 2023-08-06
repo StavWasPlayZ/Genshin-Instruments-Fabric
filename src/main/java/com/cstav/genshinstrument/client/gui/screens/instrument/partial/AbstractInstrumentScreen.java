@@ -14,7 +14,7 @@ import com.cstav.genshinstrument.networking.ModPacketHandler;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.networking.packets.instrument.CloseInstrumentPacket;
 import com.cstav.genshinstrument.sound.NoteSound;
-import com.cstav.genshinstrument.util.ModEntityData;
+import com.cstav.genshinstrument.util.InstrumentEntityData;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.platform.InputConstants.Type;
 
@@ -101,7 +101,7 @@ public abstract class AbstractInstrumentScreen extends Screen {
      * @return Whether the instrument has closed as a result of this method
      */
     public void handleAbruptClosing() {
-        if (!ModEntityData.isInstrumentOpen(minecraft.player))
+        if (!InstrumentEntityData.isOpen(minecraft.player))
             onClose(false);
     }
     
@@ -284,7 +284,7 @@ public abstract class AbstractInstrumentScreen extends Screen {
     }
     public void onClose(final boolean notify) {
         if (notify) {
-            ModEntityData.setInstrumentClosed(minecraft.player);
+            InstrumentEntityData.setClosed(minecraft.player);
             ModPacketHandler.sendToServer(new CloseInstrumentPacket());
         }
 
