@@ -8,11 +8,11 @@ import com.cstav.genshinstrument.networking.buttonidentifier.DefaultNoteButtonId
 import com.cstav.genshinstrument.networking.buttonidentifier.DrumNoteIdentifier;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteGridButtonIdentifier;
-import com.cstav.genshinstrument.networking.packets.instrument.CloseInstrumentPacket;
-import com.cstav.genshinstrument.networking.packets.instrument.InstrumentPacket;
-import com.cstav.genshinstrument.networking.packets.instrument.NotifyInstrumentOpenPacket;
-import com.cstav.genshinstrument.networking.packets.instrument.OpenInstrumentPacket;
-import com.cstav.genshinstrument.networking.packets.instrument.PlayNotePacket;
+import com.cstav.genshinstrument.networking.packet.instrument.CloseInstrumentPacket;
+import com.cstav.genshinstrument.networking.packet.instrument.InstrumentPacket;
+import com.cstav.genshinstrument.networking.packet.instrument.NotifyInstrumentOpenPacket;
+import com.cstav.genshinstrument.networking.packet.instrument.OpenInstrumentPacket;
+import com.cstav.genshinstrument.networking.packet.instrument.PlayNotePacket;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;

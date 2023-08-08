@@ -2,7 +2,7 @@ package com.cstav.genshinstrument.client;
 
 import com.cstav.genshinstrument.event.PosePlayerArmEvent.HandType;
 import com.cstav.genshinstrument.event.PosePlayerArmEvent.PosePlayerArmEventArgs;
-import com.cstav.genshinstrument.util.ModEntityData;
+import com.cstav.genshinstrument.util.InstrumentEntityData;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -13,7 +13,7 @@ public abstract class ModArmPose {
     public static final float HAND_HEIGHT_ROT = .9f;
 
     public static void poseForItemInstrument(final PosePlayerArmEventArgs args) {
-        if (!ModEntityData.isInstrumentOpen(args.player) || !ModEntityData.isInstrumentItem(args.player))
+        if (!InstrumentEntityData.isOpen(args.player) || !InstrumentEntityData.isItem(args.player))
 			return;
             
         final ModelPart arm = args.arm;

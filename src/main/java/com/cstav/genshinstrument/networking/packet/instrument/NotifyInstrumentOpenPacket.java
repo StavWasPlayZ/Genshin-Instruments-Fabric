@@ -1,10 +1,10 @@
-package com.cstav.genshinstrument.networking.packets.instrument;
+package com.cstav.genshinstrument.networking.packet.instrument;
 
 import java.util.Optional;
 import java.util.UUID;
 
 import com.cstav.genshinstrument.networking.IModPacket;
-import com.cstav.genshinstrument.util.ModEntityData;
+import com.cstav.genshinstrument.util.InstrumentEntityData;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.Minecraft;
@@ -57,12 +57,12 @@ public class NotifyInstrumentOpenPacket implements IModPacket {
         if (isOpen) {
 
             if (pos.isPresent())
-                ModEntityData.setInstrumentOpen(_player, pos.get());
+                InstrumentEntityData.setOpen(_player, pos.get());
             else
-                ModEntityData.setInstrumentOpen(_player);
+                InstrumentEntityData.setOpen(_player);
 
         } else
-            ModEntityData.setInstrumentClosed(_player);
+            InstrumentEntityData.setClosed(_player);
     }
     
 }

@@ -7,7 +7,7 @@ import com.cstav.genshinstrument.event.InstrumentPlayedEvent.ByPlayer.ByPlayerAr
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEventArgs;
 import com.cstav.genshinstrument.event.PosePlayerArmEvent.PosePlayerArmEventArgs;
 import com.cstav.genshinstrument.sound.NoteSound;
-import com.cstav.genshinstrument.util.ModEntityData;
+import com.cstav.genshinstrument.util.InstrumentEntityData;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -32,11 +32,11 @@ public abstract class ClientEvents {
     public static void posePlayerArmEvent(final PosePlayerArmEventArgs args) {
         final Player player = args.player;
 
-        if (!ModEntityData.isInstrumentOpen(player) || ModEntityData.isInstrumentItem(player))
+        if (!InstrumentEntityData.isOpen(player) || InstrumentEntityData.isItem(player))
 			return;
 
 
-        final Block block = player.getLevel().getBlockState(ModEntityData.getInstrumentBlockPos(player)).getBlock();
+        final Block block = player.getLevel().getBlockState(InstrumentEntityData.getBlockPos(player)).getBlock();
         if (block instanceof AbstractInstrumentBlock blockInstrument)
             blockInstrument.onPosePlayerArm(args);
     }

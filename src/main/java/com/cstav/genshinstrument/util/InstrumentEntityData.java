@@ -8,8 +8,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
-//TODO: Change to "InstrumentEntityData" and remove all "instruments" from method names
-public abstract class ModEntityData {
+public abstract class InstrumentEntityData {
     public static final String OPEN_TAG = "instrumentOpen",
         IS_ITEM_TAG = "isItem", BLOCK_POS_TAG = "blockPos";
 
@@ -19,34 +18,34 @@ public abstract class ModEntityData {
     }
 
 
-    public static boolean isInstrumentOpen(final Player player) {
+    public static boolean isOpen(final Player player) {
         return getModTag(player).getBoolean(OPEN_TAG);
     }
-    public static boolean isInstrumentItem(final Player player) {
+    public static boolean isItem(final Player player) {
         return getModTag(player).getBoolean(IS_ITEM_TAG);
     }
 
-    public static BlockPos getInstrumentBlockPos(final Player player) {
+    public static BlockPos getBlockPos(final Player player) {
         final CompoundTag posTag = getModTag(player).getCompound(BLOCK_POS_TAG);
         return posTag.isEmpty() ? null : NbtUtils.readBlockPos(posTag);
     }
 
 
-    public static void setInstrumentOpen(final Player player, final BlockPos pos) {
+    public static void setOpen(final Player player, final BlockPos pos) {
         final CompoundTag modTag = getModTag(player);
         modTag.putBoolean(OPEN_TAG, true);
         modTag.put(BLOCK_POS_TAG, NbtUtils.writeBlockPos(pos));
 
         modTag.putBoolean(IS_ITEM_TAG, false);
     }
-    public static void setInstrumentOpen(final Player player) {
+    public static void setOpen(final Player player) {
         final CompoundTag modTag = getModTag(player);
         modTag.putBoolean(OPEN_TAG, true);
 
         modTag.putBoolean(IS_ITEM_TAG, true);
     }
 
-    public static void setInstrumentClosed(final Player player) {
+    public static void setClosed(final Player player) {
         getModTag(player).putBoolean(OPEN_TAG, false);
     }
 
