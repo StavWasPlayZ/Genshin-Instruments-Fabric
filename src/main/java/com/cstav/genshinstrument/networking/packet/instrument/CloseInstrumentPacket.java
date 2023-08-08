@@ -1,4 +1,4 @@
-package com.cstav.genshinstrument.networking.packets.instrument;
+package com.cstav.genshinstrument.networking.packet.instrument;
 
 import com.cstav.genshinstrument.networking.IModPacket;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
