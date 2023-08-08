@@ -9,6 +9,7 @@ import com.cstav.genshinstrument.client.gui.screens.instrument.floralzither.Flor
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.InstrumentThemeLoader;
 import com.cstav.genshinstrument.client.gui.screens.instrument.vintagelyre.VintageLyreScreen;
 import com.cstav.genshinstrument.client.gui.screens.instrument.windsonglyre.WindsongLyreScreen;
+import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings;
 import com.cstav.genshinstrument.event.ClientEvents;
 import com.cstav.genshinstrument.event.ResourcesLoadedEvent;
 import com.cstav.genshinstrument.item.ItemPoseModifier;
@@ -38,6 +39,8 @@ public class ClientInitiator implements ClientModInitializer {
 		ClientEvents.register();
 		ItemPoseModifier.register();
 
+		
+		InstrumentKeyMappings.load();
 
 		// Load necessary classes, as listed above
 		for (final Class<?> loadMe : LOAD_ME) {

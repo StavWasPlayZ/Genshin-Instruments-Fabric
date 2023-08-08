@@ -1,15 +1,40 @@
 package com.cstav.genshinstrument.client.keyMaps;
 
+import org.lwjgl.glfw.GLFW;
+
+import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractGridInstrumentScreen;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.platform.InputConstants.Type;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.client.KeyMapping;
 
-// Literally only doing this for key translations
 @Environment(EnvType.CLIENT)
-public class KeyMappings {
+public class InstrumentKeyMappings {
+    public static final String CATEGORY = GInstrumentMod.MODID+".keymaps";
+    
+    public static void load() {}
+
+    public static final KeyMapping
+        TRANSPOSE_UP_MODIFIER = KeyBindingHelper.registerKeyBinding(
+            new KeyMapping(CATEGORY+".transpose_up_modifier",
+                InputConstants.Type.KEYSYM,
+                GLFW.GLFW_KEY_RIGHT_SHIFT
+            , CATEGORY)
+        ),
+        TRANSPOSE_DOWN_MODIFIER = KeyBindingHelper.registerKeyBinding(
+            new KeyMapping(CATEGORY+".transpose_down_modifier",
+                InputConstants.Type.KEYSYM,
+                GLFW.GLFW_KEY_LEFT_SHIFT
+            , CATEGORY)
+        )
+    ;
+
+    /* --------------- Builtin Keys --------------- */
     
     public static final Key[][] GRID_INSTRUMENT_MAPPINGS = createInstrumentMaps(new int[][] {
         {81, 87, 69, 82, 84, 89, 85, 73},
