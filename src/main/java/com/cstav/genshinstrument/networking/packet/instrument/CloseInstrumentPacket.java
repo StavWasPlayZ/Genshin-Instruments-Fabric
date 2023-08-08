@@ -1,8 +1,8 @@
-package com.cstav.genshinstrument.networking.packets.instrument;
+package com.cstav.genshinstrument.networking.packet.instrument;
 
 import com.cstav.genshinstrument.networking.IModPacket;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
-import com.cstav.genshinstrument.util.ModEntityData;
+import com.cstav.genshinstrument.util.InstrumentEntityData;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.network.FriendlyByteBuf;
@@ -17,7 +17,7 @@ public class CloseInstrumentPacket implements IModPacket {
     
     @Override
     public void handle(Player player, PacketSender responseSender) {
-        ModEntityData.setInstrumentClosed(player);
+        InstrumentEntityData.setClosed(player);
 
         for (final Player oPlayer : player.getLevel().players())
             ModPacketHandler.sendToClient(new NotifyInstrumentOpenPacket(player.getUUID(), false), (ServerPlayer)oPlayer);
