@@ -1,10 +1,10 @@
-package com.cstav.genshinstrument.networking.packets.instrument;
+package com.cstav.genshinstrument.networking.packet.instrument;
 
 import java.util.Optional;
 import java.util.UUID;
 
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
-import com.cstav.genshinstrument.networking.packets.INoteIdentifierSender;
+import com.cstav.genshinstrument.networking.packet.INoteIdentifierSender;
 import com.cstav.genshinstrument.sound.NoteSound;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;

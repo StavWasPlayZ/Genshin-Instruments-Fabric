@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "genshinstrument",
-	"version": "3.2.2",
+	"version": "3.2.3",
 	"name": "Genshin Instruments",
 	"description": "A mod that brings Genshin Impact's instruments to Minecraft!\nThis is my first ever published mod, and I am quite proud of it :')\nHope you enjoy it as much as I do!!",
 	"authors": [
@@ -34,7 +34,9 @@
 		"fabricloader": ">=0.14.21",
 		"minecraft": "~1.20",
 		"java": ">=17",
+		"forgeconfigapiport": "*",
+
 		"fabric-api": "*",
-		"forgeconfigapiport": "*"
+		"fabric-key-binding-api-v1": "*"
 	}
 }
