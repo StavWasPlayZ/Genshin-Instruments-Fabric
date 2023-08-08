@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import com.cstav.genshinstrument.mixin.util.ISetHeightAccessor;
 import com.google.common.collect.Lists;
 
 import net.fabricmc.api.EnvType;
@@ -13,6 +12,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
+import net.minecraftforge.mixin.client.accessor.AbstractWidgetAccessor;
 
 @Environment(EnvType.CLIENT)
 public class LinearLayoutWidget extends AbstractContainerWidget {
@@ -221,7 +221,7 @@ public class LinearLayoutWidget extends AbstractContainerWidget {
       void setSecondaryLength(AbstractWidget pWidget, int pLength) {
          switch (this) {
             case HORIZONTAL:
-               ((ISetHeightAccessor)(pWidget)).setHeight(pLength);
+               ((AbstractWidgetAccessor)(pWidget)).setHeight(pLength);
                break;
             case VERTICAL:
                pWidget.setWidth(pLength);
