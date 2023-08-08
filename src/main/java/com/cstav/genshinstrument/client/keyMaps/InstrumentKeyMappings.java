@@ -23,13 +23,13 @@ public class InstrumentKeyMappings {
         TRANSPOSE_UP_MODIFIER = KeyBindingHelper.registerKeyBinding(
             new KeyMapping(CATEGORY+".transpose_up_modifier",
                 InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_RIGHT_SHIFT
+                GLFW.GLFW_KEY_RIGHT_ALT
             , CATEGORY)
         ),
         TRANSPOSE_DOWN_MODIFIER = KeyBindingHelper.registerKeyBinding(
             new KeyMapping(CATEGORY+".transpose_down_modifier",
                 InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_LEFT_SHIFT
+                GLFW.GLFW_KEY_LEFT_ALT
             , CATEGORY)
         )
     ;
