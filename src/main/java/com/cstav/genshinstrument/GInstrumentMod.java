@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import com.cstav.genshinstrument.block.ModBlockEntities;
 import com.cstav.genshinstrument.block.ModBlocks;
 import com.cstav.genshinstrument.criteria.ModCriteria;
+import com.cstav.genshinstrument.event.ServerEvents;
 import com.cstav.genshinstrument.item.ModItems;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
 import com.cstav.genshinstrument.sound.ModSounds;
@@ -19,6 +20,8 @@ public class GInstrumentMod implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		ModPacketHandler.registerServerPackets();
+		ServerEvents.register();
+
 		ModCriteria.register();
 		
 		ModSounds.load();

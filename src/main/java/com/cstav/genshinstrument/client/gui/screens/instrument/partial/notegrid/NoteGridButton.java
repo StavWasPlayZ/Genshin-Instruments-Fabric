@@ -1,10 +1,9 @@
-//TODO Move to the below package:
-// package com.cstav.genshinstrument.client.gui.screens.instrument.partial.notegrid;
-// Applies to all notegrid implementations, see Forge repository
-package com.cstav.genshinstrument.client.gui.screens.instrument.partial.note;
+package com.cstav.genshinstrument.client.gui.screens.instrument.partial.notegrid;
 
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
-import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractGridInstrumentScreen;
+import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.NoteButton;
+import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.NoteButtonRenderer;
+import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.NoteNotation;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.label.NoteLabelSupplier;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteGridButtonIdentifier;
 import com.cstav.genshinstrument.sound.NoteSound;
