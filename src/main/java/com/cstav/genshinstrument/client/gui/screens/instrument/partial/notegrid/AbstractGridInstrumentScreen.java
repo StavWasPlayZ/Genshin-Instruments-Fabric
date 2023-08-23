@@ -178,7 +178,6 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
     public void render(GuiGraphics gui, int pMouseX, int pMouseY, float pPartialTick) {
         if (ModClientConfigs.RENDER_BACKGROUND.get()) {
             RenderSystem.enableBlend();
-            RenderSystem.enableDepthTest();
 
             ClientUtil.setShaderColor(Color.WHITE, .6f);
             renderInstrumentBackground(gui);
