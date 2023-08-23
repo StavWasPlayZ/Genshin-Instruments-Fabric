@@ -9,7 +9,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
-public enum ZitherSoundType {
+public enum ZitherSoundType implements SoundType {
     OLD(() -> ModSounds.ZITHER_OLD_NOTE_SOUNDS),
     NEW(() -> ModSounds.ZITHER_NEW_NOTE_SOUNDS);
 
@@ -18,7 +18,7 @@ public enum ZitherSoundType {
         this.soundArr = soundType;
     }
 
-    public Supplier<NoteSound[]> soundArr() {
+    public Supplier<NoteSound[]> getSoundArr() {
         return soundArr;
     }
 }

@@ -9,7 +9,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
-public class DrumOptionsScren extends AbstractInstrumentOptionsScreen {
+public class DrumOptionsScren extends BaseInstrumentOptionsScreen {
 
     public DrumOptionsScren(AratakisGreatAndGloriousDrumScreen screen) {
         super(screen);

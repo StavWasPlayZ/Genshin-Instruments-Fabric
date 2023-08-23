@@ -7,7 +7,7 @@ import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.InstrumentThemeLoader;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.NoteButton;
-import com.cstav.genshinstrument.client.gui.screens.options.instrument.AbstractInstrumentOptionsScreen;
+import com.cstav.genshinstrument.client.gui.screens.options.instrument.BaseInstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.gui.screens.options.instrument.DrumOptionsScren;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 
@@ -19,21 +19,21 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 
 @Environment(EnvType.CLIENT)
-// ikik im funny, long name, thank you
 public class AratakisGreatAndGloriousDrumScreen extends AbstractInstrumentScreen {
-    public static final String INSTRUMENT_ID = "glorious_drum";
+    public static final ResourceLocation INSTRUMENT_ID = new ResourceLocation(GInstrumentMod.MODID, "glorious_drum");
+    public static final String[] NOTE_LAYOUT = {"D", "G"};
 
     public AratakisGreatAndGloriousDrumScreen(InteractionHand hand) {
         super(hand);
     }
     @Override
     public ResourceLocation getInstrumentId() {
-        return new ResourceLocation(GInstrumentMod.MODID, INSTRUMENT_ID);
+        return INSTRUMENT_ID;
     }
 
     @Override
     public ResourceLocation getNoteSymbolsLocation() {
-        return getResourceFromRoot("note/notes.png");
+        return getResourceFromRoot("note/notes.png", false);
     }
 
     
@@ -47,7 +47,7 @@ public class AratakisGreatAndGloriousDrumScreen extends AbstractInstrumentScreen
     }
 
     @Override
-    protected AbstractInstrumentOptionsScreen initInstrumentOptionsScreen() {
+    protected BaseInstrumentOptionsScreen initInstrumentOptionsScreen() {
         return new DrumOptionsScren(this);
     }
 
@@ -101,7 +101,12 @@ public class AratakisGreatAndGloriousDrumScreen extends AbstractInstrumentScreen
     }
     
 
-    private static final InstrumentThemeLoader THEME_LOADER = initThemeLoader(GInstrumentMod.MODID, INSTRUMENT_ID);
+    @Override
+    public String[] noteLayout() {
+        return NOTE_LAYOUT;
+    }
+
+    private static final InstrumentThemeLoader THEME_LOADER = new InstrumentThemeLoader(INSTRUMENT_ID);
     @Override
     public InstrumentThemeLoader getThemeLoader() {
         return THEME_LOADER;

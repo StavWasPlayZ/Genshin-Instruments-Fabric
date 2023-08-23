@@ -5,12 +5,12 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 
-import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.ClientUtil;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.NoteButton;
-import com.cstav.genshinstrument.client.gui.screens.options.instrument.AbstractInstrumentOptionsScreen;
+import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.label.NoteLabelSupplier;
+import com.cstav.genshinstrument.client.gui.screens.options.instrument.BaseInstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.gui.screens.options.instrument.GridInstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
@@ -28,6 +28,8 @@ import net.minecraft.world.InteractionHand;
 
 @Environment(EnvType.CLIENT)
 public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScreen {
+    public static final String[] NOTE_LAYOUT = {"C", "D", "E", "F", "G", "A", "B"};
+
     public static final int DEF_ROWS = 7, DEF_COLUMNS = 3,
         CLEF_WIDTH = 26, CLEF_HEIGHT = 52;
 
@@ -51,7 +53,7 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
      * Each sound is used on press by the their index on the grid.
      * @return The array of sounds used by this instruments.
      */
-    public abstract NoteSound[] getSounds();
+    public abstract NoteSound[] getInitSounds();
 
 
     /**
@@ -107,7 +109,26 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
         return noteGrid.getNoteButton(row, column);
     }
 
+
+    /**
+     * Creates a note for a singular sound type (SSTI) instrument
+     */
+    public NoteGridButton createNote(int row, int column, int pitch) {
+        return new NoteGridButton(row, column, this, pitch);
+    }
+    public NoteGridButton createNote(int row, int column) {
+        return new NoteGridButton(row, column, this);
+    }
+
+    /**
+     * @return The perferred label supplier specified in this mod's configs
+     */
+    protected NoteLabelSupplier getInitLabelSupplier() {
+        return ModClientConfigs.GRID_LABEL_TYPE.get().getLabelSupplier();
+    }
+
     
+
     // Abstract implementations
     /**
      * Initializes a new Note Grid to be paired with this instrument
@@ -115,8 +136,8 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
      */
     public NoteGrid initNoteGrid() {
         return isSSTI()
-            ? new NoteGrid(getSounds(), this, NoteSound.MIN_PITCH)
-            : new NoteGrid(getSounds(), this);
+            ? new NoteGrid(this, NoteSound.MIN_PITCH)
+            : new NoteGrid(this);
     }
 
     public final NoteGrid noteGrid = initNoteGrid();
@@ -128,13 +149,18 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
     }
 
     @Override
-    protected AbstractInstrumentOptionsScreen initInstrumentOptionsScreen() {
+    protected BaseInstrumentOptionsScreen initInstrumentOptionsScreen() {
         return new GridInstrumentOptionsScreen(this);
     }
 
     @Override
     public ResourceLocation getNoteSymbolsLocation() {
-        return new ResourceLocation(GInstrumentMod.MODID, getGlobalRootPath() + "grid_notes.png");
+        return getInternalResourceFromGlob("grid_notes.png");
+    }
+
+    @Override
+    public String[] noteLayout() {
+        return NOTE_LAYOUT;
     }
     
 

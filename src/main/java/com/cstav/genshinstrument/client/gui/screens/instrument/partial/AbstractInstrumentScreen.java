@@ -9,7 +9,7 @@ import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screens.instrument.GenshinConsentScreen;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.NoteButton;
-import com.cstav.genshinstrument.client.gui.screens.options.instrument.AbstractInstrumentOptionsScreen;
+import com.cstav.genshinstrument.client.gui.screens.options.instrument.BaseInstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
@@ -32,8 +32,7 @@ import net.minecraft.world.InteractionHand;
 
 @Environment(EnvType.CLIENT)
 public abstract class AbstractInstrumentScreen extends Screen {
-    public static final String[] DEFAULT_NOTE_LAYOUT = new String[] {"C", "D", "E", "F", "G", "A", "B"};
-
+    
     @SuppressWarnings("resource")
     public int getNoteSize() {
         return switch (Minecraft.getInstance().options.guiScale().get()) {
@@ -66,22 +65,15 @@ public abstract class AbstractInstrumentScreen extends Screen {
     }
 
 
-    /**
-     * A method to initialize the theme loader of this instrument.
-     * All subclasses must call this method on game loading.
-     */
-    protected static final InstrumentThemeLoader initThemeLoader(String modId, String instrumentId) {
-        return new InstrumentThemeLoader(
-            new ResourceLocation(modId,
-                getGlobalRootPath() + instrumentId + "/" + "instrument_style.json"
-            )
-        );
+    public void resetPitch() {
+        initPitch(this::setPitch);
     }
+
+
     public abstract InstrumentThemeLoader getThemeLoader();
-
-
     public abstract ResourceLocation getInstrumentId();
-    protected abstract AbstractInstrumentOptionsScreen initInstrumentOptionsScreen();
+
+    protected abstract BaseInstrumentOptionsScreen initInstrumentOptionsScreen();
 
     /**
      * @return The location of all labels present in this instrument
@@ -91,13 +83,14 @@ public abstract class AbstractInstrumentScreen extends Screen {
 
     /**
      * @return The layout of the note names accross the instrument's rows.
+     * Null for when this instrument does not support note names.
      * @implNote All built-in instruments' layouts are derived from
      * <a href=https://github.com/Specy/genshin-music/blob/19dfe0e2fb8081508bd61dd47289dcb2d89ad5e3/src/Config.ts#L114>
      * Specy's Genshin Music app
      * </a>
      */
     public String[] noteLayout() {
-        return DEFAULT_NOTE_LAYOUT;
+        return null;
     }
 
     /**
@@ -175,16 +168,29 @@ public abstract class AbstractInstrumentScreen extends Screen {
     
     /**
      * @param path The desired path to obtain from the root directory
+     * @param considerGlobal If {@link InstrumentThemeLoader#isGlobalThemed() a global resource pack is enabled}, take the resource from there
+     * @return The resource contained in this instrument's root directory
+     * @see {@link AbstractInstrumentScreen#getInstrumentResourcesLocation()}
+     * @see {@link AbstractInstrumentScreen#getResourceFrom(ResourceLocation, String)}
+     */
+    public ResourceLocation getResourceFromRoot(final String path, final boolean considerGlobal) {
+        return (considerGlobal && InstrumentThemeLoader.isGlobalThemed())
+            ? InstrumentThemeLoader.GLOBAL_LOC.withSuffix("/"+path)
+            : getSourcePath().withPath(getPath() + path);
+    }
+    /**
+     * Gets The desired path to obtain from either the root or global directory.
+     * The global directory will be used if {@link InstrumentThemeLoader#isGlobalThemed()} is true.
      * @return The resource contained in this instrument's root directory
      * @see {@link AbstractInstrumentScreen#getInstrumentResourcesLocation()}
      * @see {@link AbstractInstrumentScreen#getResourceFrom(ResourceLocation, String)}
      */
     public ResourceLocation getResourceFromRoot(final String path) {
-        return getSourcePath().withPath(getPath() + path);
+        return getResourceFromRoot(path, true);
     }
 
 
-    public final AbstractInstrumentOptionsScreen optionsScreen = initInstrumentOptionsScreen();
+    public final BaseInstrumentOptionsScreen optionsScreen = initInstrumentOptionsScreen();
     
     public final Optional<InteractionHand> interactionHand;
     public AbstractInstrumentScreen(final InteractionHand hand) {
@@ -196,7 +202,7 @@ public abstract class AbstractInstrumentScreen extends Screen {
 
     @Override
     protected void init() {
-        initPitch(this::setPitch);
+        resetPitch();
         optionsScreen.init(minecraft, width, height);
 
         if (isGenshinInstrument() && !ModClientConfigs.ACCEPTED_GENSHIN_CONSENT.get())
@@ -253,12 +259,15 @@ public abstract class AbstractInstrumentScreen extends Screen {
 
     private boolean pitchChanged;
     protected boolean checkPitchTransposeUp(int pKeyCode, int pScanCode) {
-        if (!pitchChanged && InstrumentKeyMappings.TRANSPOSE_UP_MODIFIER.matches(pKeyCode, pScanCode)) {
+        if (pitchChanged)
+            return false;
+
+        if (checkTranposeUpKey(pKeyCode, pScanCode)) {
             setPitch(getPitch() + 1);
             pitchChanged = true;
             return true;
         }
-        if (!pitchChanged && InstrumentKeyMappings.TRANSPOSE_DOWN_MODIFIER.matches(pKeyCode, pScanCode)) {
+        else if (checkTranposeDownKey(pKeyCode, pScanCode)) {
             setPitch(getPitch() - 1);
             pitchChanged = true;
             return true;
@@ -267,18 +276,40 @@ public abstract class AbstractInstrumentScreen extends Screen {
         return false;
     }
     protected boolean checkTransposeDown(int pKeyCode, int pScanCode) {
-        if (pitchChanged && InstrumentKeyMappings.TRANSPOSE_UP_MODIFIER.matches(pKeyCode, pScanCode)) {
-            initPitch(this::setPitch);
-            pitchChanged = false;
-            return true;
-        }
-        if (pitchChanged && InstrumentKeyMappings.TRANSPOSE_DOWN_MODIFIER.matches(pKeyCode, pScanCode)) {
-            initPitch(this::setPitch);
+        if (!pitchChanged)
+            return false;
+
+        if (checkTranposeUpKey(pKeyCode, pScanCode) || checkTranposeDownKey(pKeyCode, pScanCode)) {
+            resetPitch();
             pitchChanged = false;
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * @return Whether this instrument's pitch is being tranposed up/down as requested by the keybinds
+     */
+    public boolean isTranposed() {
+        return pitchChanged;
+    }
+
+
+    /**
+     * @return {@code true} if the given key is being used by this instrument.
+     * Otherwise, {@code false}.
+     */
+    public boolean isKeyConsumed(final int keyCode, final int scanCode) {
+        return (getNoteByKey(keyCode) != null)
+            || checkTranposeDownKey(keyCode, scanCode) || checkTranposeUpKey(keyCode, scanCode);
+    }
+
+    protected boolean checkTranposeDownKey(final int keyCode, final int scanCode) {
+        return InstrumentKeyMappings.TRANSPOSE_DOWN_MODIFIER.matches(keyCode, scanCode);
+    }
+    protected boolean checkTranposeUpKey(final int keyCode, final int scanCode) {
+        return InstrumentKeyMappings.TRANSPOSE_UP_MODIFIER.matches(keyCode, scanCode);
     }
 
 
@@ -312,7 +343,7 @@ public abstract class AbstractInstrumentScreen extends Screen {
         setFocused(null);
         minecraft.setScreen(optionsScreen);
 
-        initPitch(this::setPitch);
+        resetPitch();
 
         isOptionsScreenActive = true;
     }
@@ -345,8 +376,8 @@ public abstract class AbstractInstrumentScreen extends Screen {
         if (minecraft.screen instanceof AbstractInstrumentScreen)
             return Optional.of((AbstractInstrumentScreen)minecraft.screen);
 
-        if (minecraft.screen instanceof AbstractInstrumentOptionsScreen) {
-            final AbstractInstrumentOptionsScreen instrumentOptionsScreen = (AbstractInstrumentOptionsScreen)minecraft.screen;
+        if (minecraft.screen instanceof BaseInstrumentOptionsScreen) {
+            final BaseInstrumentOptionsScreen instrumentOptionsScreen = (BaseInstrumentOptionsScreen)minecraft.screen;
             if (instrumentOptionsScreen.isOverlay)
                 return Optional.of(instrumentOptionsScreen.instrumentScreen);
         }

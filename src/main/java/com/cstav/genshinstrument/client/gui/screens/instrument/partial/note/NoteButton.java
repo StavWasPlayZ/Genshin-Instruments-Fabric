@@ -3,6 +3,7 @@ package com.cstav.genshinstrument.client.gui.screens.instrument.partial.note;
 import java.awt.Point;
 
 import com.cstav.genshinstrument.client.ClientUtil;
+import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.label.NoteLabelSupplier;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
@@ -11,6 +12,7 @@ import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifie
 import com.cstav.genshinstrument.networking.packet.instrument.InstrumentPacket;
 import com.cstav.genshinstrument.sound.NoteSound;
 import com.cstav.genshinstrument.util.InstrumentEntityData;
+import com.cstav.genshinstrument.util.LabelUtil;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -121,8 +123,24 @@ public abstract class NoteButton extends AbstractButton {
     }
 
     public NoteNotation getNotation() {
-        return NoteNotation.NONE;
+        return ModClientConfigs.ACCURATE_NOTES.get()
+            ? NoteNotation.getNotation(getNoteName())
+            : NoteNotation.NONE;
     }
+
+    public String getCutNoteName() {
+        return LabelUtil.getCutNoteName(getNoteName());
+    }
+    public String getNoteName() {
+        if (instrumentScreen.noteLayout() == null)
+            return "";
+
+        return LabelUtil.getNoteName(instrumentScreen.getPitch(), instrumentScreen.noteLayout(), getNoteOffset());
+    }
+    /**
+     * Defines the offset of this note relative to the this screen's {@link AbstractInstrumentScreen#noteLayout() note layout}
+     */
+    public abstract int getNoteOffset();
 
 
     public void init() {

@@ -10,6 +10,7 @@ import com.cstav.genshinstrument.client.config.enumType.InstrumentChannelType;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.NoteButton;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.label.INoteLabel;
+import com.cstav.genshinstrument.client.gui.screens.instrument.partial.notegrid.AbstractGridInstrumentScreen;
 import com.cstav.genshinstrument.sound.NoteSound;
 import com.cstav.genshinstrument.util.LabelUtil;
 import com.ibm.icu.text.DecimalFormat;
@@ -33,7 +34,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
-public abstract class AbstractInstrumentOptionsScreen extends Screen {
+public abstract class BaseInstrumentOptionsScreen extends Screen {
 
     private static final String SOUND_CHANNEL_KEY = "button.genshinstrument.audioChannels",
         STOP_MUSIC_KEY = "button.genshinstrument.stop_music_on_play";
@@ -42,8 +43,8 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
     protected final HashMap<String, Runnable> APPLIED_OPTIONS = new HashMap<>();
     
     /**
-     * Queues the given option to later be saved,
-     * such that when the client closes this screen - the given runnable will run.
+     * Queues the given option to later be saved.
+     * Most notably, a save occures when the client closes this screen.
      * @param optionKey A unique identifier of this option. If a duplicate entry
      * exists, it will be overwritten.
      * @param saveRunnable The runnable for saving the option
@@ -98,7 +99,7 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
     
     public final @Nullable AbstractInstrumentScreen instrumentScreen;
 
-    public AbstractInstrumentOptionsScreen(@Nullable AbstractInstrumentScreen screen) {
+    public BaseInstrumentOptionsScreen(@Nullable AbstractInstrumentScreen screen) {
         super(Component.translatable("button.genshinstrument.instrumentOptions"));
         
         this.isOverlay = true;
@@ -107,7 +108,7 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
 
         labels = getLabels();
     }
-    public AbstractInstrumentOptionsScreen(final Screen lastScreen) {
+    public BaseInstrumentOptionsScreen(final Screen lastScreen) {
         super(Component.translatable("button.genshinstrument.instrumentOptions"));
 
         this.isOverlay = false;
@@ -183,7 +184,7 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
                 protected void updateMessage() {
                     this.setMessage(
                         Component.translatable("button.genshinstrument.pitch").append(": "
-                            + LabelUtil.getNoteName(pitch, AbstractInstrumentScreen.DEFAULT_NOTE_LAYOUT, 0)
+                            + LabelUtil.getNoteName(pitch, AbstractGridInstrumentScreen.NOTE_LAYOUT, 0)
                             + " ("+format.format(NoteSound.getPitchByNoteOffset(pitch))+")"
                         )
                     );
@@ -280,14 +281,15 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
     protected abstract void saveLabel(final INoteLabel newLabel);
 
     protected void onPitchChanged(final AbstractSliderButton slider, final int pitch) {
-        if (isOverlay) {
+        if (isOverlay)
             instrumentScreen.setPitch(pitch);
-            instrumentScreen.notesIterable().forEach(NoteButton::updateNoteLabel);
 
+        // Directly save the pitch if it is being modified
+        if (isOverlay && instrumentScreen.isTranposed()) {
+            savePitch(pitch);
+            ModClientConfigs.CONFIGS.save();
+        } else
             queueToSave("pitch", () -> savePitch(pitch));
-        } else {
-            ModClientConfigs.PITCH.set(pitch);
-        }
     }
     protected void savePitch(final int newPitch) {
         ModClientConfigs.PITCH.set(newPitch);
@@ -355,18 +357,17 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
     }
 
 
-    // Make pressing notes possible with keyboard
     @Override
     public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
-        // Only pass when it is a note key
-        if (isOverlay && (instrumentScreen.getNoteByKey(pKeyCode) != null))
+        // Pass keys to the instrument screen if they are consumed
+        if (isOverlay && instrumentScreen.isKeyConsumed(pKeyCode, pScanCode))
             instrumentScreen.keyPressed(pKeyCode, pScanCode, pModifiers);
 
         return super.keyPressed(pKeyCode, pScanCode, pModifiers);
     }
     @Override
     public boolean keyReleased(int pKeyCode, int pScanCode, int pModifiers) {
-        if (isOverlay && (instrumentScreen.getNoteByKey(pKeyCode) != null))
+        if (isOverlay && instrumentScreen.isKeyConsumed(pKeyCode, pScanCode))
             instrumentScreen.keyReleased(pKeyCode, pScanCode, pModifiers);
 
         return super.keyReleased(pKeyCode, pScanCode, pModifiers);
