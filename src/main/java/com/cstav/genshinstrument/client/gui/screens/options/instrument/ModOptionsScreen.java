@@ -20,16 +20,22 @@ import net.minecraft.network.chat.Component;
 public class ModOptionsScreen extends Screen {
 
     public final @Nullable AbstractInstrumentScreen instrumentScreen;
+    public final Screen lastScreen;
+
     public final boolean isOverlay;
 
-    public ModOptionsScreen(Component pTitle, AbstractInstrumentScreen instrumentScreen) {
+    public ModOptionsScreen(Component pTitle, AbstractInstrumentScreen instrumentScreen, Screen lastScreen) {
         super(pTitle);
         this.instrumentScreen = instrumentScreen;
+        this.lastScreen = lastScreen;
 
         this.isOverlay = instrumentScreen != null;
     }
-    public ModOptionsScreen(Component pTitle) {
-        this(pTitle, null);
+    public ModOptionsScreen(Component pTitle, AbstractInstrumentScreen instrumentScreen) {
+        this(pTitle, instrumentScreen, null);
+    }
+    public ModOptionsScreen(Component pTitle, Screen lastScreen) {
+        this(pTitle, null, lastScreen);
     }
 
 
@@ -83,6 +89,22 @@ public class ModOptionsScreen extends Screen {
             instrumentScreen.resize(minecraft, width, height);
             
         super.resize(minecraft, width, height);
+    }
+
+
+    @Override
+    public boolean isPauseScreen() {
+        return instrumentScreen == null;
+    }
+
+    @Override
+    public void onClose() {
+        onSave();
+
+        if (lastScreen != null)
+            minecraft.setScreen(lastScreen);
+        else
+            super.onClose();
     }
 
 
