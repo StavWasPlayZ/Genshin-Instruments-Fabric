@@ -102,7 +102,7 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
      * Gets a {@link NoteButton} based on the location of the note as described by the given identifier.
      */
     public NoteButton getNoteButton(final NoteGridButtonIdentifier noteIdentifier) throws IndexOutOfBoundsException {
-        return getNoteButton(noteIdentifier.row, noteIdentifier.column);
+        return getNoteButton(noteIdentifier.row, noteGrid.getFlippedColumn(noteIdentifier.column));
     }
 
     public NoteButton getNoteButton(final int row, final int column) throws IndexOutOfBoundsException {
@@ -225,6 +225,43 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
      */
     protected int getLayerAddition(final int index) {
         return index * (getNoteSize() + NoteGrid.getPaddingVert()*2);
+    }
+
+
+
+    @Override
+    public boolean isMidiInstrument() {
+        // idk how to handle these, nor do i really care tbh
+        return (rows() == 7) && !isSSTI();
+    }
+
+    @Override
+    public boolean allowMidiOverflow() {
+        return true;
+    }
+
+
+    @Override
+    protected NoteButton handleMidiPress(int note, int pitch) {
+
+        final int layoutNote = note % 12;
+        final boolean higherThan3 = layoutNote > pitch + 4;
+
+        // Handle transposition
+        final boolean shouldSharpen = shouldSharpen(layoutNote, higherThan3, pitch);
+        final boolean shouldFlatten = shouldFlatten(shouldSharpen);
+
+        transposeMidi(shouldSharpen, shouldFlatten);
+
+
+        final int playedNote = note + (shouldFlatten ? 1 : shouldSharpen ? -1 : 0);
+
+        final int currNote = ((playedNote + (higherThan3 ? 1 : 0)) / 2)
+            // 12th note should go to the next column
+            + playedNote / (12 + pitch);
+
+        return getNoteButton(currNote % rows(), currNote / rows());
+
     }
     
 }

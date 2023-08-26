@@ -10,7 +10,10 @@ import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screens.instrument.GenshinConsentScreen;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.NoteButton;
 import com.cstav.genshinstrument.client.gui.screens.options.instrument.BaseInstrumentOptionsScreen;
+import com.cstav.genshinstrument.client.gui.screens.options.instrument.ModOptionsScreen;
 import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings;
+import com.cstav.genshinstrument.client.midi.MidiController;
+import com.cstav.genshinstrument.event.MidiEvent.MidiEventArgs;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.networking.packet.instrument.CloseInstrumentPacket;
@@ -18,6 +21,7 @@ import com.cstav.genshinstrument.sound.NoteSound;
 import com.cstav.genshinstrument.util.InstrumentEntityData;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.platform.InputConstants.Type;
+import com.mojang.logging.LogUtils;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -202,6 +206,8 @@ public abstract class AbstractInstrumentScreen extends Screen {
 
     @Override
     protected void init() {
+        loadMidiDevices();
+        
         resetPitch();
         optionsScreen.init(minecraft, width, height);
 
@@ -225,6 +231,26 @@ public abstract class AbstractInstrumentScreen extends Screen {
 
         addRenderableWidget(button);
         return button;
+    }
+
+
+    protected void loadMidiDevices() {
+        final int infoIndex = ModClientConfigs.MIDI_DEVICE_INDEX.get();
+        if (infoIndex == -1)
+            return;
+
+
+        MidiController.reloadIfEmpty();
+        if (infoIndex > (MidiController.DEVICES.size() - 1)) {
+            LogUtils.getLogger().warn("MIDI device out of range; setting device to none");
+            ModClientConfigs.MIDI_DEVICE_INDEX.set(-1);
+            return;
+        }
+
+        if (!MidiController.isLoaded(infoIndex)) {
+            MidiController.loadDevice(infoIndex);
+            MidiController.openForListen();
+        }
     }
 
 
@@ -263,13 +289,11 @@ public abstract class AbstractInstrumentScreen extends Screen {
             return false;
 
         if (checkTranposeUpKey(pKeyCode, pScanCode)) {
-            setPitch(getPitch() + 1);
-            pitchChanged = true;
+            transposeUp();
             return true;
         }
         else if (checkTranposeDownKey(pKeyCode, pScanCode)) {
-            setPitch(getPitch() - 1);
-            pitchChanged = true;
+            transposeDown();
             return true;
         }
 
@@ -280,12 +304,26 @@ public abstract class AbstractInstrumentScreen extends Screen {
             return false;
 
         if (checkTranposeUpKey(pKeyCode, pScanCode) || checkTranposeDownKey(pKeyCode, pScanCode)) {
-            resetPitch();
-            pitchChanged = false;
+            resetTransposition();
             return true;
         }
 
         return false;
+    }
+
+
+    public void transposeUp() {
+        setPitch(getPitch() + 1);
+        pitchChanged = true;
+    }
+    public void transposeDown() {
+        setPitch(getPitch() - 1);
+        pitchChanged = true;
+    }
+
+    public void resetTransposition() {
+        resetPitch();
+        pitchChanged = false;
     }
 
     /**
@@ -376,11 +414,9 @@ public abstract class AbstractInstrumentScreen extends Screen {
         if (minecraft.screen instanceof AbstractInstrumentScreen)
             return Optional.of((AbstractInstrumentScreen)minecraft.screen);
 
-        if (minecraft.screen instanceof BaseInstrumentOptionsScreen) {
-            final BaseInstrumentOptionsScreen instrumentOptionsScreen = (BaseInstrumentOptionsScreen)minecraft.screen;
+        if (minecraft.screen instanceof ModOptionsScreen instrumentOptionsScreen)
             if (instrumentOptionsScreen.isOverlay)
                 return Optional.of(instrumentOptionsScreen.instrumentScreen);
-        }
 
         return Optional.empty();
     }
@@ -389,6 +425,179 @@ public abstract class AbstractInstrumentScreen extends Screen {
     @Override
     public boolean isPauseScreen() {
         return false;
+    }
+
+
+
+    /* ----------- MIDI implementations ----------- */
+
+    /**
+     * Defines wether this instrument can handle MIDI messages.
+     * Must override {@link AbstractInstrumentScreen#handleMidiPress} to function.
+     */
+    public boolean isMidiInstrument() {
+        return false;
+    }
+
+
+    private NoteButton pressedMidiNote = null;
+    public void onMidi(final MidiEventArgs args) {
+        if (!isMidiInstrument())
+            return;
+
+
+        // Release previously pressed notes    
+        if (pressedMidiNote != null)
+            pressedMidiNote.locked = false;
+
+        final byte[] message = args.message.getMessage();
+        // We only care for presses
+        if (message[0] != -112)
+            return;
+
+
+        // So we don't do tranpositions on a sharpened scale
+        resetTransposition();
+
+        final int note = handleMidiOverflow(getLowC(message[1]));
+        if (note == -99)
+            return;
+
+
+        //NOTE: Math.abs(getPitch()) was here instead, but transposition seems fair enough
+        final int pitch = 0;
+
+        pressedMidiNote = handleMidiPress(note, pitch);
+        if (pressedMidiNote != null)
+            pressedMidiNote.play();
+    }
+
+    /**
+     * Fires when a MIDI note is being pressed sucessfully, only if this is {@link AbstractInstrumentScreen#isMidiInstrument a midi instrument}.
+     * @param note The raw note being pressed by the MIDI device, {@link AbstractInstrumentScreen#getLowC relative to low C} {@code note % 12}
+     * @param pitch The scale played by the MIDI device; the absolute value of current pitch saved in the client configs (Always set to 0 here)
+     * @return The pressed note button. Null if none.
+     */
+    protected NoteButton handleMidiPress(int note, int pitch) {
+        return null;
+    }
+
+
+    protected boolean shouldSharpen(final int layoutNote, final boolean higherThan3, final int pitch) {
+        // Much testing and maths later
+        // The logic here is that accidentals only occur when the note number is
+        // the same divisable as the pitch itself
+        boolean shouldSharpen = (layoutNote % 2) != (pitch % 2);
+
+        // Negate logic for notes higher than 3 on the scale
+        if (higherThan3)
+            shouldSharpen = !shouldSharpen;
+
+        // Negate logic for notes beyond the 12th note
+        if (layoutNote < pitch)
+            shouldSharpen = !shouldSharpen;
+
+        return shouldSharpen;
+    }
+    /**
+     * Minecraft pitch limitations will want us to go down a pitch instead of up.
+     */
+    protected boolean shouldFlatten(final boolean shouldSharpen) {
+        return shouldSharpen && (getPitch() == NoteSound.MAX_PITCH);
+    }
+
+    protected void transposeMidi(final boolean shouldSharpen, final boolean shouldFlatten) {
+        if (shouldFlatten)
+            transposeDown();
+        else if (shouldSharpen)
+            transposeUp();
+    }
+
+
+    public boolean allowMidiOverflow() {
+        return false;
+    }
+
+    /**
+     * Extends the usual limitation of octaves by 2 by adjusting the pitch higher/lower
+     * when necessary
+     * @param note The current note
+     * @return The new shited (or not) note to handle, or -99 if overflows
+     */
+    protected int handleMidiOverflow(int note) {
+        if (!allowMidiOverflow() || !ModClientConfigs.EXTEND_OCTAVES.get()) {
+            if ((note < minMidiNote()) || (note >= maxMidiNote()))
+                return -99;
+            return note;
+        }
+
+
+        final int minPitch = NoteSound.MIN_PITCH, maxPitch = NoteSound.MAX_PITCH;
+
+        // Set the pitch
+        if (note < minMidiNote()) {
+            // Minecraft pitch limitations
+            if (note < minMidiOverflow())
+                return -99;
+
+            if (getPitch() != minPitch) {
+                setPitch(minPitch);
+                ModClientConfigs.PITCH.set(minPitch);
+            }
+        } else if (note >= maxMidiNote()) {
+            if (note >= maxMidiOverflow())
+                return -99;
+
+            if (getPitch() != maxPitch) {
+                setPitch(maxPitch);
+                ModClientConfigs.PITCH.set(maxPitch);
+            }
+        }
+
+        if (getPitch() == minPitch) {
+            // Check if we are an octave above
+            if (note >= minMidiNote()) {
+                // Reset if so
+                setPitch(0);
+                ModClientConfigs.PITCH.set(0);
+            }
+            // Shift the note to the lower octave
+            else
+                note -= minPitch;
+        }
+        else if (getPitch() == maxPitch) {
+            if (note < maxMidiNote()) {
+                setPitch(0);
+                ModClientConfigs.PITCH.set(0);
+            }
+            else
+                note -= maxPitch;
+        }
+
+        return note;
+    }
+
+    protected int minMidiNote() {
+        return 0;
+    }
+    protected int maxMidiNote() {
+        return NoteSound.MAX_PITCH * 3;
+    }
+
+    protected int maxMidiOverflow() {
+        return maxMidiNote() + 12;
+    }
+    protected int minMidiOverflow() {
+        return minMidiNote() - 12;
+    }
+
+
+    /**
+     * @return The MIDI note adjusted by -48, as well as the perferred shift accounted.
+     * Assumes middle C is 60 as per MIDI specifications.
+     */
+    protected int getLowC(final int note) {
+        return note - ModClientConfigs.OCTAVE_SHIFT.get() * 12 - 48;
     }
 
 }
