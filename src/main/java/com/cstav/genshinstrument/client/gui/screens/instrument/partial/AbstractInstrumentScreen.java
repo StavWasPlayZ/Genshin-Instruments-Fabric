@@ -21,7 +21,6 @@ import com.cstav.genshinstrument.sound.NoteSound;
 import com.cstav.genshinstrument.util.InstrumentEntityData;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.platform.InputConstants.Type;
-import com.mojang.logging.LogUtils;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -242,7 +241,7 @@ public abstract class AbstractInstrumentScreen extends Screen {
 
         MidiController.reloadIfEmpty();
         if (infoIndex > (MidiController.DEVICES.size() - 1)) {
-            LogUtils.getLogger().warn("MIDI device out of range; setting device to none");
+            GInstrumentMod.LOGGER.warn("MIDI device out of range; setting device to none");
             ModClientConfigs.MIDI_DEVICE_INDEX.set(-1);
             return;
         }
