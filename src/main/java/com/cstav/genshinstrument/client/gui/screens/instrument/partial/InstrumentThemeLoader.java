@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 
 import com.cstav.genshinstrument.event.impl.EventArgs;
+import com.cstav.genshinstrument.event.impl.EventArgs.Empty;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -214,31 +216,53 @@ public class InstrumentThemeLoader {
 
     
     public Color getNoteTheme() {
-        return noteTheme;
+        return getTheme(() -> noteTheme);
     }
     public void setNoteTheme(Color noteTheme) {
         this.noteTheme = noteTheme;
     }
     
     public Color getPressedNoteTheme() {
-        return pressedNoteTheme;
+        return getTheme(() -> pressedNoteTheme);
     }
     public void setPressedNoteTheme(Color pressedNoteTheme) {
         this.pressedNoteTheme = pressedNoteTheme;
     }
 
     public Color getLabelTheme() {
-        return labelTheme;
+        return getTheme(() -> labelTheme);
     }
     public void setLabelTheme(Color labelTheme) {
         this.labelTheme = labelTheme;
     }
 
     public Color getNoteRingTheme() {
-        return noteRingTheme;
+        return getTheme(() -> noteRingTheme);
     }
     public void setNoteRingTheme(Color noteRingTheme) {
         this.noteRingTheme = noteRingTheme;
+    }
+
+
+    protected Color getTheme(final Supplier<Color> theme) {
+        return getTheme(theme, Color.BLACK);
+    }
+
+    protected <T> T getTheme(final Supplier<T> theme, final T def) {
+        T _theme = theme.get();
+
+        if (_theme == null) {
+            LOGGER.warn("Requested theme not found, performing reload!");
+            onResourcesReload(new Empty());
+
+            _theme = theme.get();
+            if (_theme == null) {
+                LOGGER.error("Failed to load instrument resources!");
+                return def;
+            }
+        }
+
+        return _theme;
     }
 
 }
