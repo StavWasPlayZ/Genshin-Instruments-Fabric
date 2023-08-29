@@ -2,7 +2,6 @@ package com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.labe
 
 
 import com.cstav.genshinstrument.client.ClientUtil;
-import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 
 import net.minecraft.network.chat.Component;
@@ -32,10 +31,10 @@ public interface INoteLabel {
     /**
      * @return All the values of this note label type, filtering QWERTY if already using it.
      */
-    public static INoteLabel[] filterQwerty(final INoteLabel[] values, final INoteLabel qwerty) {
+    public static INoteLabel[] filterQwerty(INoteLabel[] values, INoteLabel currentLabel, INoteLabel qwerty) {
         // Ignore QWERTY if already using this layout
         // Or if the user already selected it
-        if (!ClientUtil.isOnQwerty() || (ModClientConfigs.GRID_LABEL_TYPE.get() == qwerty))
+        if (!ClientUtil.isOnQwerty() || (currentLabel.equals(qwerty)))
             return values;
 
 
@@ -44,7 +43,7 @@ public interface INoteLabel {
         // 2nd index to not go out of bounds
         int j = 0;
         for (int i = 0; i < values.length; i++) {
-            if (values[i] == qwerty)
+            if (values[i].equals(qwerty))
                 i++;
 
             result[j] = values[i];
