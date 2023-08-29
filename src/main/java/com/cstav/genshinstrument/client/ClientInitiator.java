@@ -66,9 +66,8 @@ public class ClientInitiator implements ClientModInitializer {
 
             ClientPlayNetworking.registerGlobalReceiver(
                 IModPacket.getChannelName(packetClass),
-                (client, handler, buf, sender) -> client.execute(() ->
+                (client, handler, buf, sender) ->
                     ModPacketHandler.handlePacket(client.player, sender, buf, packetClass, client::execute)
-                )
 			);
 
         }

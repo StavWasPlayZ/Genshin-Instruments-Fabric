@@ -46,9 +46,8 @@ public class ModPacketHandler {
 
             ServerPlayNetworking.registerGlobalReceiver(
                 IModPacket.getChannelName(packetClass),
-                (server, player, handler, buf, sender) -> server.execute(() ->
+                (server, player, handler, buf, sender) ->
                     handlePacket(player, sender, buf, packetClass, server::execute)
-                )
             );
 
         }
