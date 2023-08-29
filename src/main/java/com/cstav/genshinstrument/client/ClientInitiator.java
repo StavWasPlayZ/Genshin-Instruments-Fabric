@@ -4,11 +4,11 @@ import java.util.List;
 
 import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
-import com.cstav.genshinstrument.client.gui.screens.instrument.drum.AratakisGreatAndGloriousDrumScreen;
-import com.cstav.genshinstrument.client.gui.screens.instrument.floralzither.FloralZitherScreen;
-import com.cstav.genshinstrument.client.gui.screens.instrument.partial.InstrumentThemeLoader;
-import com.cstav.genshinstrument.client.gui.screens.instrument.vintagelyre.VintageLyreScreen;
-import com.cstav.genshinstrument.client.gui.screens.instrument.windsonglyre.WindsongLyreScreen;
+import com.cstav.genshinstrument.client.gui.screen.instrument.drum.AratakisGreatAndGloriousDrumScreen;
+import com.cstav.genshinstrument.client.gui.screen.instrument.floralzither.FloralZitherScreen;
+import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentThemeLoader;
+import com.cstav.genshinstrument.client.gui.screen.instrument.vintagelyre.VintageLyreScreen;
+import com.cstav.genshinstrument.client.gui.screen.instrument.windsonglyre.WindsongLyreScreen;
 import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings;
 import com.cstav.genshinstrument.event.ClientEvents;
 import com.cstav.genshinstrument.event.ResourcesLoadedEvent;
