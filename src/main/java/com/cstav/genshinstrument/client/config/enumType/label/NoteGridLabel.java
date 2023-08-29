@@ -1,13 +1,10 @@
 package com.cstav.genshinstrument.client.config.enumType.label;
 
-import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.NoteButton;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.label.INoteLabel;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.label.NoteLabelSupplier;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.notegrid.NoteGridButton;
-import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings;
 import com.cstav.genshinstrument.util.LabelUtil;
-import com.mojang.blaze3d.platform.InputConstants.Key;
 
 import net.minecraft.network.chat.Component;
 
@@ -18,12 +15,12 @@ import net.minecraft.network.chat.Component;
  */
 public enum NoteGridLabel implements INoteLabel {
     KEYBOARD_LAYOUT((note) -> INoteLabel.upperComponent(
-        InstrumentKeyMappings.GRID_INSTRUMENT_MAPPINGS[ng(note).column][ng(note).row].getDisplayName()
+        ng(note).getKey().getDisplayName()
     )),
-    QWERTY((note) -> Component.translatable(
-        InstrumentKeyMappings.GRID_INSTRUMENT_MAPPINGS[ng(note).column][ng(note).row].getName()
-            .substring("key.keyboard.".length()).toUpperCase()
-    )),
+    QWERTY((note) ->
+        INoteLabel.getQwerty(ng(note).getKey())
+    ),
+
     NOTE_NAME((note) -> Component.literal(
         note.getCutNoteName()
     )),
@@ -32,58 +29,20 @@ public enum NoteGridLabel implements INoteLabel {
     ),
     NONE(NoteLabelSupplier.EMPTY);
 
+
     private final NoteLabelSupplier labelSupplier;
     private NoteGridLabel(final NoteLabelSupplier labelSupplier) {
         this.labelSupplier = labelSupplier;
+    }
+
+    public static INoteLabel[] availableVals() {
+        return INoteLabel.filterQwerty(values(), QWERTY);
     }
 
 
     @Override
     public NoteLabelSupplier getLabelSupplier() {
         return labelSupplier;
-    }
-
-
-    private static Boolean hasQwerty;
-    private static boolean hasQwerty() {
-        if (hasQwerty != null)
-            return hasQwerty;
-
-
-        final String qwerty = "QWERTY";
-        final Key[] keyRow = InstrumentKeyMappings.GRID_INSTRUMENT_MAPPINGS[0];
-    
-        // Assuming there will be more than 6 entries here
-        for (int i = 0; i < qwerty.length(); i++) {
-            if (qwerty.charAt(i) != keyRow[i].getDisplayName().getString(1).charAt(0))
-                return hasQwerty = false;
-        }
-    
-        return hasQwerty = true;
-    }
-
-    
-    public static NoteGridLabel[] availableVals() {
-        final NoteGridLabel[] vals = values();
-
-        // Ignore QWERTY if already using this layout
-        if (hasQwerty() && (ModClientConfigs.GRID_LABEL_TYPE.get() != QWERTY)) {
-            final NoteGridLabel[] result = new NoteGridLabel[vals.length - 1];
-
-            // 2nd index to not go out of bounds
-            int j = 0;
-            for (int i = 0; i < vals.length; i++) {
-                if (vals[i] == QWERTY)
-                    i++;
-
-                result[j] = vals[i];
-                j++;
-            }
-
-            return result;
-        }
-
-        return vals;
     }
     
 

@@ -1,6 +1,10 @@
 package com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.label;
 
 
+import com.cstav.genshinstrument.client.ClientUtil;
+import com.cstav.genshinstrument.client.config.ModClientConfigs;
+import com.mojang.blaze3d.platform.InputConstants.Key;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
@@ -16,8 +20,43 @@ public interface INoteLabel {
         return Component.literal(component.getString().toUpperCase());
     }
 
+    
+    public static MutableComponent getQwerty(final Key key) {
+        final String keyName = key.getName();
+        return Component.literal(
+            // The QWERTY key is the last letter of the key name
+            String.valueOf(keyName.charAt(keyName.length() - 1)).toUpperCase()
+        );
+    }
+    
+    /**
+     * @return All the values of this note label type, filtering QWERTY if already using it.
+     */
+    public static INoteLabel[] filterQwerty(final INoteLabel[] values, final INoteLabel qwerty) {
+        // Ignore QWERTY if already using this layout
+        // Or if the user already selected it
+        if (!ClientUtil.isOnQwerty() || (ModClientConfigs.GRID_LABEL_TYPE.get() == qwerty))
+            return values;
 
-    public NoteLabelSupplier getLabelSupplier();
+
+        final INoteLabel[] result = new INoteLabel[values.length - 1];
+
+        // 2nd index to not go out of bounds
+        int j = 0;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] == qwerty)
+                i++;
+
+            result[j] = values[i];
+            j++;
+        }
+
+        return result;
+    }
+
+
+
+    public abstract NoteLabelSupplier getLabelSupplier();
     /**
      * @return The translation key of this label
      */

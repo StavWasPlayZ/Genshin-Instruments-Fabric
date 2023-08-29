@@ -4,7 +4,6 @@ import com.cstav.genshinstrument.client.gui.screen.instrument.drum.DrumNoteButto
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.NoteButton;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.label.INoteLabel;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.label.NoteLabelSupplier;
-import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings.DrumKeys;
 import com.cstav.genshinstrument.util.LabelUtil;
 
 import net.fabricmc.api.EnvType;
@@ -13,12 +12,13 @@ import net.minecraft.network.chat.Component;
 
 @Environment(EnvType.CLIENT)
 public enum DrumNoteLabel implements INoteLabel {
-	KEYBOARD_LAYOUT((note) -> {
-		final DrumNoteButton dnb = dn(note);
-		final DrumKeys keys = dnb.btnType.getKeys();
+	KEYBOARD_LAYOUT((note) ->
+		INoteLabel.upperComponent(dn(note).getKey().getDisplayName())
+	),
+	QWERTY((note) ->
+		INoteLabel.getQwerty(dn(note).getKey())
+	),
 
-		return INoteLabel.upperComponent((dnb.isRight ? keys.right : keys.left).getDisplayName());
-	}),
 	DON_KA((note) ->
 		Component.translatable(dn(note).btnType.getTransKey())
 	),
@@ -35,6 +35,11 @@ public enum DrumNoteLabel implements INoteLabel {
     private DrumNoteLabel(final NoteLabelSupplier supplier) {
         labelSupplier = supplier;
     }
+
+	public static INoteLabel[] availableVals() {
+        return INoteLabel.filterQwerty(values(), QWERTY);
+    }
+
 
 	@Override
 	public NoteLabelSupplier getLabelSupplier() {
