@@ -125,7 +125,7 @@ public class NoteGrid implements Iterable<NoteGridButton> {
         
         grid.pack();
         grid.setX((screenWidth - grid.getWidth()) / 2);
-        grid.setY((int)(screenHeight * vertAlignment));
+        grid.setY((int)((screenHeight - grid.getHeight()) * vertAlignment));
         grid.pack();
         
         // Initialize all the notes
