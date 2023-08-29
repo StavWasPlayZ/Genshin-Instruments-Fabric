@@ -1,6 +1,6 @@
 package com.cstav.genshinstrument.client;
 
-import com.cstav.genshinstrument.client.gui.screens.options.instrument.GridInstrumentOptionsScreen;
+import com.cstav.genshinstrument.client.gui.screen.options.instrument.GridInstrumentOptionsScreen;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 
