@@ -15,7 +15,7 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
 @Environment(EnvType.CLIENT)
-public class GridInstrumentOptionsScreen extends AbstractInstrumentOptionsScreen {
+public class GridInstrumentOptionsScreen extends BaseInstrumentOptionsScreen {
 
     public GridInstrumentOptionsScreen(final AbstractGridInstrumentScreen screen) {
         super(screen);
@@ -27,7 +27,7 @@ public class GridInstrumentOptionsScreen extends AbstractInstrumentOptionsScreen
 
     @Override
     public NoteGridLabel[] getLabels() {
-        return NoteGridLabel.values();
+        return NoteGridLabel.availableVals();
     }
     @Override
     public NoteGridLabel getCurrentLabel() {

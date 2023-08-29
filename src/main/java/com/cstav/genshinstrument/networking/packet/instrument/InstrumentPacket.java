@@ -2,12 +2,15 @@ package com.cstav.genshinstrument.networking.packet.instrument;
 
 import java.util.Optional;
 
+import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.NoteButton;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.networking.packet.INoteIdentifierSender;
 import com.cstav.genshinstrument.sound.NoteSound;
 import com.cstav.genshinstrument.util.InstrumentEntityData;
 import com.cstav.genshinstrument.util.ServerUtil;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -36,6 +39,14 @@ public class InstrumentPacket implements INoteIdentifierSender {
         this.instrumentId = instrumentId;
         this.noteIdentifier = noteIdentifier;
     }
+    @Environment(EnvType.CLIENT)
+    public InstrumentPacket(final NoteButton noteButton, final BlockPos pos) {
+        this(pos, noteButton.getSound(), noteButton.getPitch(),
+            noteButton.instrumentScreen.interactionHand,
+            noteButton.instrumentScreen.getInstrumentId(), noteButton.getIdentifier()
+        );
+    }
+
     public InstrumentPacket(FriendlyByteBuf buf) {
         pos = buf.readBlockPos();
         sound = NoteSound.readFromNetwork(buf);

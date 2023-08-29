@@ -2,16 +2,19 @@ package com.cstav.genshinstrument.util;
 
 import static java.util.Map.entry;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
-import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractInstrumentScreen;
-import com.cstav.genshinstrument.client.gui.screens.instrument.partial.notegrid.AbstractGridInstrumentScreen;
-import com.cstav.genshinstrument.client.gui.screens.instrument.partial.notegrid.NoteGridButton;
+import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.NoteButton;
+import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.label.INoteLabel;
+
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 public abstract class LabelUtil {
-    
+
     public static final String[]
         DO_RE_MI = {
             "do", "re", "mi", "fa", "so", "la", "ti"
@@ -22,6 +25,12 @@ public abstract class LabelUtil {
             'C', 'D', 'E', 'F', 'G', 'A', 'B'
         }
     ;
+
+    private static final HashMap<Character, String> ABC_TO_DO_RE_MI = new HashMap<>();
+    static {
+        for (int i = 0; i < ABC.length; i++)
+            ABC_TO_DO_RE_MI.put(ABC[i], DO_RE_MI[i]);
+    }
 
 
     // Pitch system implementation
@@ -70,36 +79,49 @@ public abstract class LabelUtil {
         final String[] scale = NOTE_SCALES.get(baseNote);
         return scale[(CommonUtil.doublyPyWrap(pitch, scale.length))];
     }
-    public static String getNoteName(final NoteGridButton gridButton) {
-        final AbstractGridInstrumentScreen screen = (AbstractGridInstrumentScreen) gridButton.instrumentScreen;
-        return getNoteName(screen.getPitch(), screen.noteLayout(), getNoteOffset(gridButton));
-    }
-    public static int getNoteOffset(final NoteGridButton gridButton) {
-        return gridButton.row + gridButton.column * ((AbstractGridInstrumentScreen)gridButton.instrumentScreen).rows();
+
+    public static String getCutNoteName(final String noteName) {
+        if (noteName.isEmpty())
+            return "";
+            
+        String result = String.valueOf(noteName.charAt(0));
+        if (!ModClientConfigs.ACCURATE_NOTES.get())
+            result += noteName.substring(1)
+                .replaceAll("##", "\u00D7")
+                .replaceAll("#", "♯")
+                .replaceAll("b", "\u266D");
+
+        return result;
     }
 
-    public static String getCutNoteName(final NoteGridButton gridButton) {
-        return getCutNoteName(LabelUtil.getNoteName(gridButton));
-    }
-    public static String getCutNoteName(String noteName) {
-        if (ModClientConfigs.ACCURATE_NOTES.get())
-            noteName = String.valueOf(noteName.charAt(0));
-
-        return noteName;
-    }
-
-    public static int getABCOffset(final char note, final AbstractInstrumentScreen screen) {
-        for (int i = 0; i < ABC.length; i++) {
-            if (note == ABC[i])
-                return i;
+    public static Component toDoReMi(final String noteName) {
+        if (noteName.isEmpty()) {
+            GInstrumentMod.LOGGER.warn("Cannot convert empty note to Do Re Mi!");
+            return Component.empty();
         }
 
-        GInstrumentMod.LOGGER.warn("Could not get note letter "+note+" for "+screen.getInstrumentId()+"!");
-        return 0;
+        return Component.translatable(INoteLabel.TRANSLATABLE_PATH + ABC_TO_DO_RE_MI.get(noteName.charAt(0)))
+            .append(noteName.substring(1));
     }
 
-    public static int getABCOffset(final NoteGridButton gridButton) {
-        return getABCOffset(getNoteName(gridButton).charAt(0), gridButton.instrumentScreen);
+
+    public static int getABCOffset(final NoteButton noteButton) {
+        final ResourceLocation instrumentId = noteButton.instrumentScreen.getInstrumentId();
+        final String noteName = noteButton.getNoteName();
+
+        if (noteName.isEmpty()) {
+            GInstrumentMod.LOGGER.warn("Cannot get ABC offset for an instrument without a note layout! ("+instrumentId+")");
+            return 0;
+        }
+
+        final char note = noteName.charAt(0);
+
+        for (int i = 0; i < ABC.length; i++)
+            if (note == ABC[i])
+                return i;
+
+        GInstrumentMod.LOGGER.warn("Could not get note "+note+" for instrument "+noteButton.instrumentScreen.getInstrumentId()+"!");
+        return 0;
     }
 
 }
