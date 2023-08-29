@@ -4,10 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.cstav.genshinstrument.GInstrumentMod;
+import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.InstrumentThemeLoader;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.NoteButton;
-import com.cstav.genshinstrument.client.gui.screens.options.instrument.AbstractInstrumentOptionsScreen;
+import com.cstav.genshinstrument.client.gui.screens.options.instrument.BaseInstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.gui.screens.options.instrument.DrumOptionsScren;
 import com.cstav.genshinstrument.client.gui.screens.options.widget.copied.LinearLayoutWidget;
 import com.cstav.genshinstrument.client.gui.screens.options.widget.copied.LinearLayoutWidget.Orientation;
@@ -19,21 +20,21 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 
 @Environment(EnvType.CLIENT)
-// ikik im funny, long name, thank you
 public class AratakisGreatAndGloriousDrumScreen extends AbstractInstrumentScreen {
-    public static final String INSTRUMENT_ID = "glorious_drum";
+    public static final ResourceLocation INSTRUMENT_ID = new ResourceLocation(GInstrumentMod.MODID, "glorious_drum");
+    public static final String[] NOTE_LAYOUT = {"D", "G"};
 
     public AratakisGreatAndGloriousDrumScreen(InteractionHand hand) {
         super(hand);
     }
     @Override
     public ResourceLocation getInstrumentId() {
-        return new ResourceLocation(GInstrumentMod.MODID, INSTRUMENT_ID);
+        return INSTRUMENT_ID;
     }
 
     @Override
     public ResourceLocation getNoteSymbolsLocation() {
-        return getResourceFromRoot("note/notes.png");
+        return getResourceFromRoot("note/notes.png", false);
     }
 
     
@@ -47,7 +48,7 @@ public class AratakisGreatAndGloriousDrumScreen extends AbstractInstrumentScreen
     }
 
     @Override
-    protected AbstractInstrumentOptionsScreen initInstrumentOptionsScreen() {
+    protected BaseInstrumentOptionsScreen initInstrumentOptionsScreen() {
         return new DrumOptionsScren(this);
     }
 
@@ -103,10 +104,53 @@ public class AratakisGreatAndGloriousDrumScreen extends AbstractInstrumentScreen
     }
     
 
-    private static final InstrumentThemeLoader THEME_LOADER = initThemeLoader(GInstrumentMod.MODID, INSTRUMENT_ID);
+    @Override
+    public String[] noteLayout() {
+        return NOTE_LAYOUT;
+    }
+
+    private static final InstrumentThemeLoader THEME_LOADER = new InstrumentThemeLoader(INSTRUMENT_ID);
     @Override
     public InstrumentThemeLoader getThemeLoader() {
         return THEME_LOADER;
+    }
+
+    
+
+    @Override
+    public boolean isMidiInstrument() {
+        return true;
+    }
+
+    @Override
+    protected NoteButton handleMidiPress(int note, int pitch) {
+        final boolean isKa = (ddt() == DominentDrumType.KA) || ((ddt() == DominentDrumType.BOTH) && (note >= 12));
+
+        setPitch(note - (isKa ? 19 : 2));
+
+        for (final NoteButton noteButton : notesIterable()) {
+            final DrumNoteButton dnb = (DrumNoteButton) noteButton;
+            if ((dnb.isRight == !isKa) && (dnb.btnType == (isKa ? DrumButtonType.KA : DrumButtonType.DON)))
+                return dnb;
+        }
+
+        return null;
+    }
+
+    @Override
+    protected int minMidiNote() {
+        return ((ddt() == DominentDrumType.BOTH) || ddt() == DominentDrumType.DON) ? -10 : 7;
+    }
+    @Override
+    protected int maxMidiNote() {
+        return ((ddt() == DominentDrumType.BOTH) || ddt() == DominentDrumType.KA) ? 32 : 15;
+    }
+
+    /**
+     * Shorthand for {@code ModClientConfigs.DOMINENT_DRUM_TYPE.get()}
+     */
+    private final static DominentDrumType ddt() {
+        return ModClientConfigs.DOMINENT_DRUM_TYPE.get();
     }
     
 }

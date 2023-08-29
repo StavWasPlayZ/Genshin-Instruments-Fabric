@@ -5,6 +5,7 @@ import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractInstrumentScreen;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.ByPlayer.ByPlayerArgs;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEventArgs;
+import com.cstav.genshinstrument.event.MidiEvent.MidiEventArgs;
 import com.cstav.genshinstrument.event.PosePlayerArmEvent.PosePlayerArmEventArgs;
 import com.cstav.genshinstrument.sound.NoteSound;
 import com.cstav.genshinstrument.util.InstrumentEntityData;
@@ -26,6 +27,7 @@ public abstract class ClientEvents {
         PosePlayerArmEvent.EVENT.register(ClientEvents::posePlayerArmEvent);
         ClientTickEvents.START_CLIENT_TICK.register(ClientEvents::onClientTick);
         InstrumentPlayedEvent.EVENT.register(ClientEvents::onInstrumentPlayed);
+        MidiEvent.EVENT.register(ClientEvents::onMidiEvent);
     }
 
     // Handle block instrument arm pose
@@ -77,5 +79,9 @@ public abstract class ClientEvents {
         });
     }
     
+    // Subscribe active instruments to a MIDI event
+    public static void onMidiEvent(final MidiEventArgs args) {
+        AbstractInstrumentScreen.getCurrentScreen(Minecraft.getInstance()).ifPresent((screen) -> screen.onMidi(args));
+    }
 
 }

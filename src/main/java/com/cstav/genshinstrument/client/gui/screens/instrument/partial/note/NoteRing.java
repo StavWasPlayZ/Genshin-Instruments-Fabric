@@ -2,16 +2,15 @@ package com.cstav.genshinstrument.client.gui.screens.instrument.partial.note;
 
 import java.awt.Point;
 
-import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.ClientUtil;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractInstrumentScreen;
+import com.cstav.genshinstrument.client.gui.screens.instrument.partial.InstrumentThemeLoader;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.animation.RingAnimationController;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.resources.ResourceLocation;
 
 @Environment(EnvType.CLIENT)
 public class NoteRing {
@@ -35,7 +34,7 @@ public class NoteRing {
     }
     
     
-    public void render(final PoseStack poseStack) {
+    public void render(final PoseStack stack, final InstrumentThemeLoader themeLoader) {
         if (!ringAnimation.isPlaying())
             return;
 
@@ -44,12 +43,10 @@ public class NoteRing {
         final Point ringCenter = ClientUtil.getInitCenter(note.getInitX(), note.getInitY(), note.instrumentScreen.getNoteSize(), size);
 
 
-        ClientUtil.displaySprite(
-            new ResourceLocation(GInstrumentMod.MODID, AbstractInstrumentScreen.getGlobalRootPath() + RING_GLOB_FILENAME)
-        );
-        ClientUtil.setShaderColor(note.instrumentScreen.getThemeLoader().getNoteTheme(), alpha);
+        ClientUtil.setShaderColor(themeLoader.getNoteRingTheme(), alpha);
+        ClientUtil.displaySprite(AbstractInstrumentScreen.getInternalResourceFromGlob(RING_GLOB_FILENAME));
 
-        GuiComponent.blit(poseStack,
+        GuiComponent.blit(stack,
             ringCenter.x, ringCenter.y,
             0, 0,
             size, size,
