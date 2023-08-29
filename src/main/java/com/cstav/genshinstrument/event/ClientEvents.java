@@ -2,7 +2,7 @@ package com.cstav.genshinstrument.event;
 
 import com.cstav.genshinstrument.block.partial.AbstractInstrumentBlock;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
-import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractInstrumentScreen;
+import com.cstav.genshinstrument.client.gui.screen.instrument.partial.AbstractInstrumentScreen;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.ByPlayer.ByPlayerArgs;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEventArgs;
 import com.cstav.genshinstrument.event.MidiEvent.MidiEventArgs;

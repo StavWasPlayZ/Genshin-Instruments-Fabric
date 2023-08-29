@@ -1,7 +1,7 @@
 package com.cstav.genshinstrument.item;
 
 import com.cstav.genshinstrument.client.ModArmPose;
-import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractInstrumentScreen;
+import com.cstav.genshinstrument.client.gui.screen.instrument.partial.AbstractInstrumentScreen;
 import com.cstav.genshinstrument.event.PosePlayerArmEvent.PosePlayerArmEventArgs;
 import com.cstav.genshinstrument.networking.OpenInstrumentPacketSender;
 import com.cstav.genshinstrument.util.ServerUtil;
