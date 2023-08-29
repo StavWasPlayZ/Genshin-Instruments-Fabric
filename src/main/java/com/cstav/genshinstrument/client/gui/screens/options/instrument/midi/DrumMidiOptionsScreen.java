@@ -7,10 +7,10 @@ import com.cstav.genshinstrument.client.gui.screens.instrument.partial.AbstractI
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.components.CycleButton;
+import net.minecraft.client.gui.components.GridWidget;
+import net.minecraft.client.gui.components.GridWidget.RowHelper;
+import net.minecraft.client.gui.components.SpacerWidget;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.layouts.GridLayout;
-import net.minecraft.client.gui.layouts.GridLayout.RowHelper;
-import net.minecraft.client.gui.layouts.SpacerElement;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -23,10 +23,10 @@ public class DrumMidiOptionsScreen extends MidiOptionsScreen {
     }
 
     @Override
-    protected void initOptionsGrid(GridLayout grid, RowHelper rowHelper) {
+    protected void initOptionsGrid(GridWidget grid, RowHelper rowHelper) {
         super.initOptionsGrid(grid, rowHelper);
 
-        rowHelper.addChild(SpacerElement.height(15), 2);
+        rowHelper.addChild(SpacerWidget.height(15), 2);
 
         final CycleButton<DominentDrumType> dominentDrumType = CycleButton.<DominentDrumType>builder((type) -> Component.translatable(type.getKey()))
             .withValues(DominentDrumType.values())
