@@ -32,7 +32,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
-public abstract class BaseInstrumentOptionsScreen extends ModOptionsScreen {
+public abstract class BaseInstrumentOptionsScreen extends AbstractInstrumentOptionsScreen {
     public static final MutableComponent MIDI_OPTIONS = Component.translatable("label.genshinstrument.midiOptions");
 
     private static final String SOUND_CHANNEL_KEY = "button.genshinstrument.audioChannels",
