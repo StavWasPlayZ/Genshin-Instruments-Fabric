@@ -19,24 +19,24 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 @Environment(EnvType.CLIENT)
-public class ModOptionsScreen extends Screen {
+public abstract class AbstractInstrumentOptionsScreen extends Screen {
 
     public final @Nullable AbstractInstrumentScreen instrumentScreen;
     public final Screen lastScreen;
 
     public final boolean isOverlay;
 
-    public ModOptionsScreen(Component pTitle, AbstractInstrumentScreen instrumentScreen, Screen lastScreen) {
+    public AbstractInstrumentOptionsScreen(Component pTitle, AbstractInstrumentScreen instrumentScreen, Screen lastScreen) {
         super(pTitle);
         this.instrumentScreen = instrumentScreen;
         this.lastScreen = lastScreen;
 
         this.isOverlay = instrumentScreen != null;
     }
-    public ModOptionsScreen(Component pTitle, AbstractInstrumentScreen instrumentScreen) {
+    public AbstractInstrumentOptionsScreen(Component pTitle, AbstractInstrumentScreen instrumentScreen) {
         this(pTitle, instrumentScreen, null);
     }
-    public ModOptionsScreen(Component pTitle, Screen lastScreen) {
+    public AbstractInstrumentOptionsScreen(Component pTitle, Screen lastScreen) {
         this(pTitle, null, lastScreen);
     }
 
