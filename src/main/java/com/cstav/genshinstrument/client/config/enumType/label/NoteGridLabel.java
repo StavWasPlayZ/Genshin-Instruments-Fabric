@@ -1,12 +1,13 @@
 package com.cstav.genshinstrument.client.config.enumType.label;
 
+import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.NoteButton;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.label.INoteLabel;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.note.label.NoteLabelSupplier;
-import com.cstav.genshinstrument.client.gui.screens.instrument.partial.notegrid.AbstractGridInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screens.instrument.partial.notegrid.NoteGridButton;
 import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings;
 import com.cstav.genshinstrument.util.LabelUtil;
+import com.mojang.blaze3d.platform.InputConstants.Key;
 
 import net.minecraft.network.chat.Component;
 
@@ -19,27 +20,17 @@ public enum NoteGridLabel implements INoteLabel {
     KEYBOARD_LAYOUT((note) -> INoteLabel.upperComponent(
         InstrumentKeyMappings.GRID_INSTRUMENT_MAPPINGS[ng(note).column][ng(note).row].getDisplayName()
     )),
+    QWERTY((note) -> Component.translatable(
+        InstrumentKeyMappings.GRID_INSTRUMENT_MAPPINGS[ng(note).column][ng(note).row].getName()
+            .substring("key.keyboard.".length()).toUpperCase()
+    )),
     NOTE_NAME((note) -> Component.literal(
-        LabelUtil.getCutNoteName(ng(note))
+        note.getCutNoteName()
     )),
     DO_RE_MI((note) ->
-        Component.translatable(
-            INoteLabel.TRANSLATABLE_PATH + LabelUtil.DO_RE_MI[ng(note).row % gs(note).rows()]
-        ).append(LabelUtil.getCutNoteName(ng(note)).substring(1))
+        LabelUtil.toDoReMi(note.getCutNoteName())
     ),
-    ABC_1((note) -> Component.literal(
-        String.valueOf(LabelUtil.ABC[ng(note).row]) + (gs(note).columns() - ng(note).column)
-    )),
-    ABC_2((note) -> Component.literal(
-        (
-            (ng(note).column == 0) ? "A" :
-            (ng(note).column == 1) ? "B" :
-            "C"
-        ) + (ng(note).row + 1)
-    )),
-
     NONE(NoteLabelSupplier.EMPTY);
-        
 
     private final NoteLabelSupplier labelSupplier;
     private NoteGridLabel(final NoteLabelSupplier labelSupplier) {
@@ -51,16 +42,55 @@ public enum NoteGridLabel implements INoteLabel {
     public NoteLabelSupplier getLabelSupplier() {
         return labelSupplier;
     }
-    @Override
-    public NoteGridLabel[] getValues() {
-        return values();
+
+
+    private static Boolean hasQwerty;
+    private static boolean hasQwerty() {
+        if (hasQwerty != null)
+            return hasQwerty;
+
+
+        final String qwerty = "QWERTY";
+        final Key[] keyRow = InstrumentKeyMappings.GRID_INSTRUMENT_MAPPINGS[0];
+    
+        // Assuming there will be more than 6 entries here
+        for (int i = 0; i < qwerty.length(); i++) {
+            if (qwerty.charAt(i) != keyRow[i].getDisplayName().getString(1).charAt(0))
+                return hasQwerty = false;
+        }
+    
+        return hasQwerty = true;
     }
 
+    
+    public static NoteGridLabel[] availableVals() {
+        final NoteGridLabel[] vals = values();
+
+        // Ignore QWERTY if already using this layout
+        if (hasQwerty() && (ModClientConfigs.GRID_LABEL_TYPE.get() != QWERTY)) {
+            final NoteGridLabel[] result = new NoteGridLabel[vals.length - 1];
+
+            // 2nd index to not go out of bounds
+            int j = 0;
+            for (int i = 0; i < vals.length; i++) {
+                if (vals[i] == QWERTY)
+                    i++;
+
+                result[j] = vals[i];
+                j++;
+            }
+
+            return result;
+        }
+
+        return vals;
+    }
+    
 
     private static NoteGridButton ng(final NoteButton btn) {
         return (NoteGridButton)btn;
     }
-    private static AbstractGridInstrumentScreen gs(final NoteButton btn) {
-        return (AbstractGridInstrumentScreen)btn.instrumentScreen;
-    }
+    // private static AbstractGridInstrumentScreen gs(final NoteButton btn) {
+    //     return (AbstractGridInstrumentScreen)btn.instrumentScreen;
+    // }
 }
