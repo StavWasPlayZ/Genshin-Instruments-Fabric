@@ -3,6 +3,8 @@ package com.cstav.genshinstrument.client;
 import java.awt.Color;
 import java.awt.Point;
 
+import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings;
+import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.fabricmc.api.EnvType;
@@ -16,6 +18,25 @@ import net.minecraft.resources.ResourceLocation;
 @Environment(EnvType.CLIENT)
 public class ClientUtil {
     public static final int GRID_HORZ_PADDING = 4, GRID_VERT_PADDING = 2;
+
+
+    private static Boolean onQwerty;
+    public static boolean isOnQwerty() {
+        if (onQwerty != null)
+            return onQwerty;
+
+
+        final String qwerty = "QWERTY";
+        final Key[] keyRow = InstrumentKeyMappings.GRID_INSTRUMENT_MAPPINGS[0];
+    
+        // Assuming there will be more than 6 entries here
+        for (int i = 0; i < qwerty.length(); i++) {
+            if (qwerty.charAt(i) != keyRow[i].getDisplayName().getString(1).charAt(0))
+                return onQwerty = false;
+        }
+    
+        return onQwerty = true;
+    }
     
     
     /**
