@@ -55,7 +55,7 @@ public interface INoteLabel {
 
 
 
-    public abstract NoteLabelSupplier getLabelSupplier();
+    public NoteLabelSupplier getLabelSupplier();
     /**
      * @return The translation key of this label
      */
