@@ -28,6 +28,7 @@ public enum NoteGridLabel implements INoteLabel {
     DO_RE_MI((note) ->
         LabelUtil.toDoReMi(note.getCutNoteName())
     ),
+    
     NONE(NoteLabelSupplier.EMPTY);
 
 
