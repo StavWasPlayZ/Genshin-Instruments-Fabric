@@ -80,12 +80,12 @@ public abstract class LabelUtil {
         return scale[(CommonUtil.doublyPyWrap(pitch, scale.length))];
     }
 
-    public static String getCutNoteName(final String noteName) {
+    public static String formatNoteName(final String noteName, final boolean omitIfAccurate) {
         if (noteName.isEmpty())
             return "";
             
         String result = String.valueOf(noteName.charAt(0));
-        if (!ModClientConfigs.ACCURATE_NOTES.get())
+        if (!(omitIfAccurate && ModClientConfigs.ACCURATE_NOTES.get()))
             result += noteName.substring(1)
                 .replaceAll("##", "\u00D7")
                 .replaceAll("#", "♯")
