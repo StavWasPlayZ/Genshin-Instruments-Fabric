@@ -2,11 +2,10 @@ package com.cstav.genshinstrument.client.gui.screen.instrument.partial.note;
 
 import java.util.ArrayList;
 
-import com.cstav.genshinstrument.client.ClientUtil;
-import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.AbstractInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentThemeLoader;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.animation.NoteAnimationController;
+import com.cstav.genshinstrument.client.util.ClientUtil;
 import com.cstav.genshinstrument.util.CommonUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
 
@@ -185,8 +184,7 @@ public class NoteButtonRenderer {
         foreignPlaying = isForeign;
 
         noteAnimation.play(isForeign);
-        if (ModClientConfigs.EMIT_RING_ANIMATION.get())
-            rings.add(new NoteRing(noteButton, isForeign));
+        rings.add(new NoteRing(noteButton, isForeign));
     }
 
 

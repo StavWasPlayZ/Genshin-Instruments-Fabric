@@ -1,5 +1,6 @@
 package com.cstav.genshinstrument.client.gui.screen.instrument.partial;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -9,10 +10,11 @@ import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screen.instrument.GenshinConsentScreen;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.NoteButton;
-import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.BaseInstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.AbstractInstrumentOptionsScreen;
+import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.BaseInstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings;
 import com.cstav.genshinstrument.client.midi.MidiController;
+import com.cstav.genshinstrument.client.midi.MidiOutOfRangeException;
 import com.cstav.genshinstrument.event.MidiEvent.MidiEventArgs;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
@@ -21,6 +23,7 @@ import com.cstav.genshinstrument.sound.NoteSound;
 import com.cstav.genshinstrument.util.InstrumentEntityData;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.platform.InputConstants.Type;
+import com.mojang.logging.LogUtils;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -70,6 +73,33 @@ public abstract class AbstractInstrumentScreen extends Screen {
 
     public void resetPitch() {
         initPitch(this::setPitch);
+    }
+
+
+    public double volume = ModClientConfigs.VOLUME.get();
+    /**
+     * Convinience method to get the {@link AbstractInstrumentScreen#volume volume}
+     * of this instrument as a {@code float}
+     */
+    public float volume() {
+        return (float)volume;
+    }
+
+
+    /**
+     * Sets the sounds of this instruments.
+     * @apiNote This method should generally be overitten by subclasses to keep their respected order of notes
+     */
+    public void setNoteSounds(final NoteSound[] sounds) {
+        final Iterator<NoteButton> noteIterator = notesIterable().iterator();
+
+        int i = 0;
+        while (noteIterator.hasNext() && (i < sounds.length))
+            noteIterator.next().setSound(sounds[i++]);
+
+
+        if (noteIterator.hasNext() || (i < sounds.length))
+            LogUtils.getLogger().warn("Not all sounds could be set for this instrument!");
     }
 
 
@@ -429,10 +459,11 @@ public abstract class AbstractInstrumentScreen extends Screen {
 
 
     /* ----------- MIDI implementations ----------- */
+    public static final int MIN_MIDI_VELOCITY = 10;
 
     /**
      * Defines wether this instrument can handle MIDI messages.
-     * Must override {@link AbstractInstrumentScreen#handleMidiPress} to function.
+     * @apiNote Override {@link AbstractInstrumentScreen#handleMidiPress} to handle MIDI input
      */
     public boolean isMidiInstrument() {
         return false;
@@ -440,35 +471,65 @@ public abstract class AbstractInstrumentScreen extends Screen {
 
 
     private NoteButton pressedMidiNote = null;
+
     public void onMidi(final MidiEventArgs args) {
-        if (!isMidiInstrument())
+        if (!canPerformMidi(args))
             return;
-
-
-        // Release previously pressed notes    
-        if (pressedMidiNote != null)
-            pressedMidiNote.locked = false;
 
         final byte[] message = args.message.getMessage();
-        // We only care for presses
-        if (message[0] != -112)
-            return;
 
 
         // So we don't do tranpositions on a sharpened scale
         resetTransposition();
 
-        final int note = handleMidiOverflow(getLowC(message[1]));
-        if (note == -99)
+        final int note;
+        try {
+            note = handleMidiOverflow(getLowC(message[1]));
+        } catch (MidiOutOfRangeException e) {
             return;
+        }
 
 
         //NOTE: Math.abs(getPitch()) was here instead, but transposition seems fair enough
         final int pitch = 0;
 
+        // Handle dynamic touch
+        final double prevVolume = volume;
+        if (!ModClientConfigs.FIXED_TOUCH.get())
+            volume *= Math.max(MIN_MIDI_VELOCITY, message[2]) / 127D;
+
+
         pressedMidiNote = handleMidiPress(note, pitch);
         if (pressedMidiNote != null)
             pressedMidiNote.play();
+
+
+        volume = prevVolume;
+    }
+
+    protected boolean canPerformMidi(final MidiEventArgs args) {
+        if (!isMidiInstrument())
+            return false;
+
+        final byte[] message = args.message.getMessage();
+
+        // Release previously pressed notes    
+        if (pressedMidiNote != null)
+            pressedMidiNote.locked = false;
+
+        // We only care for press events:
+
+        // Ignore last 4 bits (don't care about the channel atm)
+        final int eventType = (message[0] >> 4) << 4;
+        if (eventType != -112)
+            return false;
+
+        if (!ModClientConfigs.ACCEPT_ALL_CHANNELS.get())
+            if ((message[0] - eventType) != ModClientConfigs.MIDI_CHANNEL.get())
+                return false;
+
+
+        return true;
     }
 
     /**
@@ -521,12 +582,14 @@ public abstract class AbstractInstrumentScreen extends Screen {
      * Extends the usual limitation of octaves by 2 by adjusting the pitch higher/lower
      * when necessary
      * @param note The current note
-     * @return The new shited (or not) note to handle, or -99 if overflows
+     * @return The new shifted (or not) note to handle
+     * @throws MidiOutOfRangeException If the pressed note exceeds the allowed MIDI range (overflows)
      */
-    protected int handleMidiOverflow(int note) {
+    protected int handleMidiOverflow(int note) throws MidiOutOfRangeException {
         if (!allowMidiOverflow() || !ModClientConfigs.EXTEND_OCTAVES.get()) {
             if ((note < minMidiNote()) || (note >= maxMidiNote()))
-                return -99;
+                throw new MidiOutOfRangeException();
+                
             return note;
         }
 
@@ -535,9 +598,8 @@ public abstract class AbstractInstrumentScreen extends Screen {
 
         // Set the pitch
         if (note < minMidiNote()) {
-            // Minecraft pitch limitations
             if (note < minMidiOverflow())
-                return -99;
+                throw new MidiOutOfRangeException();
 
             if (getPitch() != minPitch) {
                 setPitch(minPitch);
@@ -545,36 +607,39 @@ public abstract class AbstractInstrumentScreen extends Screen {
             }
         } else if (note >= maxMidiNote()) {
             if (note >= maxMidiOverflow())
-                return -99;
+                throw new MidiOutOfRangeException();
 
-            if (getPitch() != maxPitch) {
-                setPitch(maxPitch);
-                ModClientConfigs.PITCH.set(maxPitch);
-            }
+            if (getPitch() != maxPitch)
+                overflowMidi(maxPitch);
         }
 
+        // Check if we are an octave above/below
+        // and reset back to pitch C
         if (getPitch() == minPitch) {
-            // Check if we are an octave above
-            if (note >= minMidiNote()) {
-                // Reset if so
+            if (note >= minMidiNote())
                 setPitch(0);
-                ModClientConfigs.PITCH.set(0);
-            }
             // Shift the note to the higher octave
             else
                 note += 12;
         }
         else if (getPitch() == maxPitch) {
-            if (note < maxMidiNote()) {
+            if (note < maxMidiNote())
                 setPitch(0);
-                ModClientConfigs.PITCH.set(0);
-            }
             else
                 note -= 12;
         }
 
         return note;
     }
+
+    private void overflowMidi(final int desiredPitch) {
+        setPitch(desiredPitch);
+        // Reset pitch to C to avoid coming back down for a mess
+        if (!ModClientConfigs.PITCH.get().equals(0))
+            ModClientConfigs.PITCH.set(0);
+    }
+
+
 
     protected int minMidiNote() {
         return 0;

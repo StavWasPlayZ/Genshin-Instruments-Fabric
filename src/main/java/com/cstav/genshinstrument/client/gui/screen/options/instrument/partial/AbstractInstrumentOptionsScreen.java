@@ -5,9 +5,9 @@ import java.util.HashMap;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.cstav.genshinstrument.client.ClientUtil;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.AbstractInstrumentScreen;
+import com.cstav.genshinstrument.client.util.ClientUtil;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -119,7 +119,11 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
      * exists, it will be overwritten.
      * @param saveRunnable The runnable for saving the option
      */
-    protected void queueToSave(final String optionKey, final Runnable saveRunnable) {
+    protected void queueToSave(String optionKey, final Runnable saveRunnable) {
+        final String modId = modId();
+        if (modId != null)
+            optionKey = modId + ":" + optionKey;
+
         if (appliedOptions.containsKey(optionKey))
             appliedOptions.replace(optionKey, saveRunnable);
         else
@@ -131,6 +135,15 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
             runnable.run();
 
         ModClientConfigs.CONFIGS.save();
+    }
+
+
+    /**
+     * Fetches the Mod ID of the instrument being used
+     * @apiNote Should be overwritten in the case of not being used by an instrument
+     */
+    public String modId() {
+        return isOverlay ? instrumentScreen.getModId() : null;
     }
     
 }
