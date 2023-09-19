@@ -601,10 +601,8 @@ public abstract class AbstractInstrumentScreen extends Screen {
             if (note < minMidiOverflow())
                 throw new MidiOutOfRangeException();
 
-            if (getPitch() != minPitch) {
+            if (getPitch() != minPitch)
                 setPitch(minPitch);
-                ModClientConfigs.PITCH.set(minPitch);
-            }
         } else if (note >= maxMidiNote()) {
             if (note >= maxMidiOverflow())
                 throw new MidiOutOfRangeException();
