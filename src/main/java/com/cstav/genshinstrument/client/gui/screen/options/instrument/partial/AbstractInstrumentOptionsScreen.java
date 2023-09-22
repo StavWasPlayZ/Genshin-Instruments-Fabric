@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.AbstractInstrumentScreen;
 import com.cstav.genshinstrument.client.util.ClientUtil;
@@ -131,10 +132,14 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
     }
 
     protected void onSave() {
-        for (final Runnable runnable : appliedOptions.values())
-            runnable.run();
+        if (appliedOptions.isEmpty())
+            return;
 
+        appliedOptions.values().forEach(Runnable::run);
         ModClientConfigs.CONFIGS.save();
+
+        GInstrumentMod.LOGGER.info("Successfully saved "+appliedOptions.size()+" option"+((appliedOptions.size() == 1) ? "" : "s")
+            + " for "+title.getString());
     }
 
 

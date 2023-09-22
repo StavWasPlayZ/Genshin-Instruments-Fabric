@@ -2,6 +2,7 @@ package com.cstav.genshinstrument.client.gui.screen.instrument.partial.note;
 
 import java.awt.Point;
 
+import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.AbstractInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.label.NoteLabelSupplier;
@@ -24,6 +25,7 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
 @Environment(EnvType.CLIENT)
@@ -191,6 +193,29 @@ public abstract class NoteButton extends AbstractButton {
 
     public void playNoteAnimation(final boolean isForeign) {
         noteRenderer.playNoteAnimation(isForeign);
+    }
+
+
+    /**
+     * @return The index position of this note relative to the note {@code C}
+     */
+    public int getABCOffset() {
+        final ResourceLocation instrumentId = instrumentScreen.getInstrumentId();
+        final String noteName = getNoteName();
+
+        if (noteName.isEmpty()) {
+            GInstrumentMod.LOGGER.warn("Cannot get ABC offset for an instrument without a note layout! ("+instrumentId+")");
+            return 0;
+        }
+
+        final char note = noteName.charAt(0);
+
+        for (int i = 0; i < LabelUtil.ABC.length; i++)
+            if (note == LabelUtil.ABC[i])
+                return i;
+
+        GInstrumentMod.LOGGER.warn("Could not get note "+note+" for instrument "+instrumentScreen.getInstrumentId()+"!");
+        return 0;
     }
 
 

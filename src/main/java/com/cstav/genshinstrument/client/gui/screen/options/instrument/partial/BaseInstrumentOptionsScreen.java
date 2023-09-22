@@ -294,8 +294,6 @@ public abstract class BaseInstrumentOptionsScreen extends AbstractInstrumentOpti
 
     @Override
     public void onClose() {
-        onSave();
-
         if (isOverlay)
             instrumentScreen.onOptionsClose();
         else

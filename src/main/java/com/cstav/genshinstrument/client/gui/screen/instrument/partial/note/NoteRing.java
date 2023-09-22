@@ -13,7 +13,7 @@ import net.minecraft.client.gui.GuiGraphics;
 
 @Environment(EnvType.CLIENT)
 public class NoteRing {
-    public static final String RING_GLOB_FILENAME = "ring.png";
+    public static final String RING_GLOB_FILENAME = "note/ring.png";
 
     protected final RingAnimationController ringAnimation;
 
