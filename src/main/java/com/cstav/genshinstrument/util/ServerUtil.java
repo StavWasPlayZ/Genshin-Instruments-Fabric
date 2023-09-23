@@ -39,13 +39,16 @@ public class ServerUtil {
      * @param sound The sound tp initiate
      * @param instrumentId The ID of the instrument initiating the sound
      * @param pitch The pitch of the sound to initiate
+     * @param volume The volume of the sound to initiate
      */
     public static void sendPlayNotePackets(ServerPlayer player, Optional<InteractionHand> hand,
-            NoteSound sound, ResourceLocation instrumentId, int pitch) {
+            NoteSound sound, ResourceLocation instrumentId, int pitch, float volume) {
 
         sendPlayNotePackets(
             player, player.blockPosition(), hand,
-            sound, instrumentId, new DefaultNoteButtonIdentifier(sound, pitch), pitch
+            sound, instrumentId, new DefaultNoteButtonIdentifier(sound, pitch),
+            pitch, volume,
+            PlayNotePacket::new
         );
     }
     /**
@@ -55,19 +58,21 @@ public class ServerUtil {
      * @param hand The hand of the player producing the sounds
      * @param sound The sound tp initiate
      * @param pitch The pitch of the sound to initiate
+     * @param volume The volume of the sound to initiate
+     * @param PlayNotePacketDelegate The initiator of the {@link PlayNotePacket} to be sent
      */
     public static void sendPlayNotePackets(ServerPlayer player, BlockPos pos, Optional<InteractionHand> hand,
-            NoteSound sound, ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, int pitch) {
+            NoteSound sound, ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, int pitch, float volume,
+            PlayNotePacketDelegate notePacketDelegate) {
+
+        final PlayNotePacket packet = notePacketDelegate.create(
+            pos, sound, pitch, volume,
+            instrumentId, noteIdentifier,
+            Optional.of(player.getUUID()), hand
+        );
 
         for (final Player listener : noteListeners(player.getLevel(), player.blockPosition()))
-            ModPacketHandler.sendToClient(
-                new PlayNotePacket(
-                    pos, sound, pitch,
-                    instrumentId, noteIdentifier,
-                    Optional.of(player.getUUID()), hand
-                ),
-                (ServerPlayer)listener
-            );
+            ModPacketHandler.sendToClient(packet, (ServerPlayer)listener);
 
         // Trigger an instrument game event
         // This is done so that sculk sensors can pick up the instrument's sound
@@ -78,7 +83,7 @@ public class ServerUtil {
 
         // Fire a player-specific event
         InstrumentPlayedEvent.ByPlayer.EVENT.invoker().triggered(
-            new ByPlayerArgs(sound, pitch, player, pos, hand, instrumentId, noteIdentifier, false)
+            new ByPlayerArgs(sound, pitch, volume, player, pos, hand, instrumentId, noteIdentifier, false)
         );
     }
 
@@ -91,8 +96,15 @@ public class ServerUtil {
      * @param instrumentId The ID of the instrument initiating the sound
      * @param pitch The pitch of the sound to initiate
      */
-    public static void sendPlayNotePackets(Level level, BlockPos pos, NoteSound sound, ResourceLocation instrumentId, int pitch) {
-        sendPlayNotePackets(level, pos, sound, instrumentId, new DefaultNoteButtonIdentifier(sound, pitch), pitch);
+    public static void sendPlayNotePackets(Level level, BlockPos pos, NoteSound sound, ResourceLocation instrumentId,
+            int pitch, float volume) {
+
+        sendPlayNotePackets(
+            level, pos, sound,
+            instrumentId, new DefaultNoteButtonIdentifier(sound, pitch),
+            pitch, volume,
+            PlayNotePacket::new
+        );
     }
     /**
      * Sends {@link PlayNotePacket}s in the specified {@link ServerUtil#PLAY_DISTANCE}.
@@ -103,19 +115,21 @@ public class ServerUtil {
      * @param instrumentId The ID of the instrument initiating the sound
      * @param noteIdentifier The identifier of the note
      * @param pitch The pitch of the sound to initiate
+     * @param volume The volume of the sound to initiate
+     * @param PlayNotePacketDelegate The initiator of the {@link PlayNotePacket} to be sent
      */
     public static void sendPlayNotePackets(Level level, BlockPos pos, NoteSound sound,
-            ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, int pitch) {
+            ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, int pitch, float volume,
+            PlayNotePacketDelegate notePacketDelegate) {
+
+        final PlayNotePacket packet = notePacketDelegate.create(
+            pos, sound, pitch, volume,
+            instrumentId, noteIdentifier,
+            Optional.empty(), Optional.empty()
+        );
 
         for (final Player listener : noteListeners(level, pos))
-            ModPacketHandler.sendToClient(
-                new PlayNotePacket(
-                    pos, sound, pitch,
-                    instrumentId, noteIdentifier,
-                    Optional.empty(), Optional.empty()
-                ),
-                (ServerPlayer)listener
-            );
+            ModPacketHandler.sendToClient(packet, (ServerPlayer)listener);
 
 
         final BlockState bs = level.getBlockState(pos);
@@ -131,7 +145,7 @@ public class ServerUtil {
 
         // Fire a generic instrument event
         InstrumentPlayedEvent.EVENT.invoker().triggered(
-            new InstrumentPlayedEventArgs(sound, pitch, (ServerLevel)level, pos, instrumentId, noteIdentifier, false)
+            new InstrumentPlayedEventArgs(sound, pitch, volume, (ServerLevel)level, pos, instrumentId, noteIdentifier, false)
         );
     }
 
@@ -155,6 +169,9 @@ public class ServerUtil {
             )
         );
     }
+
+
+    /* ------------------ */
 
 
     /**
@@ -194,23 +211,24 @@ public class ServerUtil {
     private static boolean sendOpenPacket(ServerPlayer player, InteractionHand usedHand, OpenInstrumentPacketSender onOpenRequest,
             BlockPos pos) {
 
-        onOpenRequest.send(player, usedHand);
-
-        // Update the the capabilty on server
+        // Update the the capabilty on the server
         if (pos == null)
             InstrumentEntityData.setOpen(player);
         else
             InstrumentEntityData.setOpen(player, pos);
 
-        // And clients
+        // Notify the other players
         final Optional<BlockPos> playPos = Optional.ofNullable(pos);
 
-        player.getLevel().players().forEach((nearbyPlayer) ->
+        player.getLevel().players().forEach((otherPlayer) ->
             ModPacketHandler.sendToClient(
                 new NotifyInstrumentOpenPacket(player.getUUID(), playPos),
-                (ServerPlayer)nearbyPlayer
+                (ServerPlayer)otherPlayer
             )
         );
+
+        // Send open packet after everyone is aware of the state
+        onOpenRequest.send(player, usedHand);
 
         return true;
     }
