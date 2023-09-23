@@ -16,8 +16,11 @@ public interface MidiEvent extends ModEvent<MidiEventArgs> {
 
     public static class MidiEventArgs extends EventArgs {
         public final MidiMessage message;
-        public MidiEventArgs(final MidiMessage message) {
+        public final long timeStamp;
+
+        public MidiEventArgs(final MidiMessage message, final long timeStamp) {
             this.message = message;
+            this.timeStamp = timeStamp;
         }
     }
 

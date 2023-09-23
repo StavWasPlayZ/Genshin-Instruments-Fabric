@@ -24,11 +24,12 @@ public enum DrumNoteLabel implements INoteLabel {
 		Component.translatable(dn(note).btnType.getTransKey())
 	),
 	NOTE_NAME((note) -> Component.literal(
-		note.getCutNoteName()
+		note.getFormattedNoteName()
 	)),
 	DO_RE_MI((note) ->
-        LabelUtil.toDoReMi(note.getCutNoteName())
+        LabelUtil.toDoReMi(note.getFormattedNoteName())
     ),
+	
     NONE(NoteLabelSupplier.EMPTY);
 
 

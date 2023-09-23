@@ -3,12 +3,16 @@ package com.cstav.genshinstrument.client.gui.screen.options.instrument.partial;
 import java.awt.Color;
 
 import com.cstav.genshinstrument.client.config.enumType.SoundType;
+import com.cstav.genshinstrument.client.gui.screen.instrument.partial.AbstractInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.notegrid.AbstractGridInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.GridInstrumentOptionsScreen;
+import com.cstav.genshinstrument.client.util.TogglablePedalSound;
+import com.cstav.genshinstrument.event.MidiEvent.MidiEventArgs;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.GridWidget;
 import net.minecraft.client.gui.components.GridWidget.RowHelper;
@@ -30,9 +34,18 @@ public abstract class SoundTypeOptionsScreen<T extends SoundType> extends GridIn
         super(lastScreen);
     }
 
+    
     private T perferredSoundType = getInitSoundType();
+
     public T getPerferredSoundType() {
         return perferredSoundType;
+    }
+    public void setPerferredSoundType(T perferredSoundType) {
+        this.perferredSoundType = perferredSoundType;
+
+        // Update the sound for this instrument
+        if (isValidForSet(instrumentScreen))
+            instrumentScreen.setNoteSounds(perferredSoundType.getSoundArr().get());
     }
 
     protected abstract T getInitSoundType();
@@ -76,15 +89,48 @@ public abstract class SoundTypeOptionsScreen<T extends SoundType> extends GridIn
 
 
     protected void onSoundTypeChange(final CycleButton<T> btn, final T soundType) {
-        if ((instrumentScreen instanceof AbstractGridInstrumentScreen gridInstrument) && isValidForSet(gridInstrument))
-            gridInstrument.noteGrid.setNoteSounds(soundType.getSoundArr().get());
+        setPerferredSoundType(soundType);
 
-        queueToSave("zither_sound_type", () -> {
-            perferredSoundType = soundType;
-            saveSoundType(soundType);
-        });
+        queueToSave(instrumentScreen.getInstrumentId().getPath()+"_sound_type", () -> saveSoundType(soundType));
     }
     protected abstract void saveSoundType(final T soundType);
 
-    protected abstract boolean isValidForSet(final AbstractGridInstrumentScreen screen);
+    protected abstract boolean isValidForSet(final AbstractInstrumentScreen screen);
+
+
+
+    /* ----------- MIDI Pedal Behaviour ----------- */
+
+    /**
+     * @return The sounds that should be used upon MIDI pedal events by this instrument. Null for none.
+     */
+    public TogglablePedalSound<T> midiPedalListener() {
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void onMidiRecievedEvent(final MidiEventArgs args) {
+        final AbstractInstrumentScreen instrumentScreen = AbstractInstrumentScreen.getCurrentScreen(Minecraft.getInstance()).orElse(null);
+
+        if ((instrumentScreen == null)
+            || !(instrumentScreen.optionsScreen instanceof SoundTypeOptionsScreen optionsScreen)
+        ) return;
+
+        final var pedalSounds = optionsScreen.midiPedalListener();
+        if (optionsScreen.midiPedalListener() == null)
+            return;
+
+
+        final byte[] message = args.message.getMessage();
+
+        // Only listen for pedal events
+        // Check 80 too bc FreePiano
+        if (((message[0] != -80) && (message[0] != -176)) || (message[1] != 64))
+            return;
+
+
+        //NOTE: I did not test this on an actual pedal, this value might need to be flipped
+        optionsScreen.setPerferredSoundType((message[2] >= 64) ? pedalSounds.enabled : pedalSounds.disabled);
+    }
+
 }
