@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 
-import com.cstav.genshinstrument.client.ClientUtil;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.AbstractInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.NoteButton;
@@ -13,6 +12,7 @@ import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.label
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.GridInstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.BaseInstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings;
+import com.cstav.genshinstrument.client.util.ClientUtil;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteGridButtonIdentifier;
 import com.cstav.genshinstrument.sound.NoteSound;
@@ -23,7 +23,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.layouts.AbstractLayout;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 
 @Environment(EnvType.CLIENT)
@@ -54,6 +53,11 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
      * @return The array of sounds used by this instruments.
      */
     public abstract NoteSound[] getInitSounds();
+
+    @Override
+    public void setNoteSounds(NoteSound[] sounds) {
+        noteGrid.setNoteSounds(sounds);
+    }
 
 
     /**
@@ -154,11 +158,6 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
     }
 
     @Override
-    public ResourceLocation getNoteSymbolsLocation() {
-        return getInternalResourceFromGlob("grid_notes.png");
-    }
-
-    @Override
     public String[] noteLayout() {
         return NOTE_LAYOUT;
     }
@@ -196,25 +195,31 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
     protected void renderInstrumentBackground(final GuiGraphics gui) {
         final int clefX = grid.getX() - getNoteSize() + 8;
 
-        for (int i = 0; i < columns(); i++) {
-            renderClef(gui, i, clefX);
-            renderStaff(gui, i);
+        // Implement your own otherwise, idk
+        if (columns() == 3) {
+            renderClef(gui, 0, clefX, "treble");
+            renderClef(gui, 1, clefX, "alto");
+            renderClef(gui, 2, clefX, "bass");
         }
+
+        for (int i = 0; i < columns(); i++)
+            renderStaff(gui, i);
     }
 
-    protected void renderClef(final GuiGraphics gui, final int index, final int x) {
-        gui.blit(getInternalResourceFromGlob("background/clefs.png"),
+    protected void renderClef(GuiGraphics gui, int index, int x, String clefName) {
+        gui.blit(getInternalResourceFromGlob("background/clef/"+clefName+".png"),
             x, grid.getY() + NoteGrid.getPaddingVert() + getLayerAddition(index) - 5,
-            index * CLEF_WIDTH, 0,
+            0, 0,
+
             CLEF_WIDTH, CLEF_HEIGHT,
-            CLEF_WIDTH*3, CLEF_HEIGHT
+            CLEF_WIDTH, CLEF_HEIGHT
         );
     }
-
     protected void renderStaff(final GuiGraphics gui, final int index) {
         gui.blit(getInternalResourceFromGlob("background/staff.png"),
             grid.getX() + 2, grid.getY() + NoteGrid.getPaddingVert() + getLayerAddition(index),
             0, 0,
+            
             grid.getWidth() - 5, getNoteSize(),
             grid.getWidth() - 5, getNoteSize()
         );

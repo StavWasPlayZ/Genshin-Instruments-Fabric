@@ -3,6 +3,8 @@ package com.cstav.genshinstrument.event;
 import com.cstav.genshinstrument.block.partial.AbstractInstrumentBlock;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.AbstractInstrumentScreen;
+import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.SoundTypeOptionsScreen;
+import com.cstav.genshinstrument.client.midi.MidiController;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.ByPlayer.ByPlayerArgs;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEventArgs;
 import com.cstav.genshinstrument.event.MidiEvent.MidiEventArgs;
@@ -12,6 +14,7 @@ import com.cstav.genshinstrument.util.InstrumentEntityData;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
@@ -27,7 +30,9 @@ public abstract class ClientEvents {
         PosePlayerArmEvent.EVENT.register(ClientEvents::posePlayerArmEvent);
         ClientTickEvents.START_CLIENT_TICK.register(ClientEvents::onClientTick);
         InstrumentPlayedEvent.EVENT.register(ClientEvents::onInstrumentPlayed);
+
         MidiEvent.EVENT.register(ClientEvents::onMidiEvent);
+        ClientLifecycleEvents.CLIENT_STOPPING.register(ClientEvents::onGameShutdown);
     }
 
     // Handle block instrument arm pose
@@ -78,10 +83,17 @@ public abstract class ClientEvents {
             } catch (Exception e) {}
         });
     }
+
     
     // Subscribe active instruments to a MIDI event
     public static void onMidiEvent(final MidiEventArgs args) {
         AbstractInstrumentScreen.getCurrentScreen(Minecraft.getInstance()).ifPresent((screen) -> screen.onMidi(args));
+        SoundTypeOptionsScreen.onMidiRecievedEvent(args);
+    }
+
+    // Safely close MIDI streams upon game shutdown
+    public static void onGameShutdown(final Minecraft client) {
+        MidiController.unloadDevice();
     }
 
 }

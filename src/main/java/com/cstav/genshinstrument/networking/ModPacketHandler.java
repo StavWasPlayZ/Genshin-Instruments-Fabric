@@ -66,5 +66,4 @@ public class ModPacketHandler {
         ServerPlayNetworking.send(player, packet);
     }
     
-
 }

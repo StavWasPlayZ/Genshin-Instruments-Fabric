@@ -2,10 +2,10 @@ package com.cstav.genshinstrument.client.gui.screen.instrument.partial.note;
 
 import java.awt.Point;
 
-import com.cstav.genshinstrument.client.ClientUtil;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.AbstractInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentThemeLoader;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.animation.RingAnimationController;
+import com.cstav.genshinstrument.client.util.ClientUtil;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -13,7 +13,7 @@ import net.minecraft.client.gui.GuiGraphics;
 
 @Environment(EnvType.CLIENT)
 public class NoteRing {
-    public static final String RING_GLOB_FILENAME = "ring.png";
+    public static final String RING_GLOB_FILENAME = "note/ring.png";
 
     protected final RingAnimationController ringAnimation;
 
