@@ -7,11 +7,9 @@ import java.util.Map;
 
 import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
-import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.NoteButton;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.label.INoteLabel;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 
 public abstract class LabelUtil {
 
@@ -80,12 +78,12 @@ public abstract class LabelUtil {
         return scale[(CommonUtil.doublyPyWrap(pitch, scale.length))];
     }
 
-    public static String getCutNoteName(final String noteName) {
+    public static String formatNoteName(final String noteName, final boolean omitIfAccurate) {
         if (noteName.isEmpty())
             return "";
             
         String result = String.valueOf(noteName.charAt(0));
-        if (!ModClientConfigs.ACCURATE_NOTES.get())
+        if (!(omitIfAccurate && ModClientConfigs.ACCURATE_NOTES.get()))
             result += noteName.substring(1)
                 .replaceAll("##", "\u00D7")
                 .replaceAll("#", "♯")
@@ -102,26 +100,6 @@ public abstract class LabelUtil {
 
         return Component.translatable(INoteLabel.TRANSLATABLE_PATH + ABC_TO_DO_RE_MI.get(noteName.charAt(0)))
             .append(noteName.substring(1));
-    }
-
-
-    public static int getABCOffset(final NoteButton noteButton) {
-        final ResourceLocation instrumentId = noteButton.instrumentScreen.getInstrumentId();
-        final String noteName = noteButton.getNoteName();
-
-        if (noteName.isEmpty()) {
-            GInstrumentMod.LOGGER.warn("Cannot get ABC offset for an instrument without a note layout! ("+instrumentId+")");
-            return 0;
-        }
-
-        final char note = noteName.charAt(0);
-
-        for (int i = 0; i < ABC.length; i++)
-            if (note == ABC[i])
-                return i;
-
-        GInstrumentMod.LOGGER.warn("Could not get note "+note+" for instrument "+noteButton.instrumentScreen.getInstrumentId()+"!");
-        return 0;
     }
 
 }

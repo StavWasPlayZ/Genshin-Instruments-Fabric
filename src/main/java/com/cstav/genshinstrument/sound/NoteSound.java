@@ -129,7 +129,7 @@ public class NoteSound {
      * @param pos The position at which the sound was fired from
      */
     @Environment(EnvType.CLIENT)
-    public void playAtPos(int pitch, UUID playerUUID, Optional<InteractionHand> hand,
+    public void playAtPos(int pitch, float volume, UUID playerUUID, Optional<InteractionHand> hand,
             ResourceLocation instrumentId, NoteButtonIdentifier buttonIdentifier, BlockPos pos) {
                 
         final Minecraft minecraft = Minecraft.getInstance();
@@ -146,13 +146,13 @@ public class NoteSound {
         if (playerUUID == null)
             InstrumentPlayedEvent.EVENT.invoker().triggered(
                 new InstrumentPlayedEventArgs(
-                    this, pitch, level, pos, instrumentId, buttonIdentifier, true
+                    this, pitch, volume, level, pos, instrumentId, buttonIdentifier, true
                 )
             );
         else
             InstrumentPlayedEvent.ByPlayer.EVENT.invoker().triggered(
                 new ByPlayerArgs(
-                    this, pitch, level.getPlayerByUUID(playerUUID), pos, hand,
+                    this, pitch, volume, level.getPlayerByUUID(playerUUID), pos, hand,
                     instrumentId, buttonIdentifier, true
                 )
             );
@@ -170,17 +170,17 @@ public class NoteSound {
                 1, mcPitch
             , false);
         else
-            playLocally(mcPitch);
+            playLocally(mcPitch, volume);
     }
 
     /**
      * Plays this sound locally. Treats the given {@code pitch} as a Minecraft pitch.
      */
     @Environment(EnvType.CLIENT)
-    public void playLocally(final float pitch) {
+    public void playLocally(final float pitch, final float volume) {
         Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(
             getByPreference().getLocation(), SoundSource.RECORDS,
-            1, pitch, SoundInstance.createUnseededRandom(),
+            volume, pitch, SoundInstance.createUnseededRandom(),
             false, 0, SoundInstance.Attenuation.NONE,
             0, 0, 0, true
         ));
@@ -192,8 +192,8 @@ public class NoteSound {
      * @see NoteSound#getPitchByNoteOffset
      */
     @Environment(EnvType.CLIENT)
-    public void playLocally(final int pitch) {
-        playLocally(getPitchByNoteOffset(clampPitch(pitch)));
+    public void playLocally(final int pitch, final float volume) {
+        playLocally(getPitchByNoteOffset(clampPitch(pitch)), volume);
     }
 
 

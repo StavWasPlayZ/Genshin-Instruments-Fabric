@@ -23,11 +23,12 @@ public enum NoteGridLabel implements INoteLabel {
     ),
 
     NOTE_NAME((note) -> Component.literal(
-        note.getCutNoteName()
+        note.getFormattedNoteName()
     )),
     DO_RE_MI((note) ->
-        LabelUtil.toDoReMi(note.getCutNoteName())
+        LabelUtil.toDoReMi(note.getFormattedNoteName())
     ),
+    
     NONE(NoteLabelSupplier.EMPTY);
 
 

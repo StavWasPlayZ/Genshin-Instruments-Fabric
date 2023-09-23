@@ -21,27 +21,32 @@ import net.minecraft.world.entity.player.Player;
 
 public class InstrumentPacket implements INoteIdentifierSender {
 
+    private final BlockPos pos;
     private final NoteSound sound;
     private final Optional<InteractionHand> hand;
+
     private final int pitch;
-    private final BlockPos pos;
+    private final float volume;
 
     private final ResourceLocation instrumentId;
     private final NoteButtonIdentifier noteIdentifier;
 
-    public InstrumentPacket(BlockPos pos, NoteSound sound, int pitch, Optional<InteractionHand> hand,
+    public InstrumentPacket(BlockPos pos, NoteSound sound, int pitch, float volume, Optional<InteractionHand> hand,
             ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier) {
         this.pos = pos;
         this.sound = sound;
         this.hand = hand;
+
         this.pitch = pitch;
+        this.volume = volume;
         
         this.instrumentId = instrumentId;
         this.noteIdentifier = noteIdentifier;
     }
     @Environment(EnvType.CLIENT)
     public InstrumentPacket(final NoteButton noteButton, final BlockPos pos) {
-        this(pos, noteButton.getSound(), noteButton.getPitch(),
+        this(pos, noteButton.getSound(),
+            noteButton.getPitch(), noteButton.instrumentScreen.volume(),
             noteButton.instrumentScreen.interactionHand,
             noteButton.instrumentScreen.getInstrumentId(), noteButton.getIdentifier()
         );
@@ -51,7 +56,9 @@ public class InstrumentPacket implements INoteIdentifierSender {
         pos = buf.readBlockPos();
         sound = NoteSound.readFromNetwork(buf);
         hand = buf.readOptional((fbb) -> buf.readEnum(InteractionHand.class));
+
         pitch = buf.readInt();
+        volume = buf.readFloat();
         
         instrumentId = buf.readResourceLocation();
         noteIdentifier = readNoteIdentifierFromNetwork(buf);
@@ -62,7 +69,9 @@ public class InstrumentPacket implements INoteIdentifierSender {
         buf.writeBlockPos(pos);
         sound.writeToNetwork(buf);
         buf.writeOptional(hand, FriendlyByteBuf::writeEnum);
+
         buf.writeInt(pitch);
+        buf.writeFloat(volume);
 
         buf.writeResourceLocation(instrumentId);
         noteIdentifier.writeToNetwork(buf);
@@ -74,7 +83,17 @@ public class InstrumentPacket implements INoteIdentifierSender {
         if (!InstrumentEntityData.isOpen(player))
             return;
 
-        ServerUtil.sendPlayNotePackets((ServerPlayer)player, pos, hand, sound, instrumentId, noteIdentifier, pitch);
+        sendPlayNotePackets((ServerPlayer)player);
+    }
+
+    protected void sendPlayNotePackets(final ServerPlayer player) {
+
+        ServerUtil.sendPlayNotePackets(player, pos, hand,
+            sound, instrumentId, noteIdentifier,
+            pitch, volume,
+            PlayNotePacket::new
+        );
+
     }
     
 }
