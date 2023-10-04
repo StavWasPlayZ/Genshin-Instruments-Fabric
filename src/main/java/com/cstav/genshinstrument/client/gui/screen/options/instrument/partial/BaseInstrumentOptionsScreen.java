@@ -192,6 +192,15 @@ public abstract class BaseInstrumentOptionsScreen extends AbstractInstrumentOpti
             );
         rowHelper.addChild(stopMusic);
 
+        final CycleButton<Boolean> sharedInstrument = CycleButton.booleanBuilder(CommonComponents.OPTION_ON, CommonComponents.OPTION_OFF)
+            .withInitialValue(ModClientConfigs.SHARED_INSTRUMENT.get())
+            .withTooltip((value) -> Tooltip.create(Component.translatable("button.genshinstrument.shared_instrument.tooltip")))
+            .create(0, 0,
+                getSmallButtonWidth(), getButtonHeight(),
+                Component.translatable("button.genshinstrument.shared_instrument"), this::onSharedInstrumentChanged
+            );
+        rowHelper.addChild(sharedInstrument);
+
         final CycleButton<Boolean> accurateNotes = CycleButton.booleanBuilder(CommonComponents.OPTION_ON, CommonComponents.OPTION_OFF)
             .withInitialValue(ModClientConfigs.ACCURATE_NOTES.get())
             .withTooltip(tooltip((value) -> Component.translatable("button.genshinstrument.accurate_notes.tooltip")))
