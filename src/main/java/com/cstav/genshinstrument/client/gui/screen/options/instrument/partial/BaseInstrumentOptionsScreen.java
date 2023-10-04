@@ -194,7 +194,7 @@ public abstract class BaseInstrumentOptionsScreen extends AbstractInstrumentOpti
 
         final CycleButton<Boolean> sharedInstrument = CycleButton.booleanBuilder(CommonComponents.OPTION_ON, CommonComponents.OPTION_OFF)
             .withInitialValue(ModClientConfigs.SHARED_INSTRUMENT.get())
-            .withTooltip((value) -> Tooltip.create(Component.translatable("button.genshinstrument.shared_instrument.tooltip")))
+            .withTooltip(tooltip((value) -> Component.translatable("button.genshinstrument.shared_instrument.tooltip")))
             .create(0, 0,
                 getSmallButtonWidth(), getButtonHeight(),
                 Component.translatable("button.genshinstrument.shared_instrument"), this::onSharedInstrumentChanged
