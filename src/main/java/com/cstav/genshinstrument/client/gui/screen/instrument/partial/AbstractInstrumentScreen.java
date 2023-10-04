@@ -16,6 +16,7 @@ import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings;
 import com.cstav.genshinstrument.client.midi.MidiController;
 import com.cstav.genshinstrument.client.midi.MidiOutOfRangeException;
 import com.cstav.genshinstrument.event.MidiEvent.MidiEventArgs;
+import com.cstav.genshinstrument.mixin.required.ScreenAccessor;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.networking.packet.instrument.CloseInstrumentPacket;
@@ -28,8 +29,10 @@ import com.mojang.logging.LogUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -263,6 +266,14 @@ public abstract class AbstractInstrumentScreen extends Screen {
 
         addRenderableWidget(button);
         return button;
+    }
+
+
+    // To omit background
+    @Override
+    public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        for (Renderable renderable : ((ScreenAccessor)this).getRenderables())
+            renderable.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
     }
 
 

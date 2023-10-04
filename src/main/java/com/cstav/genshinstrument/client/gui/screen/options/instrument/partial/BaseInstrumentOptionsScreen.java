@@ -90,9 +90,9 @@ public abstract class BaseInstrumentOptionsScreen extends AbstractInstrumentOpti
         if (!isOverlay || instrumentScreen.isMidiInstrument()) {
             final LinearLayout buttonLayout = new LinearLayout(
                 grid.getX() + 40, buttonsY,
-                getBigButtonWidth() - 80, getButtonHeight(),
                 Orientation.HORIZONTAL
             );
+            buttonLayout.spacing(ClientUtil.GRID_HORZ_PADDING * 2);
 
             final Button midiOptions = Button.builder(MIDI_OPTIONS.copy().append("..."), (btn) -> openMidiOptions())
                 .width(150)

@@ -3,7 +3,8 @@
 	"package": "com.cstav.genshinstrument.mixin.required",
 	"compatibilityLevel": "JAVA_17",
 	"client": [
-		"ResourcesLoaderInjector"
+		"ResourcesLoaderInjector",
+		"ScreenAccessor"
 	],
 	"mixins": [
 		"EntityNBTInjector"

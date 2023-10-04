@@ -7,7 +7,7 @@ version = project.mod_version
 group = project.maven_group
 
 base {
-	archivesName = project.archives_base_name+"-fabric-1.20+"+project.minecraft_version
+	archivesName = project.archives_base_name+"-fabric-"+project.minecraft_version
 }
 
 repositories {
@@ -34,7 +34,7 @@ dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings loom.layered() {
 		officialMojangMappings()
-		parchment("org.parchmentmc.data:parchment-${project.parchment_mappings}@zip")
+		// parchment("org.parchmentmc.data:parchment-${project.parchment_mappings}@zip")
 	}
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
