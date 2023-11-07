@@ -47,7 +47,7 @@ public abstract class ModItems {
 
 
     private static void addToItemGroups(final Item item) {
-        // All shall go to the instruments and toold tab
+        // All shall go to the instruments and tools tab
         addToTab(ModCreativeModeTabs.INSTRUMENTS_TAB, item);
         addToTab(CreativeModeTabs.TOOLS_AND_UTILITIES, item);
     }

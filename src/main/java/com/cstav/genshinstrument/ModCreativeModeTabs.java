@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 
-public class ModCreativeModeTabs {
+public abstract class ModCreativeModeTabs {
     
     public static final CreativeModeTab INSTRUMENTS_TAB = FabricItemGroup.builder()
         .icon(() -> new ItemStack(ModItems.FLORAL_ZITHER))
@@ -18,8 +18,9 @@ public class ModCreativeModeTabs {
         .build();
 
     public static void regsiter() {
-        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, new ResourceLocation(GInstrumentMod.MODID, "instruments_tab"), INSTRUMENTS_TAB);
-        
+        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB,
+            new ResourceLocation(GInstrumentMod.MODID, "instruments_tab"), INSTRUMENTS_TAB
+        );
     }
 
 }

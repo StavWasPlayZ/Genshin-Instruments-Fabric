@@ -33,6 +33,10 @@
 		"genshinstrument.optional.mixins.json",
 		"genshinstrument.required.mixins.json"
 	],
+
+	"suggests": {
+		"evenmoreinstruments": "*"
+	},
 	"depends": {
 		"fabricloader": ">=0.14.21",
 		"minecraft": "~1.20.1",

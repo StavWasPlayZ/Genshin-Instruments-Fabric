@@ -3,6 +3,7 @@ package com.cstav.genshinstrument.util;
 import java.util.List;
 import java.util.Optional;
 
+import com.cstav.genshinstrument.GInstrumentMod;
 import com.google.common.collect.Lists;
 
 import net.minecraft.resources.ResourceLocation;
@@ -76,6 +77,19 @@ public abstract class CommonUtil {
      */
     public static int doublyPyWrap(int index, final int arrLength) {
         return wrapAround(pyWrap(index, arrLength), arrLength);
+    }
+
+
+    public static void loadClasses(final List<Class<?>> classes) {
+        for (final Class<?> loadMe : classes) {
+			
+			try {
+				Class.forName(loadMe.getName());
+			} catch (ClassNotFoundException e) {
+				GInstrumentMod.LOGGER.error("Failed to load class "+ loadMe.getSimpleName() +": class not found", e);
+			}
+
+		}
     }
 
 }

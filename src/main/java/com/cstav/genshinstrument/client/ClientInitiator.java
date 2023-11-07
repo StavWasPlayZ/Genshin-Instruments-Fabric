@@ -14,6 +14,7 @@ import com.cstav.genshinstrument.event.ClientEvents;
 import com.cstav.genshinstrument.event.ResourcesLoadedEvent;
 import com.cstav.genshinstrument.item.ItemPoseModifier;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
+import com.cstav.genshinstrument.util.CommonUtil;
 
 import fuzs.forgeconfigapiport.api.config.v2.ForgeConfigRegistry;
 import net.fabricmc.api.ClientModInitializer;
@@ -42,17 +43,8 @@ public class ClientInitiator implements ClientModInitializer {
 		
 		InstrumentKeyMappings.load();
 
-		// Load necessary classes, as listed above
-		for (final Class<?> loadMe : LOAD_ME) {
-			
-			try {
-				Class.forName(loadMe.getName());
-			} catch (ClassNotFoundException e) {
-				GInstrumentMod.LOGGER.error("Failed to load class "+ loadMe.getSimpleName() +": class not found", e);
-			}
+		CommonUtil.loadClasses(LOAD_ME);
 
-		}
-		
 		ResourcesLoadedEvent.EVENT.register(InstrumentThemeLoader::onResourcesReload);
 	}
     
