@@ -67,27 +67,30 @@ public abstract class ClientEvents {
             return;
 
         // Only show play notes in the local range
-        if (!args.pos.closerThan(MINECRAFT.player.blockPosition(), NoteSound.LOCAL_RANGE))
+        if (!args.playPos.closerThan(MINECRAFT.player.blockPosition(), NoteSound.LOCAL_RANGE))
             return;
 
 
-        AbstractInstrumentScreen.getCurrentScreen(MINECRAFT).ifPresent((screen) -> {
-            // The produced instrument sound has to match the current screen's sounds
-            if (!screen.getInstrumentId().equals(args.instrumentId))
-                return;
-
-            try {
-
-                screen.getNoteButton(args.noteIdentifier).playNoteAnimation(true);
-
-            } catch (Exception e) {}
-        });
+        AbstractInstrumentScreen.getCurrentScreen(MINECRAFT)
+            // Filter instruments that do not match the one we're on
+            .filter((screen) -> screen.getInstrumentId().equals(args.instrumentId))
+            .ifPresent((screen) -> {
+                try {
+                    screen.getNoteButton(args.noteIdentifier).playNoteAnimation(true);
+                } catch (Exception e) {
+                    // Button was prolly just not found
+                }
+            }
+        );
     }
 
     
     // Subscribe active instruments to a MIDI event
     public static void onMidiEvent(final MidiEventArgs args) {
-        AbstractInstrumentScreen.getCurrentScreen(Minecraft.getInstance()).ifPresent((screen) -> screen.onMidi(args));
+        AbstractInstrumentScreen.getCurrentScreen(Minecraft.getInstance())
+            .filter(AbstractInstrumentScreen::isMidiInstrument)
+            .ifPresent((instrument) -> instrument.midiReciever.onMidi(args));
+        
         SoundTypeOptionsScreen.onMidiRecievedEvent(args);
     }
 

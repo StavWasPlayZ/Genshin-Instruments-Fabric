@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.cstav.genshinstrument.GInstrumentMod;
 import com.google.common.collect.Lists;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -39,6 +40,19 @@ public abstract class CommonUtil {
                 list.add(player);
 
         return list;
+    }
+
+    /**
+     * Converts the given {@code netPos} to the played position;
+     * when said optional is empty, provides either the player's position
+     * (if hand-held instrument) or the block's position (block instrument).
+     * @param netPos The play position as provided by the network
+     */
+    public static BlockPos getPlayeredPosition(Player player, Optional<BlockPos> netPos) {
+        return netPos.orElseGet(() -> !InstrumentEntityData.isItem(player)
+            ? InstrumentEntityData.getBlockPos(player)
+            : player.blockPosition()
+        );
     }
     
 

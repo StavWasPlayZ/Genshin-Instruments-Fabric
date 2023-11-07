@@ -12,7 +12,6 @@ import com.cstav.genshinstrument.networking.buttonidentifier.DefaultNoteButtonId
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.networking.packet.instrument.InstrumentPacket;
 import com.cstav.genshinstrument.sound.NoteSound;
-import com.cstav.genshinstrument.util.InstrumentEntityData;
 import com.cstav.genshinstrument.util.LabelUtil;
 
 import net.fabricmc.api.EnvType;
@@ -23,10 +22,8 @@ import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.sounds.SoundManager;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
 
 @Environment(EnvType.CLIENT)
 public abstract class NoteButton extends AbstractButton {
@@ -168,16 +165,7 @@ public abstract class NoteButton extends AbstractButton {
             return;
         
         sound.playLocally(getPitch(), instrumentScreen.volume());
-
-
-        final Player player = minecraft.player;
-
-        final BlockPos pos = InstrumentEntityData.isItem(player)
-            ? player.blockPosition()
-            : InstrumentEntityData.getBlockPos(player);
-
-        sendNotePlayPacket(pos);
-
+        sendNotePlayPacket();
         playNoteAnimation(false);
 
         locked = true;
@@ -187,8 +175,8 @@ public abstract class NoteButton extends AbstractButton {
         play();
     }
 
-    protected void sendNotePlayPacket(final BlockPos pos) {
-        ModPacketHandler.sendToServer(new InstrumentPacket(this, pos));
+    protected void sendNotePlayPacket() {
+        ModPacketHandler.sendToServer(new InstrumentPacket(this));
     }
 
     public void playNoteAnimation(final boolean isForeign) {
@@ -244,7 +232,7 @@ public abstract class NoteButton extends AbstractButton {
      */
     @Override
     public boolean equals(Object obj) {
-        return getIdentifier().matches(obj);
+        return (obj instanceof NoteButton btn) && getIdentifier().matches(btn);
     }
 
 

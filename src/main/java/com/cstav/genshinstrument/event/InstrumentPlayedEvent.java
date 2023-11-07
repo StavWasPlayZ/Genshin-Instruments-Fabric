@@ -9,7 +9,6 @@ import com.cstav.genshinstrument.event.impl.EventArgs;
 import com.cstav.genshinstrument.event.impl.ModEvent;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.sound.NoteSound;
-import com.cstav.genshinstrument.util.InstrumentEntityData;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
@@ -31,18 +30,26 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEventArg
     public static class InstrumentPlayedEventArgs extends EventArgs {
 
         public final NoteSound sound;
-        public final int pitch;
-        public final float volume;
+        public final int pitch, volume;
 
         public final Level level;
         public final boolean isClientSide;
 
         public final ResourceLocation instrumentId;
         public final NoteButtonIdentifier noteIdentifier;
-        public final BlockPos pos;
+        public final BlockPos playPos;
+
+
+        /**
+         * Convinience method to convert the volume of the note
+         * into a {@code float} percentage
+         */
+        public float volume() {
+            return volume / 100f;
+        }
         
 
-        public InstrumentPlayedEventArgs(NoteSound sound, int pitch, float volume, Level level, BlockPos pos,
+        public InstrumentPlayedEventArgs(NoteSound sound, int pitch, int volume, Level level, BlockPos pos,
                 ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, boolean isClientSide) {
                     
             this.sound = sound;
@@ -50,7 +57,7 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEventArg
             this.volume = volume;
 
             this.level = level;
-            this.pos = pos;
+            this.playPos = pos;
             this.isClientSide = isClientSide;
 
             this.instrumentId = instrumentId;
@@ -81,24 +88,25 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEventArg
             /** The hand holding the instrument played by this player */
             public final Optional<InteractionHand> hand;
 
-            public final Optional<BlockPos> blockInstrumentPos;
-    
-            public ByPlayerArgs(NoteSound sound, int pitch, float volume, Player player, BlockPos pos, Optional<InteractionHand> hand,
-                    ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, boolean isClientSide) {
+            public boolean isBlockInstrument() {
+                return !hand.isPresent();
+            }
 
-                super(sound, pitch, volume, player.level(), pos, instrumentId, noteIdentifier, isClientSide);
+    
+            public ByPlayerArgs(NoteSound sound, int pitch, int volume, Player player, BlockPos pos, Optional<InteractionHand> hand,
+                    ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, boolean isClientSide) {
+                super(
+                    sound, pitch, volume,
+                    player.level(), pos,
+                    instrumentId, noteIdentifier,
+                    isClientSide
+                );
+    
                 this.player = player;
+                this.hand = hand;
     
-                if (hand.isPresent()) {
-                    this.hand = hand;
-                    itemInstrument = Optional.of((hand == null) ? null : player.getItemInHand(hand.get()));
-    
-                    blockInstrumentPos = Optional.empty();
-                } else {
-                    itemInstrument = Optional.empty();
-                    this.hand = Optional.empty();
-                    blockInstrumentPos = Optional.ofNullable(InstrumentEntityData.getBlockPos(player));
-                }
+                itemInstrument = isBlockInstrument() ? Optional.empty()
+                    : Optional.of(player.getItemInHand(hand.get()));
             }
         }
     }

@@ -99,8 +99,8 @@ public class NoteButtonRenderer {
         final int noteWidth = noteButton.getWidth()/2, noteHeight = noteButton.getHeight()/2;
         
         ClientUtil.setShaderColor((noteButton.isPlaying() && !foreignPlaying)
-            ? themeLoader.getPressedNoteTheme()
-            : themeLoader.getLabelTheme()
+            ? themeLoader.notePressed()
+            : themeLoader.noteReleased()
         );
 
         gui.blit(labelProvider.get(),
@@ -129,8 +129,8 @@ public class NoteButtonRenderer {
             MINECRAFT.font, noteButton.getMessage(),
             labelX, labelY,
             ((noteButton.isPlaying() && !foreignPlaying)
-                ? themeLoader.getPressedNoteTheme()
-                : themeLoader.getNoteTheme()
+                ? themeLoader.labelPressed()
+                : themeLoader.labelReleased()
             ).getRGB()
         );
     }

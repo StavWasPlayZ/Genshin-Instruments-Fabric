@@ -42,10 +42,10 @@ public class ServerUtil {
      * @param volume The volume of the sound to initiate
      */
     public static void sendPlayNotePackets(ServerPlayer player, Optional<InteractionHand> hand,
-            NoteSound sound, ResourceLocation instrumentId, int pitch, float volume) {
+            NoteSound sound, ResourceLocation instrumentId, int pitch, int volume) {
 
         sendPlayNotePackets(
-            player, player.blockPosition(), hand,
+            player, Optional.empty(), hand,
             sound, instrumentId, new DefaultNoteButtonIdentifier(sound, pitch),
             pitch, volume,
             PlayNotePacket::new
@@ -61,8 +61,8 @@ public class ServerUtil {
      * @param volume The volume of the sound to initiate
      * @param PlayNotePacketDelegate The initiator of the {@link PlayNotePacket} to be sent
      */
-    public static void sendPlayNotePackets(ServerPlayer player, BlockPos pos, Optional<InteractionHand> hand,
-            NoteSound sound, ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, int pitch, float volume,
+    public static void sendPlayNotePackets(ServerPlayer player, Optional<BlockPos> pos, Optional<InteractionHand> hand,
+            NoteSound sound, ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, int pitch, int volume,
             PlayNotePacketDelegate notePacketDelegate) {
 
         final PlayNotePacket packet = notePacketDelegate.create(
@@ -71,19 +71,21 @@ public class ServerUtil {
             Optional.of(player.getUUID()), hand
         );
 
-        for (final Player listener : noteListeners(player.level(), player.blockPosition()))
+        final BlockPos playeredPos = CommonUtil.getPlayeredPosition(player, pos);
+
+        for (final Player listener : noteListeners(player.level(), playeredPos))
             ModPacketHandler.sendToClient(packet, (ServerPlayer)listener);
 
         // Trigger an instrument game event
         // This is done so that sculk sensors can pick up the instrument's sound
         player.level().gameEvent(
-            GameEvent.INSTRUMENT_PLAY, pos,
+            GameEvent.INSTRUMENT_PLAY, playeredPos,
             GameEvent.Context.of(player)
         );
 
         // Fire a player-specific event
         InstrumentPlayedEvent.ByPlayer.EVENT.invoker().triggered(
-            new ByPlayerArgs(sound, pitch, volume, player, pos, hand, instrumentId, noteIdentifier, false)
+            new ByPlayerArgs(sound, pitch, volume, player, playeredPos, hand, instrumentId, noteIdentifier, false)
         );
     }
 
@@ -97,7 +99,7 @@ public class ServerUtil {
      * @param pitch The pitch of the sound to initiate
      */
     public static void sendPlayNotePackets(Level level, BlockPos pos, NoteSound sound, ResourceLocation instrumentId,
-            int pitch, float volume) {
+            int pitch, int volume) {
 
         sendPlayNotePackets(
             level, pos, sound,
@@ -119,11 +121,11 @@ public class ServerUtil {
      * @param PlayNotePacketDelegate The initiator of the {@link PlayNotePacket} to be sent
      */
     public static void sendPlayNotePackets(Level level, BlockPos pos, NoteSound sound,
-            ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, int pitch, float volume,
+            ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, int pitch, int volume,
             PlayNotePacketDelegate notePacketDelegate) {
 
         final PlayNotePacket packet = notePacketDelegate.create(
-            pos, sound, pitch, volume,
+            Optional.of(pos), sound, pitch, volume,
             instrumentId, noteIdentifier,
             Optional.empty(), Optional.empty()
         );

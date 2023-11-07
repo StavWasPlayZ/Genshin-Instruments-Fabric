@@ -269,10 +269,12 @@ public abstract class BaseInstrumentOptionsScreen extends AbstractInstrumentOpti
     }
 
     protected void onVolumeChanged(final AbstractSliderButton slider, final double volume) {
-        if (isOverlay)
-            instrumentScreen.volume = volume;
+        final int newVolume = (int)(volume * 100);
 
-        queueToSave("volume", () -> saveVolume(volume));
+        if (isOverlay)
+            instrumentScreen.volume = newVolume;
+
+        queueToSave("volume", () -> saveVolume(newVolume / 100d));
     }
     protected void saveVolume(final double newVolume) {
         ModClientConfigs.VOLUME.set(newVolume);

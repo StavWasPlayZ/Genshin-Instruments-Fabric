@@ -48,12 +48,16 @@ public class InstrumentThemeLoader {
 
 
     private static final ArrayList<InstrumentThemeLoader> LOADERS = new ArrayList<>();
-    private static final Color DEF_NOTE_PRESSED_THEME = new Color(255, 249, 239);
+    private static final Color DEF_PRESSED_THEME = new Color(255, 249, 239);
 
     public final ResourceLocation resourcesRootDir, instrumentId;
     private final boolean ignoreGlobal;
 
-    private Color noteTheme, pressedNoteTheme, labelTheme, noteRingTheme;
+    private Color
+        labelPressed, labelReleased,
+        notePressed, noteReleased,
+        noteRing
+    ;
 
     private final ArrayList<Consumer<JsonObject>> listeners = new ArrayList<>();
     
@@ -95,12 +99,52 @@ public class InstrumentThemeLoader {
         listeners.add(themeLoader);
     }
 
-    public void loadColorTheme(final JsonObject theme) {
+    private void loadColorTheme(final JsonObject theme) {
+        if (!theme.has("label") || !theme.has("note")) {
+            loadLegacyTheme(theme);
+            return;
+        }
+
+        setPressStatedTheme(theme, "note",
+            this::setNotePressed, this::setNoteReleased,
+            DEF_PRESSED_THEME, Color.BLACK
+        );
+        setPressStatedTheme(theme, "label",
+            this::setLabelPressed, this::setLabelReleased,
+            notePressed(), Color.BLACK
+        );
+
+        setNoteRing(getTheme(theme, "note_ring", labelReleased()));
+    }
+    public void setPressStatedTheme(JsonObject theme, String propName,
+            Consumer<Color> pressConsumer, Consumer<Color> releaseConsumer,
+            Color defPress, Color defRelease) {
+        final JsonObject pressThemes = theme.getAsJsonObject(propName);
+ 
+        if (pressThemes == null) {
+            pressConsumer.accept(defPress);
+            releaseConsumer.accept(defRelease);
+            return;
+        }
+
+        pressConsumer.accept(getTheme(pressThemes, "pressed", defPress));
+        releaseConsumer.accept(getTheme(pressThemes, "released", defRelease));
+    }
+
+    @Deprecated(forRemoval = true)
+    private void loadLegacyTheme(final JsonObject theme) {
+        LOGGER.warn("The active resourcepack is using the legacy instrument styler format on instrument "+instrumentId+"!");
+        LOGGER.warn("The format is deprecated and will be left unsupported, and should be migrated to the new format.");
+        LOGGER.warn("Please update your pack, contact the author of it, or visit the Genshin Instruments GitHub repository to learn more."); //TODO add link to resourcepack wiki page
+
         setNoteTheme(getTheme(theme, "note_theme", Color.BLACK));
         setLabelTheme(getTheme(theme, "label_theme", Color.BLACK));
-        setPressedNoteTheme(getTheme(theme, "note_pressed_theme", DEF_NOTE_PRESSED_THEME));
+        setPressedNoteTheme(getTheme(theme, "note_pressed_theme", DEF_PRESSED_THEME));
         setNoteRingTheme(getTheme(theme, "note_ring_theme", getNoteTheme()));
+
+        setLabelPressed(getPressedNoteTheme());
     }
+
 
     /**
      * @param rgbArray The array represenation of an RGB value
@@ -140,13 +184,15 @@ public class InstrumentThemeLoader {
 
 
     public static void onResourcesReload(final EventArgs.Empty args) {
-        final ResourceManager rManager = Minecraft.getInstance().getResourceManager();
-        
+        InstrumentThemeLoader.reload(Minecraft.getInstance().getResourceManager());
+    }
+
+    private static void reload(final ResourceManager resourceManager) {
         // Handle global resource packs
         isGlobalThemed = false;
 
         try {
-            isGlobalThemed = JsonParser.parseReader(rManager.getResource(INSTRUMENTS_META_LOC).get().openAsReader())
+            isGlobalThemed = JsonParser.parseReader(resourceManager.getResource(INSTRUMENTS_META_LOC).get().openAsReader())
                 .getAsJsonObject().get("is_global_pack").getAsBoolean();
 
             if (isGlobalThemed)
@@ -155,7 +201,7 @@ public class InstrumentThemeLoader {
 
 
         for (final InstrumentThemeLoader instrumentLoader : LOADERS)
-            instrumentLoader.performReload(rManager);
+            instrumentLoader.performReload(resourceManager);
 
         CACHES.clear();
     }
@@ -209,37 +255,88 @@ public class InstrumentThemeLoader {
             .withSuffix("/"+JSON_STYLER_NAME);
     }
 
+
+
+    public Color labelPressed() {
+        return labelPressed;
+    }
+    public void setLabelPressed(Color labelPressed) {
+        this.labelPressed = labelPressed;
+    }
+
+    public Color labelReleased() {
+        return labelReleased;
+    }
+    public void setLabelReleased(Color labelReleased) {
+        this.labelReleased = labelReleased;
+    }
+
+
+    public Color notePressed() {
+        return notePressed;
+    }
+    public void setNotePressed(Color notePressed) {
+        this.notePressed = notePressed;
+    }
+
+    public Color noteReleased() {
+        return noteReleased;
+    }
+    public void setNoteReleased(Color noteReleased) {
+        this.noteReleased = noteReleased;
+    }
+
     
+    public Color noteRing() {
+        return getColorTheme(noteRing);
+    }
+    public void setNoteRing(Color noteRingTheme) {
+        this.noteRing = noteRingTheme;
+    }
+
+
+    
+    /* --------- Legacy Styler Properties --------- */
+    //TODO remove in v6.0
+
+    @Deprecated(forRemoval = true)
     public Color getNoteTheme() {
-        return getTheme(noteTheme);
+        return getColorTheme(labelReleased);
     }
+    @Deprecated(forRemoval = true)
     public void setNoteTheme(Color noteTheme) {
-        this.noteTheme = noteTheme;
+        this.labelReleased = noteTheme;
     }
     
+    @Deprecated(forRemoval = true)
     public Color getPressedNoteTheme() {
-        return getTheme(pressedNoteTheme);
+        return getColorTheme(notePressed);
     }
+    @Deprecated(forRemoval = true)
     public void setPressedNoteTheme(Color pressedNoteTheme) {
-        this.pressedNoteTheme = pressedNoteTheme;
+        this.notePressed = pressedNoteTheme;
     }
 
+    @Deprecated(forRemoval = true)
     public Color getLabelTheme() {
-        return getTheme(labelTheme);
+        return getColorTheme(noteReleased);
     }
+    @Deprecated(forRemoval = true)
     public void setLabelTheme(Color labelTheme) {
-        this.labelTheme = labelTheme;
+        this.noteReleased = labelTheme;
     }
 
+    @Deprecated(forRemoval = true)
     public Color getNoteRingTheme() {
-        return getTheme(noteRingTheme);
+        return getColorTheme(noteRing);
     }
+    @Deprecated(forRemoval = true)
     public void setNoteRingTheme(Color noteRingTheme) {
-        this.noteRingTheme = noteRingTheme;
+        this.noteRing = noteRingTheme;
     }
 
 
-    protected Color getTheme(final Color theme) {
+    protected Color getColorTheme(final Color theme) {
         return getTheme(theme, Color.BLACK);
     }
 

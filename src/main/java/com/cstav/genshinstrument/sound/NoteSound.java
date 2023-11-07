@@ -9,6 +9,7 @@ import com.cstav.genshinstrument.event.InstrumentPlayedEvent;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.ByPlayer.ByPlayerArgs;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEventArgs;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
+import com.cstav.genshinstrument.util.CommonUtil;
 import com.cstav.genshinstrument.util.LabelUtil;
 
 import net.fabricmc.api.EnvType;
@@ -51,12 +52,26 @@ public class NoteSound {
 
 
 
-    private final SoundEvent mono;
-    private final Optional<SoundEvent> stereo;
+    public final int index;
+    public final ResourceLocation baseSoundName;
+
+    SoundEvent mono;
+    Optional<SoundEvent> stereo;
     
-    public NoteSound(SoundEvent mono, Optional<SoundEvent> stereo) {
+    public NoteSound(int index, ResourceLocation instrumentId, SoundEvent mono, Optional<SoundEvent> stereo) {
+        this.index = index;
+        this.baseSoundName = instrumentId;
+
         this.mono = mono;
         this.stereo = stereo;
+    }
+
+    /**
+     * Constructor for assigning mono & stereo lazily
+     */
+    NoteSound(int index, ResourceLocation instrumentId) {
+        this.index = index;
+        this.baseSoundName = instrumentId;
     }
     
 
@@ -69,6 +84,27 @@ public class NoteSound {
     }
     public Optional<SoundEvent> getStereo() {
         return stereo;
+    }
+
+    public NoteSound[] getSoundsArr() {
+        return NoteSoundRegistrer.getSounds(baseSoundName);
+    }
+
+    public NoteSoundReuslt transpose(final int amount) {
+        final NoteSound[] sounds = getSoundsArr();
+        int newIndex = amount + index;
+
+        final int delta = newIndex / sounds.length;
+
+        if (delta != 0) {
+            // We can only go up/down 1 octave
+            if ((delta < -1) || (delta > 1))
+                return new NoteSoundReuslt(null, delta);
+
+            newIndex += sounds.length * delta;
+        }
+
+        return new NoteSoundReuslt(sounds[newIndex], delta);
     }
 
 
@@ -124,44 +160,47 @@ public class NoteSound {
     /**
      * A method for packets to use for playing this note on the client's end.
      * Will also stop the client's background music per preference.
-     * @param playerUUID The UUID of the player who initiated the sound. Null for when it wasn't a player.
-     * @param hand The hand of the player who initiated the sound. Null for when it wasn't a player.
-     * @param pos The position at which the sound was fired from
+     * @param playerUUID The UUID of the player who initiated the sound. Empty for when it wasn't a player.
+     * @param hand The hand of the player who initiated the sound. Empty for when it wasn't a player.
+     * @param playPos The position at which the sound was fired from. Null for the player's.
      */
     @Environment(EnvType.CLIENT)
-    public void playAtPos(int pitch, float volume, UUID playerUUID, Optional<InteractionHand> hand,
-            ResourceLocation instrumentId, NoteButtonIdentifier buttonIdentifier, BlockPos pos) {
-                
+    public void play(int pitch, int volume, Optional<UUID> playerUUID, Optional<InteractionHand> hand,
+            ResourceLocation instrumentId, NoteButtonIdentifier buttonIdentifier, Optional<BlockPos> position) {
         final Minecraft minecraft = Minecraft.getInstance();
         final Player player = minecraft.player;
+
+        final Level level = minecraft.level;
+        final Player initiator = playerUUID.isPresent()
+            ? level.getPlayerByUUID(playerUUID.get())
+            : null;
+
+        final BlockPos pos = CommonUtil.getPlayeredPosition(initiator, position);
+        
 
         final double distanceFromPlayer = Math.sqrt(pos.distToCenterSqr((Position)player.position()));
         
         if (ModClientConfigs.STOP_MUSIC_ON_PLAY.get() && (distanceFromPlayer < NoteSound.STOP_SOUND_DISTANCE))
             minecraft.getMusicManager().stopPlaying();
 
-        final Level level = minecraft.level;
 
-        // Send instrument played event
-        if (playerUUID == null)
+        if (playerUUID.isEmpty())
             InstrumentPlayedEvent.EVENT.invoker().triggered(
-                new InstrumentPlayedEventArgs(
-                    this, pitch, volume, level, pos, instrumentId, buttonIdentifier, true
-                )
+                new InstrumentPlayedEventArgs(this, pitch, volume, level, pos, instrumentId, buttonIdentifier, true)
             );
         else
             InstrumentPlayedEvent.ByPlayer.EVENT.invoker().triggered(
-                new ByPlayerArgs(
-                    this, pitch, volume, level.getPlayerByUUID(playerUUID), pos, hand,
+                new ByPlayerArgs(this, pitch, volume,
+                    initiator, pos, hand,
                     instrumentId, buttonIdentifier, true
                 )
             );
         
 
-        if (player.getUUID().equals(playerUUID))
+        if (player.equals(initiator))
             return;
 
-
+        
         final float mcPitch = getPitchByNoteOffset(clampPitch(pitch));
             
         if (distanceFromPlayer > LOCAL_RANGE)
@@ -170,7 +209,7 @@ public class NoteSound {
                 1, mcPitch
             , false);
         else
-            playLocally(mcPitch, volume);
+            playLocally(mcPitch, volume / 100f);
     }
 
     /**
@@ -215,15 +254,13 @@ public class NoteSound {
     }
 
 
+
     public void writeToNetwork(final FriendlyByteBuf buf) {
-        mono.writeToNetwork(buf);
-        buf.writeOptional(stereo, (fbb, sound) -> sound.writeToNetwork(fbb));
+        buf.writeResourceLocation(baseSoundName);
+        buf.writeInt(index);
     }
     public static NoteSound readFromNetwork(final FriendlyByteBuf buf) {
-        return new NoteSound(
-            SoundEvent.readFromNetwork(buf),
-            buf.readOptional(SoundEvent::readFromNetwork)
-        );
+        return NoteSoundRegistrer.getSounds(buf.readResourceLocation())[buf.readInt()];
     }
 
 
