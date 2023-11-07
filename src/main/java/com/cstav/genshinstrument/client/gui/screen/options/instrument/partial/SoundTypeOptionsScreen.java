@@ -35,17 +35,17 @@ public abstract class SoundTypeOptionsScreen<T extends SoundType> extends GridIn
     }
 
     
-    private T perferredSoundType = getInitSoundType();
+    private T preferredSoundType = getInitSoundType();
 
-    public T getPerferredSoundType() {
-        return perferredSoundType;
+    public T getPreferredSoundType() {
+        return preferredSoundType;
     }
-    public void setPerferredSoundType(T perferredSoundType) {
-        this.perferredSoundType = perferredSoundType;
+    public void setPreferredSoundType(T preferredSoundType) {
+        this.preferredSoundType = preferredSoundType;
 
         // Update the sound for this instrument
         if (isValidForSet(instrumentScreen))
-            instrumentScreen.setNoteSounds(perferredSoundType.getSoundArr().get());
+            instrumentScreen.setNoteSounds(preferredSoundType.getSoundArr().get());
     }
 
     protected abstract T getInitSoundType();
@@ -69,7 +69,7 @@ public abstract class SoundTypeOptionsScreen<T extends SoundType> extends GridIn
             Component.translatable(soundTypeButtonKey()+"."+type.toString().toLowerCase())
         )
             .withValues(values())
-            .withInitialValue(getPerferredSoundType())
+            .withInitialValue(getPreferredSoundType())
             .create(0, 0,
                 getBigButtonWidth(), getButtonHeight()
             , Component.translatable(soundTypeButtonKey()), this::onSoundTypeChange);
@@ -89,7 +89,7 @@ public abstract class SoundTypeOptionsScreen<T extends SoundType> extends GridIn
 
 
     protected void onSoundTypeChange(final CycleButton<T> btn, final T soundType) {
-        setPerferredSoundType(soundType);
+        setPreferredSoundType(soundType);
 
         queueToSave(instrumentScreen.getInstrumentId().getPath()+"_sound_type", () -> saveSoundType(soundType));
     }
@@ -109,7 +109,7 @@ public abstract class SoundTypeOptionsScreen<T extends SoundType> extends GridIn
     }
 
     @SuppressWarnings("unchecked")
-    public static void onMidiRecievedEvent(final MidiEventArgs args) {
+    public static void onMidiReceivedEvent(final MidiEventArgs args) {
         final AbstractInstrumentScreen instrumentScreen = AbstractInstrumentScreen.getCurrentScreen(Minecraft.getInstance()).orElse(null);
 
         if ((instrumentScreen == null)
@@ -130,7 +130,7 @@ public abstract class SoundTypeOptionsScreen<T extends SoundType> extends GridIn
 
 
         //NOTE: I did not test this on an actual pedal, this value might need to be flipped
-        optionsScreen.setPerferredSoundType((message[2] >= 64) ? pedalSounds.enabled : pedalSounds.disabled);
+        optionsScreen.setPreferredSoundType((message[2] >= 64) ? pedalSounds.enabled : pedalSounds.disabled);
     }
 
 }

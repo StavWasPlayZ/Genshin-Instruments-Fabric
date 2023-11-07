@@ -91,7 +91,7 @@ public abstract class ClientEvents {
             .filter(AbstractInstrumentScreen::isMidiInstrument)
             .ifPresent((instrument) -> instrument.midiReciever.onMidi(args));
         
-        SoundTypeOptionsScreen.onMidiRecievedEvent(args);
+        SoundTypeOptionsScreen.onMidiReceivedEvent(args);
     }
 
     // Safely close MIDI streams upon game shutdown

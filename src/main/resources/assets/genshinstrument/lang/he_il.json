@@ -60,12 +60,17 @@
     "button.genshinstrument.dominentDrumType.ka.tooltip": "כל התווים הם מסוג צליל Ka",
 
 
+    "button.genshinstrument.normalize_vintage_lyre": "נרמל את הנבל",
+    "button.genshinstrument.normalize_vintage_lyre.tooltip": "מנרמל את כל הצלילים של הנבל תחת היתק במול",
+
+
     "button.none": "כלום",
     
 
     
     "button.genshinstrument.instrumentOptions": "אפשרויות כלי נגינה",
     "label.genshinstrument.zither_options": "אפשרויות הציטר",
+    "label.genshinstrument.vintage_lyre_options": "אפשרויות נבל הבציר",
     "label.genshinstrument.midiOptions": "אפשרויות MIDI",
 
     
