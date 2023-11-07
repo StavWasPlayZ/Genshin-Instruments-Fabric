@@ -1,8 +1,5 @@
 package com.cstav.genshinstrument.util;
 
-import java.util.List;
-import java.util.Optional;
-
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.ByPlayer.ByPlayerArgs;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEventArgs;
@@ -14,10 +11,8 @@ import com.cstav.genshinstrument.networking.packet.instrument.NotifyInstrumentOp
 import com.cstav.genshinstrument.networking.packet.instrument.OpenInstrumentPacket;
 import com.cstav.genshinstrument.networking.packet.instrument.PlayNotePacket;
 import com.cstav.genshinstrument.sound.NoteSound;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -26,6 +21,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
+
+import java.util.List;
+import java.util.Optional;
 
 public class ServerUtil {
     public static final int PLAY_DISTANCE = 16;
@@ -59,7 +57,7 @@ public class ServerUtil {
      * @param sound The sound tp initiate
      * @param pitch The pitch of the sound to initiate
      * @param volume The volume of the sound to initiate
-     * @param PlayNotePacketDelegate The initiator of the {@link PlayNotePacket} to be sent
+     * @param notePacketDelegate The initiator of the {@link PlayNotePacket} to be sent
      */
     public static void sendPlayNotePackets(ServerPlayer player, Optional<BlockPos> pos, Optional<InteractionHand> hand,
             NoteSound sound, ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, int pitch, int volume,
@@ -118,7 +116,7 @@ public class ServerUtil {
      * @param noteIdentifier The identifier of the note
      * @param pitch The pitch of the sound to initiate
      * @param volume The volume of the sound to initiate
-     * @param PlayNotePacketDelegate The initiator of the {@link PlayNotePacket} to be sent
+     * @param notePacketDelegate The initiator of the {@link PlayNotePacket} to be sent
      */
     public static void sendPlayNotePackets(Level level, BlockPos pos, NoteSound sound,
             ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, int pitch, int volume,
@@ -147,7 +145,7 @@ public class ServerUtil {
 
         // Fire a generic instrument event
         InstrumentPlayedEvent.EVENT.invoker().triggered(
-            new InstrumentPlayedEventArgs(sound, pitch, volume, (ServerLevel)level, pos, instrumentId, noteIdentifier, false)
+            new InstrumentPlayedEventArgs(sound, pitch, volume, level, pos, instrumentId, noteIdentifier, false)
         );
     }
 
@@ -160,7 +158,7 @@ public class ServerUtil {
 
 
     public static void setInstrumentClosed(final Player player) {
-        // Update the the capabilty on server
+        // Update the capability on server
         InstrumentEntityData.setClosed(player);
 
         // And clients
@@ -213,7 +211,7 @@ public class ServerUtil {
     private static boolean sendOpenPacket(ServerPlayer player, InteractionHand usedHand, OpenInstrumentPacketSender onOpenRequest,
             BlockPos pos) {
 
-        // Update the the capabilty on the server
+        // Update the capability on the server
         if (pos == null)
             InstrumentEntityData.setOpen(player);
         else
