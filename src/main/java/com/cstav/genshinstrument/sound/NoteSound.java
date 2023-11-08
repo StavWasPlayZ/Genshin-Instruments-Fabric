@@ -18,7 +18,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Position;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -33,7 +32,7 @@ import net.minecraft.world.level.Level;
  */
 public class NoteSound {
     /**
-     * The range at which playuers with Mixed instrument sound type will start to hear Mono.
+     * The range at which players with Mixed instrument sound type will start to hear Mono.
     */
     public static final double STEREO_RANGE = 5.5;
     /**
@@ -53,25 +52,17 @@ public class NoteSound {
 
 
     public final int index;
-    public final ResourceLocation baseSoundName;
+    public final ResourceLocation baseSoundLocation;
 
     SoundEvent mono;
     Optional<SoundEvent> stereo;
     
-    public NoteSound(int index, ResourceLocation instrumentId, SoundEvent mono, Optional<SoundEvent> stereo) {
+    NoteSound(int index, ResourceLocation baseSoundLocation, SoundEvent mono, Optional<SoundEvent> stereo) {
         this.index = index;
-        this.baseSoundName = instrumentId;
+        this.baseSoundLocation = baseSoundLocation;
 
         this.mono = mono;
         this.stereo = stereo;
-    }
-
-    /**
-     * Constructor for assigning mono & stereo lazily
-     */
-    NoteSound(int index, ResourceLocation instrumentId) {
-        this.index = index;
-        this.baseSoundName = instrumentId;
     }
     
 
@@ -87,9 +78,15 @@ public class NoteSound {
     }
 
     public NoteSound[] getSoundsArr() {
-        return NoteSoundRegistrer.getSounds(baseSoundName);
+        return NoteSoundRegistrar.getSounds(baseSoundLocation);
     }
 
+    /**
+     * Transposes this note by getting the note that is {@code amount} units
+     * away from this note. Utilizes this note's {@link NoteSound#getSoundsArr() sound array}.
+     * @param amount The unit amount of transposition. Can be positive or negative.
+     * @return The note corresponding to the transposition
+     */
     public NoteSoundReuslt transpose(final int amount) {
         final NoteSound[] sounds = getSoundsArr();
         int newIndex = amount + index;
@@ -162,29 +159,27 @@ public class NoteSound {
      * Will also stop the client's background music per preference.
      * @param playerUUID The UUID of the player who initiated the sound. Empty for when it wasn't a player.
      * @param hand The hand of the player who initiated the sound. Empty for when it wasn't a player.
-     * @param playPos The position at which the sound was fired from. Null for the player's.
+     * @param playPos The position at which the sound was fired from. Empty for the player's.
      */
     @Environment(EnvType.CLIENT)
     public void play(int pitch, int volume, Optional<UUID> playerUUID, Optional<InteractionHand> hand,
-            ResourceLocation instrumentId, NoteButtonIdentifier buttonIdentifier, Optional<BlockPos> position) {
+            ResourceLocation instrumentId, NoteButtonIdentifier buttonIdentifier, Optional<BlockPos> playPos) {
         final Minecraft minecraft = Minecraft.getInstance();
         final Player player = minecraft.player;
 
         final Level level = minecraft.level;
-        final Player initiator = playerUUID.isPresent()
-            ? level.getPlayerByUUID(playerUUID.get())
-            : null;
+        final Player initiator = playerUUID.map(level::getPlayerByUUID).orElse(null);
 
-        final BlockPos pos = CommonUtil.getPlayeredPosition(initiator, position);
+        final BlockPos pos = CommonUtil.getPlayeredPosition(initiator, playPos);
         
 
-        final double distanceFromPlayer = Math.sqrt(pos.distToCenterSqr((Position)player.position()));
+        final double distanceFromPlayer = Math.sqrt(pos.distToCenterSqr(player.position()));
         
         if (ModClientConfigs.STOP_MUSIC_ON_PLAY.get() && (distanceFromPlayer < NoteSound.STOP_SOUND_DISTANCE))
             minecraft.getMusicManager().stopPlaying();
 
 
-        if (playerUUID.isEmpty())
+        if (initiator == null)
             InstrumentPlayedEvent.EVENT.invoker().triggered(
                 new InstrumentPlayedEventArgs(this, pitch, volume, level, pos, instrumentId, buttonIdentifier, true)
             );
@@ -256,21 +251,19 @@ public class NoteSound {
 
 
     public void writeToNetwork(final FriendlyByteBuf buf) {
-        buf.writeResourceLocation(baseSoundName);
+        buf.writeResourceLocation(baseSoundLocation);
         buf.writeInt(index);
     }
     public static NoteSound readFromNetwork(final FriendlyByteBuf buf) {
-        return NoteSoundRegistrer.getSounds(buf.readResourceLocation())[buf.readInt()];
+        return NoteSoundRegistrar.getSounds(buf.readResourceLocation())[buf.readInt()];
     }
 
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof NoteSound))
+        if (!(obj instanceof NoteSound other))
             return false;
 
-        final NoteSound other = (NoteSound) obj;
-        // Mono is enough to determine if the sounds are are the same
-        return mono.getLocation().equals(other.mono.getLocation());
+        return baseSoundLocation.equals(other.baseSoundLocation) && (index == other.index);
     }
 }

@@ -11,7 +11,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 
-public class NoteSoundRegistrer {
+public class NoteSoundRegistrar {
     private static final HashMap<ResourceLocation, NoteSound[]> SOUNDS_REGISTRY = new HashMap<>();
     public static final String STEREO_SUFFIX = "_stereo";
 
@@ -22,26 +22,26 @@ public class NoteSoundRegistrer {
 
     /* ----------- Registration Builder ----------- */
 
-    private final ResourceLocation baseSoundName;
+    private final ResourceLocation baseSoundLocation;
 
     private boolean hasStereo = false;
 
-    public NoteSoundRegistrer(ResourceLocation baseSoundName) {
-        this.baseSoundName = baseSoundName;
+    public NoteSoundRegistrar(ResourceLocation baseSoundLocation) {
+        this.baseSoundLocation = baseSoundLocation;
     }
 
     /**
      * Defines that this note sound will support stereo.
      * Stereo sounds are suffixed with {@code "_stereo"}.
      */
-    public NoteSoundRegistrer stereo() {
+    public NoteSoundRegistrar stereo() {
         hasStereo = true;
         return this;
     }
 
 
     public NoteSound[] register(final NoteSound[] noteSounds) {
-        SOUNDS_REGISTRY.put(baseSoundName, noteSounds);
+        SOUNDS_REGISTRY.put(baseSoundLocation, noteSounds);
         return noteSounds;
     }
 
@@ -70,13 +70,13 @@ public class NoteSoundRegistrer {
     }
 
 
-    // Singles registrer
+    // Singles registrar
     private final ArrayList<NoteSound> stackedSounds = new ArrayList<>();
-    public NoteSoundRegistrer add(ResourceLocation soundLocation, boolean hasStereo) {
+    public NoteSoundRegistrar add(ResourceLocation soundLocation, boolean hasStereo) {
         stackedSounds.add(createNote(soundLocation, hasStereo, stackedSounds.size()));
         return this;
     }
-    public NoteSoundRegistrer add(ResourceLocation soundLocation) {
+    public NoteSoundRegistrar add(ResourceLocation soundLocation) {
         return add(soundLocation, hasStereo);
     }
 
@@ -85,19 +85,19 @@ public class NoteSoundRegistrer {
     }
 
     /**
-     * Registers all NoteSounds added via {@link NoteSoundRegistrer#add}
+     * Registers all NoteSounds added via {@link NoteSoundRegistrar#add}
      */
     public NoteSound[] registerAll() {
         return register(stackedSounds.toArray(NoteSound[]::new));
     }
 
-    // Single registrer
+    // Single registrar
     /**
      * Creates a singular {@link NoteSound} with null sounds, that will get filled
      * upon registration.
      */
     public NoteSound registerNote() {
-        return createNote(baseSoundName, 0);
+        return createNote(baseSoundLocation, 0);
     }
 
 
@@ -106,7 +106,7 @@ public class NoteSoundRegistrer {
      * upon registration.
      */
     private NoteSound createNote(ResourceLocation soundLocation, boolean hasStereo, int index) {
-        return new NoteSound(index, baseSoundName,
+        return new NoteSound(index, baseSoundLocation,
             registerSound(soundLocation),
             hasStereo
                 ? Optional.of(registerSound(soundLocation.withSuffix(STEREO_SUFFIX)))
@@ -128,7 +128,7 @@ public class NoteSoundRegistrer {
      * @param noteIndex The index of the note
      */
     public NoteSound createNote(int noteIndex) {
-        return createNote(baseSoundName.withSuffix("_note_"+noteIndex), noteIndex);
+        return createNote(baseSoundLocation.withSuffix("_note_"+noteIndex), noteIndex);
     }
     
 

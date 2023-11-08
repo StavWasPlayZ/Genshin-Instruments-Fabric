@@ -41,7 +41,7 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEventArg
 
 
         /**
-         * Convinience method to convert the volume of the note
+         * Convenience method to convert the volume of the note
          * into a {@code float} percentage
          */
         public float volume() {
@@ -89,7 +89,7 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEventArg
             public final Optional<InteractionHand> hand;
 
             public boolean isBlockInstrument() {
-                return !hand.isPresent();
+                return hand.isEmpty();
             }
 
     

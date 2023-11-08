@@ -37,10 +37,10 @@ public class ModSounds {
         GInstrumentMod.LOGGER.info("Registered all note sounds for instruments");
     }
     /**
-     * Shorthand for {@code new NoteSoundRegistrer(instrumentId)}
+     * Shorthand for {@code new NoteSoundRegistrar(instrumentId)}
      */
-    private static NoteSoundRegistrer nsr(ResourceLocation instrumentId) {
-        return new NoteSoundRegistrer(instrumentId);
+    private static NoteSoundRegistrar nsr(ResourceLocation instrumentId) {
+        return new NoteSoundRegistrar(instrumentId);
     }
 
 }
