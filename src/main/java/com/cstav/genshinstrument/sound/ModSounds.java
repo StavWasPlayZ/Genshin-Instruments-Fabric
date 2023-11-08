@@ -7,11 +7,11 @@ import net.minecraft.resources.ResourceLocation;
 public class ModSounds {
 
     public static final NoteSound[]
-        WINDSONG_LYRE_NOTE_SOUNDS = nsr(loc("windsong_lyre")).stereo().regsiterGrid(),
-        VINTAGE_LYRE_NOTE_SOUNDS = nsr(loc("vintage_lyre")).regsiterGrid(),
+        WINDSONG_LYRE_NOTE_SOUNDS = nsr(loc("windsong_lyre")).stereo().registerGrid(),
+        VINTAGE_LYRE_NOTE_SOUNDS = nsr(loc("vintage_lyre")).registerGrid(),
 
-        ZITHER_NEW_NOTE_SOUNDS = nsr(loc("floral_zither_new")).regsiterGrid(),
-        ZITHER_OLD_NOTE_SOUNDS = nsr(loc("floral_zither_old")).regsiterGrid(),
+        ZITHER_NEW_NOTE_SOUNDS = nsr(loc("floral_zither_new")).registerGrid(),
+        ZITHER_OLD_NOTE_SOUNDS = nsr(loc("floral_zither_old")).registerGrid(),
 
         GLORIOUS_DRUM = nsr(loc("glorious_drum"))
             .add(loc("glorious_drum_don"))

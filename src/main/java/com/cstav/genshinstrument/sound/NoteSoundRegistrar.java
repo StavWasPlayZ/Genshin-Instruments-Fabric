@@ -65,7 +65,7 @@ public class NoteSoundRegistrar {
      * Registers a matrix of sounds for a grid instrument, with the
      * default amount of {@link AbstractGridInstrumentScreen#DEF_ROWS rows} and {@link AbstractGridInstrumentScreen#DEF_COLUMNS columns}.
      */
-    public NoteSound[] regsiterGrid() {
+    public NoteSound[] registerGrid() {
         return registerGrid(AbstractGridInstrumentScreen.DEF_ROWS, AbstractGridInstrumentScreen.DEF_COLUMNS);
     }
 
