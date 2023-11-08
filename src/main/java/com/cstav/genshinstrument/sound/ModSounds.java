@@ -16,7 +16,7 @@ public class ModSounds {
         GLORIOUS_DRUM = nsr(loc("glorious_drum"))
             .add(loc("glorious_drum_don"))
             .add(loc("glorious_drum_ka"), true)
-        .registerAll();
+        .registerAll()
 
         // // TODO remove after tests (this is outdated anyways)
         // BANJO = new NoteSound[] {
