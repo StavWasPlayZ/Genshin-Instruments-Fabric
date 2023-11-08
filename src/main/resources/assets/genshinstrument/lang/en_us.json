@@ -59,7 +59,7 @@
     "button.genshinstrument.acceptAllChannels": "Listen to All Channels",
 
 
-    "button.genshinstrument.dominentDrumType": "Dominent Drum Type",
+    "button.genshinstrument.dominentDrumType": "Dominant Drum Type",
     "button.genshinstrument.dominentDrumType.both": "Both",
 
     "button.genshinstrument.dominentDrumType.both.tooltip": "The MIDI keyboard will be split in middle C, such that low C plays Don and high plays Ka",
@@ -117,7 +117,7 @@
     "genshinstrument.advancements.main.windsong_lyre.title": "The Sound of Wind",
     "genshinstrument.advancements.main.windsong_lyre.description": "Play the Windsong Lyre",
     
-    "genshinstrument.advancements.main.vintage_lyre.title": "The Forest Will Remeber",
+    "genshinstrument.advancements.main.vintage_lyre.title": "The Forest Will Remember",
     "genshinstrument.advancements.main.vintage_lyre.description": "Play the Vintage Lyre",
     
     "genshinstrument.advancements.main.glorious_drum.title": "Totally Not a Scam",
