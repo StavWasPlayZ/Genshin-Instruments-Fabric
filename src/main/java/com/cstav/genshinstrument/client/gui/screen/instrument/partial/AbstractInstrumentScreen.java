@@ -13,7 +13,7 @@ import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.NoteB
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.AbstractInstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.BaseInstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings;
-import com.cstav.genshinstrument.client.midi.InstrumentMidiReciever;
+import com.cstav.genshinstrument.client.midi.InstrumentMidiReceiver;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.networking.packet.instrument.CloseInstrumentPacket;
@@ -79,14 +79,14 @@ public abstract class AbstractInstrumentScreen extends Screen {
      */
     public int volume = (int)(ModClientConfigs.VOLUME.get() * 100);
     /**
-     * Convinience method to get the {@link AbstractInstrumentScreen#volume volume}
+     * Convenience method to get the {@link AbstractInstrumentScreen#volume volume}
      * of this instrument as a {@code float} percentage
      */
     public float volume() {
         return volume / 100f;
     }
     /**
-     * Convinience method to set the {@link AbstractInstrumentScreen#volume volume}
+     * Convenience method to set the {@link AbstractInstrumentScreen#volume volume}
      * of this instrument via a float percentage
      */
     public void setVolume(float volume) {
@@ -95,8 +95,8 @@ public abstract class AbstractInstrumentScreen extends Screen {
 
 
     /**
-     * Sets the sounds of this instruments.
-     * @apiNote This method should generally be overitten by subclasses to keep their respected order of notes
+     * Sets the sounds of this instrument.
+     * @apiNote This method should generally be overwritten by subclasses to keep their respected order of notes
      */
     public void setNoteSounds(final NoteSound[] sounds) {
         final Iterator<NoteButton> noteIterator = notesIterable().iterator();
@@ -107,7 +107,7 @@ public abstract class AbstractInstrumentScreen extends Screen {
 
 
         if (noteIterator.hasNext() || (i < sounds.length))
-            LogUtils.getLogger().warn("Not all sounds could be set for this instrument!");
+            LogUtils.getLogger().warn("Not all sounds were set for instrument "+getInstrumentId()+"!");
     }
 
 
@@ -118,7 +118,7 @@ public abstract class AbstractInstrumentScreen extends Screen {
 
 
     /**
-     * @return The layout of the note names accross the instrument's rows.
+     * @return The layout of the note names across the instrument's rows.
      * Null for when this instrument does not support note names.
      * @implNote All built-in instruments' layouts are derived from
      * <a href=https://github.com/Specy/genshin-music/blob/19dfe0e2fb8081508bd61dd47289dcb2d89ad5e3/src/Config.ts#L114>
@@ -130,9 +130,8 @@ public abstract class AbstractInstrumentScreen extends Screen {
     }
 
     /**
-     * Handles this instrument being closed by either recieving a false signal from {@link InstrumentOpenProvider#isOpen}
+     * Handles this instrument being closed by either receiving a false signal from {@link InstrumentEntityData#isOpen}
      * or, if it is an item, if the item has been ripped out of the player's hands.
-     * @return Whether the instrument has closed as a result of this method
      */
     public void handleAbruptClosing() {
         if (!InstrumentEntityData.isOpen(minecraft.player))
@@ -150,12 +149,12 @@ public abstract class AbstractInstrumentScreen extends Screen {
     }
 
 
-    public final InstrumentMidiReciever midiReciever;
+    public final InstrumentMidiReceiver midiReceiver;
     /**
      * Initiates the MIDI handler of this instrument.
      * Override to implement MIDI support.
      */
-    public InstrumentMidiReciever initMidiReceiver() {
+    public InstrumentMidiReceiver initMidiReceiver() {
         return null;
     }
 
@@ -163,7 +162,7 @@ public abstract class AbstractInstrumentScreen extends Screen {
      * @return Whether this instrument can support MIDI input
      */
     public boolean isMidiInstrument() {
-        return midiReciever != null;
+        return midiReceiver != null;
     }
 
 
@@ -193,7 +192,7 @@ public abstract class AbstractInstrumentScreen extends Screen {
         return "textures/gui/genshinstrument/";
     }
     /**
-     * @return The resource laied inside of this instrument's directory
+     * @return The resource laid inside of this instrument's directory
      */
     public ResourceLocation getResourceFromGlob(final String path) {
         return getSourcePath().withPath(getGlobalRootPath() + "instrument/" + path);
@@ -231,8 +230,6 @@ public abstract class AbstractInstrumentScreen extends Screen {
      * @param path The desired path to obtain from the instrument's root directory
      * @param considerGlobal If {@link InstrumentThemeLoader#isGlobalThemed() a global resource pack is enabled}, take the resource from there
      * @return The resource contained in this instrument's root directory
-     * @see {@link AbstractInstrumentScreen#getInstrumentResourcesLocation()}
-     * @see {@link AbstractInstrumentScreen#getResourceFrom(ResourceLocation, String)}
      */
     public ResourceLocation getResourceFromRoot(final String path, final boolean considerGlobal) {
         return (considerGlobal && InstrumentThemeLoader.isGlobalThemed())
@@ -243,8 +240,6 @@ public abstract class AbstractInstrumentScreen extends Screen {
      * Gets The desired path to obtain from either the instrument's root or global directory.
      * The global directory will be used if {@link InstrumentThemeLoader#isGlobalThemed()} is true.
      * @return The resource contained in this instrument's root directory
-     * @see {@link AbstractInstrumentScreen#getInstrumentResourcesLocation()}
-     * @see {@link AbstractInstrumentScreen#getResourceFrom(ResourceLocation, String)}
      */
     public ResourceLocation getResourceFromRoot(final String path) {
         return getResourceFromRoot(path, true);
@@ -258,7 +253,7 @@ public abstract class AbstractInstrumentScreen extends Screen {
         super(CommonComponents.EMPTY);
         
         interactionHand = Optional.ofNullable(hand);
-        midiReciever = initMidiReceiver();
+        midiReceiver = initMidiReceiver();
     }
 
 
@@ -323,11 +318,11 @@ public abstract class AbstractInstrumentScreen extends Screen {
         if (pitchChanged)
             return false;
 
-        if (checkTranposeUpKey(pKeyCode, pScanCode)) {
+        if (checkTransposeUpKey(pKeyCode, pScanCode)) {
             transposeUp();
             return true;
         }
-        else if (checkTranposeDownKey(pKeyCode, pScanCode)) {
+        else if (checkTransposeDownKey(pKeyCode, pScanCode)) {
             transposeDown();
             return true;
         }
@@ -338,7 +333,7 @@ public abstract class AbstractInstrumentScreen extends Screen {
         if (!pitchChanged)
             return false;
 
-        if (checkTranposeUpKey(pKeyCode, pScanCode) || checkTranposeDownKey(pKeyCode, pScanCode)) {
+        if (checkTransposeUpKey(pKeyCode, pScanCode) || checkTransposeDownKey(pKeyCode, pScanCode)) {
             resetTransposition();
             return true;
         }
@@ -362,9 +357,9 @@ public abstract class AbstractInstrumentScreen extends Screen {
     }
 
     /**
-     * @return Whether this instrument's pitch is being tranposed up/down as requested by the keybinds
+     * @return Whether this instrument's pitch is being transposed up/down as requested by the keybindings
      */
-    public boolean isTranposed() {
+    public boolean isTransposed() {
         return pitchChanged;
     }
 
@@ -375,13 +370,13 @@ public abstract class AbstractInstrumentScreen extends Screen {
      */
     public boolean isKeyConsumed(final int keyCode, final int scanCode) {
         return (getNoteByKey(keyCode) != null)
-            || checkTranposeDownKey(keyCode, scanCode) || checkTranposeUpKey(keyCode, scanCode);
+            || checkTransposeDownKey(keyCode, scanCode) || checkTransposeUpKey(keyCode, scanCode);
     }
 
-    protected boolean checkTranposeDownKey(final int keyCode, final int scanCode) {
+    protected boolean checkTransposeDownKey(final int keyCode, final int scanCode) {
         return InstrumentKeyMappings.TRANSPOSE_DOWN_MODIFIER.matches(keyCode, scanCode);
     }
-    protected boolean checkTranposeUpKey(final int keyCode, final int scanCode) {
+    protected boolean checkTransposeUpKey(final int keyCode, final int scanCode) {
         return InstrumentKeyMappings.TRANSPOSE_UP_MODIFIER.matches(keyCode, scanCode);
     }
 
@@ -396,7 +391,7 @@ public abstract class AbstractInstrumentScreen extends Screen {
     public NoteButton getNoteByKey(final int keyCode) {
         final Key key = Type.KEYSYM.getOrCreate(keyCode);
 
-        return noteMap().containsKey(key) ? noteMap().get(key) : null;
+        return noteMap().getOrDefault(key, null);
     }
     /**
      * Unlocks any focused {@link NoteButton}s

@@ -12,7 +12,7 @@ import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.label
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.GridInstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.BaseInstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings;
-import com.cstav.genshinstrument.client.midi.InstrumentMidiReciever;
+import com.cstav.genshinstrument.client.midi.InstrumentMidiReceiver;
 import com.cstav.genshinstrument.client.util.ClientUtil;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteGridButtonIdentifier;
@@ -234,8 +234,8 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
     }
 
 
-    public InstrumentMidiReciever initMidiReceiver() {
-        return ((rows() != 7) || isSSTI()) ? null : new GridInstrumentMidiReciever(this);
+    public InstrumentMidiReceiver initMidiReceiver() {
+        return ((rows() != 7) || isSSTI()) ? null : new GridInstrumentMidiReceiver(this);
     }
     
 }

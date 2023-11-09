@@ -1,17 +1,19 @@
 package com.cstav.genshinstrument.sound;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Optional;
-
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.notegrid.AbstractGridInstrumentScreen;
-
+import com.mojang.logging.LogUtils;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import org.slf4j.Logger;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class NoteSoundRegistrar {
+    private static final Logger LOGGER = LogUtils.getLogger();
+
     private static final HashMap<ResourceLocation, NoteSound[]> SOUNDS_REGISTRY = new HashMap<>();
     public static final String STEREO_SUFFIX = "_stereo";
 
@@ -25,6 +27,7 @@ public class NoteSoundRegistrar {
     private final ResourceLocation baseSoundLocation;
 
     private boolean hasStereo = false;
+    private boolean alreadyRegistered = false;
 
     public NoteSoundRegistrar(ResourceLocation baseSoundLocation) {
         this.baseSoundLocation = baseSoundLocation;
@@ -38,10 +41,20 @@ public class NoteSoundRegistrar {
         hasStereo = true;
         return this;
     }
+    /**
+     * Skips the process of registering this note's SoundEvents with Minecraft.
+     * For use with already registered sounds.
+     */
+    public NoteSoundRegistrar alreadyRegistered() {
+        alreadyRegistered = true;
+        return this;
+    }
 
 
     public NoteSound[] register(final NoteSound[] noteSounds) {
         SOUNDS_REGISTRY.put(baseSoundLocation, noteSounds);
+
+        LOGGER.info("Successfully registered "+noteSounds.length+" note sounds of "+baseSoundLocation);
         return noteSounds;
     }
 
@@ -70,17 +83,24 @@ public class NoteSoundRegistrar {
     }
 
 
-    // Singles registrar
+    //#region Singles registrar
+
     private final ArrayList<NoteSound> stackedSounds = new ArrayList<>();
-    public NoteSoundRegistrar add(ResourceLocation soundLocation, boolean hasStereo) {
-        stackedSounds.add(createNote(soundLocation, hasStereo, stackedSounds.size()));
-        return this;
-    }
-    public NoteSoundRegistrar add(ResourceLocation soundLocation) {
-        return add(soundLocation, hasStereo);
+    /**
+     * <p>Chains a note sound to this registrar.</p>
+     * <p>Call back {@link ChainedNoteSoundRegistrar#add()}
+     * to perform the chain and return here.</p>
+     *
+     * <p>Call {@link NoteSoundRegistrar#registerAll()} after all registrations
+     * are complete.</p>
+     */
+    public ChainedNoteSoundRegistrar chain(ResourceLocation soundLocation) {
+        validateNotChained();
+        return new ChainedNoteSoundRegistrar(soundLocation);
     }
 
     public NoteSound peek() {
+        validateNotChained();
         return stackedSounds.get(stackedSounds.size() - 1);
     }
 
@@ -88,8 +108,40 @@ public class NoteSoundRegistrar {
      * Registers all NoteSounds added via {@link NoteSoundRegistrar#add}
      */
     public NoteSound[] registerAll() {
+        validateNotChained();
         return register(stackedSounds.toArray(NoteSound[]::new));
     }
+
+    public NoteSoundRegistrar add() {
+        throw new IllegalStateException("Called add() on a non-chained registrar!");
+    }
+
+
+    public class ChainedNoteSoundRegistrar extends NoteSoundRegistrar {
+
+        private final ResourceLocation soundLocation;
+        private ChainedNoteSoundRegistrar(ResourceLocation soundLocation) {
+            super(NoteSoundRegistrar.this.baseSoundLocation);
+            this.soundLocation = soundLocation;
+        }
+
+        @Override
+        public NoteSoundRegistrar add() {
+            final NoteSoundRegistrar original = NoteSoundRegistrar.this;
+            final ArrayList<NoteSound> stackedSounds = original.stackedSounds;
+
+            stackedSounds.add(createNote(soundLocation, stackedSounds.size()));
+            return original;
+        }
+
+    }
+    private void validateNotChained() {
+        if (this instanceof ChainedNoteSoundRegistrar)
+            throw new IllegalStateException("Called non-chainable method on a chained registrar!");
+    }
+
+    //#endregion
+
 
     // Single registrar
     /**
@@ -105,22 +157,22 @@ public class NoteSoundRegistrar {
      * Creates a singular {@link NoteSound} with null sounds, that will get filled
      * upon registration.
      */
-    private NoteSound createNote(ResourceLocation soundLocation, boolean hasStereo, int index) {
+    protected NoteSound createNote(ResourceLocation soundLocation, int index) {
         return new NoteSound(index, baseSoundLocation,
-            registerSound(soundLocation),
+            getOrCreateSound(soundLocation),
             hasStereo
-                ? Optional.of(registerSound(soundLocation.withSuffix(STEREO_SUFFIX)))
-                : Optional.empty()
+                ? getOrCreateSound(soundLocation.withSuffix(STEREO_SUFFIX))
+                : null
         );
     }
-    
-    /**
-     * Creates a singular {@link NoteSound} with null sounds, that will get filled
-     * upon registration.
-     */
-    private NoteSound createNote(ResourceLocation soundLocation, int index) {
-        return createNote(soundLocation, hasStereo, index);
+
+    private SoundEvent getOrCreateSound(ResourceLocation soundLocation) {
+        return alreadyRegistered
+            ? BuiltInRegistries.SOUND_EVENT.get(soundLocation)
+            : registerSound(soundLocation);
     }
+
+
     /**
      * Creates and registers a {@link NoteSound} with null sounds, that will get filled
      * upon registration.

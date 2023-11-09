@@ -89,7 +89,7 @@ public abstract class ClientEvents {
     public static void onMidiEvent(final MidiEventArgs args) {
         AbstractInstrumentScreen.getCurrentScreen(Minecraft.getInstance())
             .filter(AbstractInstrumentScreen::isMidiInstrument)
-            .ifPresent((instrument) -> instrument.midiReciever.onMidi(args));
+            .ifPresent((instrument) -> instrument.midiReceiver.onMidi(args));
         
         SoundTypeOptionsScreen.onMidiReceivedEvent(args);
     }
