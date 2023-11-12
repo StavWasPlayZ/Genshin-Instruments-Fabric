@@ -29,12 +29,6 @@ public abstract class ModItems {
         GLORIOUS_DRUM = register("glorious_drum", new InstrumentItem(
             (player, hand) -> sendInternalOpenPacket(player, hand, "glorious_drum")
         ))
-
-        // //TODO remove after tests
-        // BANJO = register("banjo", new InstrumentItem(
-        //         (player, hand) -> sendInternalOpenPacket(player, hand, "banjo")
-        //     )
-        // )
     ;
     
     

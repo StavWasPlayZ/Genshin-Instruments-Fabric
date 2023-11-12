@@ -25,9 +25,6 @@ public class ClientInitiator implements ClientModInitializer {
 	private static final List<Class<?>> LOAD_ME = List.of(
 		WindsongLyreScreen.class, VintageLyreScreen.class,
 		FloralZitherScreen.class, AratakisGreatAndGloriousDrumScreen.class
-
-		//TODO remove after tests
-		// BanjoInstrumentScreen.class
 	);
 
     
