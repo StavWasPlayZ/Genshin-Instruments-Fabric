@@ -2,6 +2,9 @@ package com.cstav.genshinstrument.client.gui.screen.options.instrument.partial;
 
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.notegrid.AbstractGridInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.GridInstrumentOptionsScreen;
+import com.mojang.blaze3d.vertex.VertexSorting.DistanceFunction;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.layouts.GridLayout;
@@ -11,6 +14,7 @@ import net.minecraft.network.chat.Component;
 
 import java.awt.*;
 
+@Environment(EnvType.CLIENT)
 public abstract class SingleButtonOptionsScreen extends GridInstrumentOptionsScreen {
     private final static int SPACE_BEFORE = 20, SPACER_HEIGHT = 13;
     private int heightBefore;

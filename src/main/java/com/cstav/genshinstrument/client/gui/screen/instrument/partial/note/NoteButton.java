@@ -25,6 +25,9 @@ import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
+/**
+ * The abstract implementation of an instrument's note button.
+ */
 @Environment(EnvType.CLIENT)
 public abstract class NoteButton extends AbstractButton {
 

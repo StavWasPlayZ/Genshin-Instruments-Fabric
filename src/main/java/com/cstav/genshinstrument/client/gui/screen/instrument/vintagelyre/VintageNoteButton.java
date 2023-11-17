@@ -42,6 +42,6 @@ public class VintageNoteButton extends NoteGridButton {
         if (!isDefaultFlat())
             return pitch;
 
-        return pitch + ((instrumentScreen.getPitch() == NoteSound.MAX_PITCH) ? -1 : 1);
+        return pitch + 1;
     }
 }

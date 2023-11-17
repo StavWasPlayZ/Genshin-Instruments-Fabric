@@ -118,7 +118,7 @@ public class AratakisGreatAndGloriousDrumScreen extends AbstractInstrumentScreen
 
             @Override
             protected NoteButton handleMidiPress(int note, int key) {
-                final boolean isKa = (ddt() == DominentDrumType.KA) || ((ddt() == DominentDrumType.BOTH) && (note >= 12));
+                final boolean isKa = (ddt() == DominantDrumType.KA) || ((ddt() == DominantDrumType.BOTH) && (note >= 12));
 
                 setPitch(note - (isKa ? 19 : 2));
 
@@ -134,13 +134,11 @@ public class AratakisGreatAndGloriousDrumScreen extends AbstractInstrumentScreen
                             kaRight = !kaRight;
                             return dnb;
                         }
-                        continue;
                     } else {
                         if (dnb.isRight == donRight) {
                             donRight = !donRight;
                             return dnb;
                         }
-                        continue;
                     }
                 }
 
@@ -149,20 +147,19 @@ public class AratakisGreatAndGloriousDrumScreen extends AbstractInstrumentScreen
 
             @Override
             protected int minMidiNote() {
-                return ((ddt() == DominentDrumType.BOTH) || ddt() == DominentDrumType.DON) ? -10 : 7;
+                return ((ddt() == DominantDrumType.BOTH) || ddt() == DominantDrumType.DON) ? -10 : 7;
             }
             @Override
             protected int maxMidiNote() {
-                return ((ddt() == DominentDrumType.BOTH) || ddt() == DominentDrumType.KA) ? 32 : 15;
+                return ((ddt() == DominantDrumType.BOTH) || ddt() == DominantDrumType.KA) ? 32 : 15;
             }
         };
     }
 
-    /**
-     * Shorthand for {@code ModClientConfigs.DOMINENT_DRUM_TYPE.get()}
+    /**MINANT_DRUM_TYPE.get()}
      */
-    private final static DominentDrumType ddt() {
-        return ModClientConfigs.DOMINENT_DRUM_TYPE.get();
+    private final static DominantDrumType ddt() {
+        return ModClientConfigs.DOMINANT_DRUM_TYPE.get();
     }
     
 }

@@ -115,7 +115,7 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
 
     /**
      * Queues the given option to later be saved.
-     * Most notably, a save occures when the client closes this screen.
+     * Most notably, a save occurs when the client closes this screen.
      * @param optionKey A unique identifier of this option. If a duplicate entry
      * exists, it will be overwritten.
      * @param saveRunnable The runnable for saving the option

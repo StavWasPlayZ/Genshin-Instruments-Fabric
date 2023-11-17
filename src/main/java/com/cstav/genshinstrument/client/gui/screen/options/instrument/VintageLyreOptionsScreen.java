@@ -3,12 +3,15 @@ package com.cstav.genshinstrument.client.gui.screen.options.instrument;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screen.instrument.vintagelyre.VintageLyreScreen;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.SingleButtonOptionsScreen;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
+@Environment(EnvType.CLIENT)
 public class VintageLyreOptionsScreen extends SingleButtonOptionsScreen {
 
     public VintageLyreOptionsScreen(final VintageLyreScreen screen) {
