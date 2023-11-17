@@ -2,7 +2,6 @@ package com.cstav.genshinstrument.client.gui.screen.options.instrument.partial;
 
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.notegrid.AbstractGridInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.GridInstrumentOptionsScreen;
-import com.mojang.blaze3d.vertex.VertexSorting.DistanceFunction;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiGraphics;
