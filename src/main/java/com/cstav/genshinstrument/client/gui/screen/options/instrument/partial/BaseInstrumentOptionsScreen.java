@@ -1,6 +1,5 @@
 package com.cstav.genshinstrument.client.gui.screen.options.instrument.partial;
 
-import net.minecraft.client.gui.layouts.LinearLayout.Orientation;
 import org.jetbrains.annotations.Nullable;
 
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
