@@ -27,7 +27,7 @@ public class NoteButtonRenderer {
 
     protected final ResourceLocation notePressedLocation, noteReleasedLocation, noteHoverLocation;
 
-    protected Supplier<ResourceLocation> labelProvider;
+    protected Supplier<ResourceLocation> noteTextureProvider;
 
     // Animations
     public final NoteAnimationController noteAnimation;
@@ -35,9 +35,9 @@ public class NoteButtonRenderer {
     protected final ArrayList<NoteRing> rings = new ArrayList<>();
 
 
-    public NoteButtonRenderer(NoteButton noteButton, Supplier<ResourceLocation> labelProvider) {
+    public NoteButtonRenderer(NoteButton noteButton, Supplier<ResourceLocation> noteTextureProvider) {
         this.noteButton = noteButton;
-        this.labelProvider = labelProvider;
+        this.noteTextureProvider = noteTextureProvider;
         this.instrumentScreen = noteButton.instrumentScreen;
 
         noteAnimation = new NoteAnimationController(.15f, 9, noteButton);
@@ -99,11 +99,11 @@ public class NoteButtonRenderer {
         final int noteWidth = noteButton.getWidth()/2, noteHeight = noteButton.getHeight()/2;
         
         ClientUtil.setShaderColor((noteButton.isPlaying() && !foreignPlaying)
-            ? themeLoader.getPressedNoteTheme()
-            : themeLoader.getLabelTheme()
+            ? themeLoader.notePressed()
+            : themeLoader.noteReleased()
         );
 
-        gui.blit(labelProvider.get(),
+        gui.blit(noteTextureProvider.get(),
             noteButton.getX() + noteWidth/2, noteButton.getY() + noteHeight/2,
             0, 0,
 
@@ -129,8 +129,8 @@ public class NoteButtonRenderer {
             MINECRAFT.font, noteButton.getMessage(),
             labelX, labelY,
             ((noteButton.isPlaying() && !foreignPlaying)
-                ? themeLoader.getPressedNoteTheme()
-                : themeLoader.getNoteTheme()
+                ? themeLoader.labelPressed()
+                : themeLoader.labelReleased()
             ).getRGB()
         );
     }
@@ -195,7 +195,7 @@ public class NoteButtonRenderer {
     /**
      * Obtains a resource from this instrument's directory.
      * @param path The resource to obtain from this note's directory
-     * @see {@link AbstractInstrumentScreen#getResourceFrom(ResourceLocation, String)}
+     * @see CommonUtil#getResourceFrom(ResourceLocation, String)
      */
     protected ResourceLocation getResourceFromRoot(final String path) {
         return CommonUtil.getResourceFrom(rootLocation, path);

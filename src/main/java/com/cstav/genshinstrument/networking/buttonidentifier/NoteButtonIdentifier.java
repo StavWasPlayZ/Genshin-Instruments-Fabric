@@ -8,6 +8,8 @@ import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.NoteB
 import com.cstav.genshinstrument.networking.packet.INoteIdentifierSender;
 import com.cstav.genshinstrument.util.ServerUtil;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.network.FriendlyByteBuf;
 
 /**
@@ -25,6 +27,7 @@ public abstract class NoteButtonIdentifier {
 
     public abstract boolean matches(final NoteButtonIdentifier other);
 
+    @Environment(EnvType.CLIENT)
     public boolean matches(final NoteButton note) {
         return matches(note.getIdentifier());
     }
@@ -35,12 +38,7 @@ public abstract class NoteButtonIdentifier {
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof NoteButtonIdentifier)
-            return matches((NoteButtonIdentifier)other);
-        if (other instanceof NoteButton)
-            return matches((NoteButton)other);
-
-        return false;
+        return (other instanceof NoteButtonIdentifier _other) && matches(_other);
     }
 
     /**
