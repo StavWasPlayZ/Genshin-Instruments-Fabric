@@ -28,12 +28,6 @@ public abstract class ModItems {
         GLORIOUS_DRUM = register("glorious_drum", new InstrumentItem(
             (player, hand) -> sendInternalOpenPacket(player, hand, "glorious_drum")
         ))
-
-        // //TODO remove after tests
-        // BANJO = register("banjo", new InstrumentItem(
-        //         (player, hand) -> sendInternalOpenPacket(player, hand, "banjo")
-        //     )
-        // )
     ;
     
     
@@ -46,7 +40,7 @@ public abstract class ModItems {
 
 
     private static void addToItemGroups(final Item item) {
-        // All shall go to the instruments and toold tab
+        // All shall go to the instruments and tools tab
         addToTab(ModCreativeModeTabs.INSTRUMENTS_TAB, item);
         addToTab(CreativeModeTabs.TOOLS_AND_UTILITIES, item);
     }

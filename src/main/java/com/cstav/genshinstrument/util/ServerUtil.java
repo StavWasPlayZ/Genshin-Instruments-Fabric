@@ -1,8 +1,5 @@
 package com.cstav.genshinstrument.util;
 
-import java.util.List;
-import java.util.Optional;
-
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.ByPlayer.ByPlayerArgs;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEventArgs;
@@ -14,10 +11,8 @@ import com.cstav.genshinstrument.networking.packet.instrument.NotifyInstrumentOp
 import com.cstav.genshinstrument.networking.packet.instrument.OpenInstrumentPacket;
 import com.cstav.genshinstrument.networking.packet.instrument.PlayNotePacket;
 import com.cstav.genshinstrument.sound.NoteSound;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -26,6 +21,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
+
+import java.util.List;
+import java.util.Optional;
 
 public class ServerUtil {
     public static final int PLAY_DISTANCE = 16;
@@ -42,10 +40,10 @@ public class ServerUtil {
      * @param volume The volume of the sound to initiate
      */
     public static void sendPlayNotePackets(ServerPlayer player, Optional<InteractionHand> hand,
-            NoteSound sound, ResourceLocation instrumentId, int pitch, float volume) {
+            NoteSound sound, ResourceLocation instrumentId, int pitch, int volume) {
 
         sendPlayNotePackets(
-            player, player.blockPosition(), hand,
+            player, Optional.empty(), hand,
             sound, instrumentId, new DefaultNoteButtonIdentifier(sound, pitch),
             pitch, volume,
             PlayNotePacket::new
@@ -59,10 +57,10 @@ public class ServerUtil {
      * @param sound The sound tp initiate
      * @param pitch The pitch of the sound to initiate
      * @param volume The volume of the sound to initiate
-     * @param PlayNotePacketDelegate The initiator of the {@link PlayNotePacket} to be sent
+     * @param notePacketDelegate The initiator of the {@link PlayNotePacket} to be sent
      */
-    public static void sendPlayNotePackets(ServerPlayer player, BlockPos pos, Optional<InteractionHand> hand,
-            NoteSound sound, ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, int pitch, float volume,
+    public static void sendPlayNotePackets(ServerPlayer player, Optional<BlockPos> pos, Optional<InteractionHand> hand,
+            NoteSound sound, ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, int pitch, int volume,
             PlayNotePacketDelegate notePacketDelegate) {
 
         final PlayNotePacket packet = notePacketDelegate.create(
@@ -71,19 +69,21 @@ public class ServerUtil {
             Optional.of(player.getUUID()), hand
         );
 
-        for (final Player listener : noteListeners(player.getLevel(), player.blockPosition()))
+        final BlockPos playeredPos = CommonUtil.getPlayeredPosition(player, pos);
+
+        for (final Player listener : noteListeners(player.getLevel(), playeredPos))
             ModPacketHandler.sendToClient(packet, (ServerPlayer)listener);
 
         // Trigger an instrument game event
         // This is done so that sculk sensors can pick up the instrument's sound
         player.getLevel().gameEvent(
-            GameEvent.INSTRUMENT_PLAY, pos,
+            GameEvent.INSTRUMENT_PLAY, playeredPos,
             GameEvent.Context.of(player)
         );
 
         // Fire a player-specific event
         InstrumentPlayedEvent.ByPlayer.EVENT.invoker().triggered(
-            new ByPlayerArgs(sound, pitch, volume, player, pos, hand, instrumentId, noteIdentifier, false)
+            new ByPlayerArgs(sound, pitch, volume, player, playeredPos, hand, instrumentId, noteIdentifier, false)
         );
     }
 
@@ -97,7 +97,7 @@ public class ServerUtil {
      * @param pitch The pitch of the sound to initiate
      */
     public static void sendPlayNotePackets(Level level, BlockPos pos, NoteSound sound, ResourceLocation instrumentId,
-            int pitch, float volume) {
+            int pitch, int volume) {
 
         sendPlayNotePackets(
             level, pos, sound,
@@ -116,14 +116,14 @@ public class ServerUtil {
      * @param noteIdentifier The identifier of the note
      * @param pitch The pitch of the sound to initiate
      * @param volume The volume of the sound to initiate
-     * @param PlayNotePacketDelegate The initiator of the {@link PlayNotePacket} to be sent
+     * @param notePacketDelegate The initiator of the {@link PlayNotePacket} to be sent
      */
     public static void sendPlayNotePackets(Level level, BlockPos pos, NoteSound sound,
-            ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, int pitch, float volume,
+            ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, int pitch, int volume,
             PlayNotePacketDelegate notePacketDelegate) {
 
         final PlayNotePacket packet = notePacketDelegate.create(
-            pos, sound, pitch, volume,
+            Optional.of(pos), sound, pitch, volume,
             instrumentId, noteIdentifier,
             Optional.empty(), Optional.empty()
         );
@@ -145,7 +145,7 @@ public class ServerUtil {
 
         // Fire a generic instrument event
         InstrumentPlayedEvent.EVENT.invoker().triggered(
-            new InstrumentPlayedEventArgs(sound, pitch, volume, (ServerLevel)level, pos, instrumentId, noteIdentifier, false)
+            new InstrumentPlayedEventArgs(sound, pitch, volume, level, pos, instrumentId, noteIdentifier, false)
         );
     }
 
@@ -158,7 +158,7 @@ public class ServerUtil {
 
 
     public static void setInstrumentClosed(final Player player) {
-        // Update the the capabilty on server
+        // Update the capability on server
         InstrumentEntityData.setClosed(player);
 
         // And clients
@@ -211,7 +211,7 @@ public class ServerUtil {
     private static boolean sendOpenPacket(ServerPlayer player, InteractionHand usedHand, OpenInstrumentPacketSender onOpenRequest,
             BlockPos pos) {
 
-        // Update the the capabilty on the server
+        // Update the capability on the server
         if (pos == null)
             InstrumentEntityData.setOpen(player);
         else

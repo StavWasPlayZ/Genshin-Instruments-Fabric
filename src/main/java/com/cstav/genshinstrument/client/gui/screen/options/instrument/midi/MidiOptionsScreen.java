@@ -16,6 +16,7 @@ import net.minecraft.client.gui.components.GridWidget;
 import net.minecraft.client.gui.components.GridWidget.RowHelper;
 import net.minecraft.client.gui.components.SpacerWidget;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.layouts.GridLayout.RowHelper;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -95,7 +96,7 @@ public class MidiOptionsScreen extends AbstractInstrumentOptionsScreen {
     }
         
     protected void initThatOtherSection(final GridWidget grid, final RowHelper rowHelper) {
-        final boolean canInstrumentOverflow = !isOverlay || instrumentScreen.allowMidiOverflow();
+        final boolean canInstrumentOverflow = !isOverlay || instrumentScreen.midiReceiver.allowMidiOverflow();
 
         if (canInstrumentOverflow) {
             final CycleButton<Boolean> extendOctaves = CycleButton.booleanBuilder(CommonComponents.OPTION_ON, CommonComponents.OPTION_OFF)

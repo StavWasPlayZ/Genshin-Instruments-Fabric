@@ -1,5 +1,6 @@
 package com.cstav.genshinstrument.mixin.optional;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,10 +19,12 @@ import net.minecraft.world.entity.player.Player;
 @Mixin(HumanoidModel.class)
 public abstract class InstrumentAnimMixin {
 
+	@Final
 	@Shadow
-	private ModelPart rightArm;
+	public ModelPart rightArm;
+	@Final
 	@Shadow
-   	private ModelPart leftArm;
+	public ModelPart leftArm;
 
 
 	@Inject(at = @At("HEAD"), method = "poseLeftArm", cancellable = true)

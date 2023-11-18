@@ -4,7 +4,7 @@ import com.cstav.genshinstrument.client.config.enumType.InstrumentChannelType;
 import com.cstav.genshinstrument.client.config.enumType.ZitherSoundType;
 import com.cstav.genshinstrument.client.config.enumType.label.DrumNoteLabel;
 import com.cstav.genshinstrument.client.config.enumType.label.NoteGridLabel;
-import com.cstav.genshinstrument.client.gui.screen.instrument.drum.DominentDrumType;
+import com.cstav.genshinstrument.client.gui.screen.instrument.drum.DominantDrumType;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.midi.MidiOptionsScreen;
 import com.cstav.genshinstrument.sound.NoteSound;
 
@@ -28,11 +28,12 @@ public class ModClientConfigs {
     public static final EnumValue<InstrumentChannelType> CHANNEL_TYPE;
     public static final BooleanValue STOP_MUSIC_ON_PLAY, SHARED_INSTRUMENT,
         RENDER_BACKGROUND, ACCEPTED_GENSHIN_CONSENT, ACCURATE_NOTES,
-        MIDI_ENABLED, EXTEND_OCTAVES, FIXED_TOUCH, ACCEPT_ALL_CHANNELS;
+        MIDI_ENABLED, EXTEND_OCTAVES, FIXED_TOUCH, ACCEPT_ALL_CHANNELS,
+        NORMALIZE_VINTAGE_LYRE;
 
     public static final EnumValue<ZitherSoundType> ZITHER_SOUND_TYPE;
     public static final EnumValue<DrumNoteLabel> DRUM_LABEL_TYPE;
-    public static final EnumValue<DominentDrumType> DOMINENT_DRUM_TYPE;
+    public static final EnumValue<DominantDrumType> DOMINANT_DRUM_TYPE;
 
 
     static {
@@ -56,6 +57,8 @@ public class ModClientConfigs {
             .define("display_other_players", true);
         RENDER_BACKGROUND = configBuilder.define("render_background", true);
         ACCURATE_NOTES = configBuilder.define("accurate_notes", true);
+
+        NORMALIZE_VINTAGE_LYRE = configBuilder.define("normalize_vintage_lyre", true);
 
         ACCEPTED_GENSHIN_CONSENT = configBuilder.define("accepted_genshin_consent", false);
 
@@ -83,9 +86,9 @@ public class ModClientConfigs {
         );
 
 
-        DOMINENT_DRUM_TYPE = configBuilder.comment(
+        DOMINANT_DRUM_TYPE = configBuilder.comment(
             "Defines the MIDI split behaviour of the Arataki's Great and Glorious Drum"
-        ).defineEnum("dominent_drum_type", DominentDrumType.BOTH);
+        ).defineEnum("dominant_drum_type", DominantDrumType.BOTH);
 
 
         CONFIGS = configBuilder.build();

@@ -1,7 +1,7 @@
 package com.cstav.genshinstrument.client.gui.screen.options.instrument.midi;
 
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
-import com.cstav.genshinstrument.client.gui.screen.instrument.drum.DominentDrumType;
+import com.cstav.genshinstrument.client.gui.screen.instrument.drum.DominantDrumType;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.AbstractInstrumentScreen;
 
 import net.fabricmc.api.EnvType;
@@ -16,7 +16,7 @@ import net.minecraft.network.chat.Component;
 
 @Environment(EnvType.CLIENT)
 public class DrumMidiOptionsScreen extends MidiOptionsScreen {
-    public static final String DDT_KEY = "button.genshinstrument.dominentDrumType";
+    public static final String DDT_KEY = "button.genshinstrument.dominantDrumType";
 
     public DrumMidiOptionsScreen(Component pTitle, Screen prevScreen, AbstractInstrumentScreen instrumentScreen) {
         super(pTitle, prevScreen, instrumentScreen);
@@ -28,19 +28,19 @@ public class DrumMidiOptionsScreen extends MidiOptionsScreen {
 
         rowHelper.addChild(SpacerWidget.height(15), 2);
 
-        final CycleButton<DominentDrumType> dominentDrumType = CycleButton.<DominentDrumType>builder((type) -> Component.translatable(type.getKey()))
-            .withValues(DominentDrumType.values())
+        final CycleButton<DominantDrumType> dominantDrumType = CycleButton.<DominantDrumType>builder((type) -> Component.translatable(type.getKey()))
+            .withValues(DominantDrumType.values())
             .withTooltip((type) -> Tooltip.create(Component.translatable(DDT_KEY+"."+type.name().toLowerCase()+".tooltip")))
-            .withInitialValue(ModClientConfigs.DOMINENT_DRUM_TYPE.get())
+            .withInitialValue(ModClientConfigs.DOMINANT_DRUM_TYPE.get())
             .create(0, 0,
                 getSmallButtonWidth(), getButtonHeight(),
-                Component.translatable(DDT_KEY), this::onDominentDrumTypeChanged
+                Component.translatable(DDT_KEY), this::onDominantDrumTypeChanged
             );
-        rowHelper.addChild(dominentDrumType);
+        rowHelper.addChild(dominantDrumType);
     }
 
-    protected void onDominentDrumTypeChanged(final CycleButton<DominentDrumType> button, final DominentDrumType value) {
-        ModClientConfigs.DOMINENT_DRUM_TYPE.set(value);
+    protected void onDominantDrumTypeChanged(final CycleButton<DominantDrumType> button, final DominantDrumType value) {
+        ModClientConfigs.DOMINANT_DRUM_TYPE.set(value);
     }
 
 }
