@@ -16,10 +16,9 @@ import net.minecraft.world.entity.player.Player;
 
 public class PlayNotePacket implements INoteIdentifierSender {
 
-    private final int pitch;
-    private final float volume;
-    
-    private final BlockPos blockPos;
+    private final int pitch, volume;
+
+    private final Optional<BlockPos> position;
     private final NoteSound sound;
     private final ResourceLocation instrumentId;
     private final NoteButtonIdentifier noteIdentifier;
@@ -27,13 +26,13 @@ public class PlayNotePacket implements INoteIdentifierSender {
     private final Optional<UUID> playerUUID;
     private final Optional<InteractionHand> hand;
 
-    public PlayNotePacket(BlockPos pos, NoteSound sound, int pitch, float volume, ResourceLocation instrumentId,
-            NoteButtonIdentifier noteIdentifier, Optional<UUID> playerUUID, Optional<InteractionHand> hand) {
+    public PlayNotePacket(Optional<BlockPos> pos, NoteSound sound, int pitch, int volume, ResourceLocation instrumentId,
+        NoteButtonIdentifier noteIdentifier, Optional<UUID> playerUUID, Optional<InteractionHand> hand) {
 
         this.pitch = pitch;
         this.volume = volume;
 
-        this.blockPos = pos;
+        this.position = pos;
         this.sound = sound;
         this.instrumentId = instrumentId;
         this.noteIdentifier = noteIdentifier;
@@ -43,9 +42,9 @@ public class PlayNotePacket implements INoteIdentifierSender {
     }
     public PlayNotePacket(FriendlyByteBuf buf) {
         pitch = buf.readInt();
-        volume = buf.readFloat();
+        volume = buf.readInt();
 
-        blockPos = buf.readBlockPos();
+        position = buf.readOptional(FriendlyByteBuf::readBlockPos);
         sound = NoteSound.readFromNetwork(buf);
         instrumentId = buf.readResourceLocation();
         noteIdentifier = readNoteIdentifierFromNetwork(buf);
@@ -57,9 +56,9 @@ public class PlayNotePacket implements INoteIdentifierSender {
     @Override
     public void write(FriendlyByteBuf buf) {
         buf.writeInt(pitch);
-        buf.writeFloat(volume);
+        buf.writeInt(volume);
 
-        buf.writeBlockPos(blockPos);
+        buf.writeOptional(position, FriendlyByteBuf::writeBlockPos);
         sound.writeToNetwork(buf);
         buf.writeResourceLocation(instrumentId);
         noteIdentifier.writeToNetwork(buf);
@@ -71,9 +70,9 @@ public class PlayNotePacket implements INoteIdentifierSender {
 
     @Override
     public void handle(Player player, PacketSender responseSender) {
-        sound.playAtPos(
-            pitch, volume, playerUUID.orElse(null), hand,
-            instrumentId, noteIdentifier, blockPos
+        sound.play(
+            pitch, volume, playerUUID, hand,
+            instrumentId, noteIdentifier, position
         );
     }
 }

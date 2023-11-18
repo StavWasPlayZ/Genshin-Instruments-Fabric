@@ -1,8 +1,5 @@
 package com.cstav.genshinstrument.sound;
 
-import static com.cstav.genshinstrument.sound.NoteSoundRegistrer.createInstrumentNotes;
-import static com.cstav.genshinstrument.sound.NoteSoundRegistrer.registerNote;
-
 import com.cstav.genshinstrument.GInstrumentMod;
 
 import net.minecraft.resources.ResourceLocation;
@@ -10,22 +7,18 @@ import net.minecraft.resources.ResourceLocation;
 public class ModSounds {
 
     public static final NoteSound[]
-        WINDSONG_LYRE_NOTE_SOUNDS = createInstrumentNotes(loc("windsong_lyre"), true),
-        VINTAGE_LYRE_NOTE_SOUNDS = createInstrumentNotes(loc("vintage_lyre")),
+        WINDSONG_LYRE_NOTE_SOUNDS = nsr(loc("windsong_lyre")).stereo().registerGrid(),
+        VINTAGE_LYRE_NOTE_SOUNDS = nsr(loc("vintage_lyre")).registerGrid(),
 
-        ZITHER_NEW_NOTE_SOUNDS = createInstrumentNotes(loc("floral_zither_new")),
-        ZITHER_OLD_NOTE_SOUNDS = createInstrumentNotes(loc("floral_zither_old")),
+        ZITHER_NEW_NOTE_SOUNDS = nsr(loc("floral_zither_new")).registerGrid(),
+        ZITHER_OLD_NOTE_SOUNDS = nsr(loc("floral_zither_old")).registerGrid(),
 
-        GLORIOUS_DRUM = new NoteSound[] {
-            registerNote(loc("glorious_drum_don")),
-            registerNote(loc("glorious_drum_ka"), true)
-        }
-
-        // // TODO remove after tests
-        // BANJO = new NoteSound[] {
-        //     new NoteSound(NoteBlockInstrument.BANJO.getSoundEvent().value(), Optional.empty())
-        // }
+        GLORIOUS_DRUM = nsr(loc("glorious_drum"))
+            .chain(loc("glorious_drum_don")).add()
+            .chain(loc("glorious_drum_ka")).stereo().add()
+        .registerAll()
     ;
+
 
     /**
      * Shorthand for {@code new ResourceLocation(GInstrumentMod.MODID, name)}
@@ -37,6 +30,12 @@ public class ModSounds {
 
     public static void load() {
         GInstrumentMod.LOGGER.info("Registered all note sounds for instruments");
+    }
+    /**
+     * Shorthand for {@code new NoteSoundRegistrar(instrumentId)}
+     */
+    private static NoteSoundRegistrar nsr(ResourceLocation instrumentId) {
+        return new NoteSoundRegistrar(instrumentId);
     }
 
 }

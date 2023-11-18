@@ -26,9 +26,9 @@ public interface IModPacket extends FabricPacket {
         return type(getClass());
     }
 
-
     public static <T extends IModPacket> PacketType<T> type(final Class<T> packetType) {
         return PacketType.create(
+            // Cannot serve custom mod IDs because FabricPacket#getType requires no arguments
             new ResourceLocation(GInstrumentMod.MODID, packetType.getSimpleName().toLowerCase()),
 
             (buf) -> {

@@ -8,7 +8,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
-public class ModMenuImp implements ModMenuApi {
+public class ModMenuImpl implements ModMenuApi {
 
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
