@@ -3,7 +3,6 @@ package com.cstav.genshinstrument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.cstav.genshinstrument.block.ModBlockEntities;
 import com.cstav.genshinstrument.block.ModBlocks;
 import com.cstav.genshinstrument.criteria.ModCriteria;
 import com.cstav.genshinstrument.event.ServerEvents;
@@ -28,7 +27,7 @@ public class GInstrumentMod implements ModInitializer {
 		
 
 		ModBlocks.load();
-		ModBlockEntities.load();
+//		ModBlockEntities.load();
 
 		ModItems.load();
 	}

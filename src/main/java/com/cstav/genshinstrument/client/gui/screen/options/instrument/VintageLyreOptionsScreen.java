@@ -7,7 +7,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.CycleButton;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
@@ -28,7 +27,7 @@ public class VintageLyreOptionsScreen extends SingleButtonOptionsScreen {
     protected AbstractButton constructButton() {
         return CycleButton.booleanBuilder(CommonComponents.OPTION_ON, CommonComponents.OPTION_OFF)
             .withInitialValue(ModClientConfigs.NORMALIZE_VINTAGE_LYRE.get())
-            .withTooltip((value) -> Tooltip.create(Component.translatable("button.genshinstrument.normalize_vintage_lyre.tooltip")))
+            .withTooltip(tooltip((value) -> Component.translatable("button.genshinstrument.normalize_vintage_lyre.tooltip")))
             .create(0, 0,
                 getBigButtonWidth(), getButtonHeight(),
                 Component.translatable("button.genshinstrument.normalize_vintage_lyre"), this::onNormalizeLyreChanged

@@ -4,12 +4,8 @@ import com.cstav.genshinstrument.client.config.enumType.SoundType;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.AbstractInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.notegrid.AbstractGridInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.GridInstrumentOptionsScreen;
-import com.cstav.genshinstrument.client.gui.screens.options.widget.copied.GridWidget;
-import com.cstav.genshinstrument.client.gui.screens.options.widget.copied.GridWidget.RowHelper;
-import com.cstav.genshinstrument.client.gui.screens.options.widget.copied.SpacerWidget;
 import com.cstav.genshinstrument.client.util.TogglablePedalSound;
 import com.cstav.genshinstrument.event.MidiEvent.MidiEventArgs;
-import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

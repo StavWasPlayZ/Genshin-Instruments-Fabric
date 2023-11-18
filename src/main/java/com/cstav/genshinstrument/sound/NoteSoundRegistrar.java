@@ -1,9 +1,9 @@
 package com.cstav.genshinstrument.sound;
 
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.notegrid.AbstractGridInstrumentScreen;
+import com.cstav.genshinstrument.util.CommonUtil;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import org.slf4j.Logger;
@@ -161,14 +161,14 @@ public class NoteSoundRegistrar {
         return new NoteSound(index, baseSoundLocation,
             getOrCreateSound(soundLocation),
             hasStereo
-                ? getOrCreateSound(soundLocation.withSuffix(STEREO_SUFFIX))
+                ? getOrCreateSound(CommonUtil.withSuffix(soundLocation, STEREO_SUFFIX))
                 : null
         );
     }
 
     private SoundEvent getOrCreateSound(ResourceLocation soundLocation) {
         return alreadyRegistered
-            ? BuiltInRegistries.SOUND_EVENT.get(soundLocation)
+            ? Registry.SOUND_EVENT.get(soundLocation)
             : registerSound(soundLocation);
     }
 
@@ -180,14 +180,14 @@ public class NoteSoundRegistrar {
      * @param noteIndex The index of the note
      */
     public NoteSound createNote(int noteIndex) {
-        return createNote(baseSoundLocation.withSuffix("_note_"+noteIndex), noteIndex);
+        return createNote(CommonUtil.withSuffix(baseSoundLocation, "_note_"+noteIndex), noteIndex);
     }
     
 
     protected SoundEvent registerSound(final ResourceLocation soundLocation) {
-        return Registry.register(BuiltInRegistries.SOUND_EVENT, soundLocation, createSoundUnsafe(soundLocation));
+        return Registry.register(Registry.SOUND_EVENT, soundLocation, createSoundUnsafe(soundLocation));
     }
     private static SoundEvent createSoundUnsafe(final ResourceLocation location) {
-        return SoundEvent.createVariableRangeEvent(location);
+        return new SoundEvent(location);
     }
 }

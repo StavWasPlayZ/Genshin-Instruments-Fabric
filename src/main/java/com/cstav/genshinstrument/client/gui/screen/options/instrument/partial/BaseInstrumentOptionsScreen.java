@@ -81,7 +81,7 @@ public abstract class BaseInstrumentOptionsScreen extends AbstractInstrumentOpti
         addRenderableWidget(grid);
 
 
-        final int buttonsY = ClientUtil.lowerButtonsY(grid.getY(), grid.getHeight(), height);
+        final int buttonsY = ClientUtil.lowerButtonsY(grid.y, grid.getHeight(), height);
         final int buttonsWidth = 150;
 
         final Button doneBtn = new Button(

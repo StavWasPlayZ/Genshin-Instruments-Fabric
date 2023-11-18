@@ -46,10 +46,16 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${project.forge_config_api_port_version}"
+	modApi ("net.minecraftforge:forgeconfigapiport-fabric:${project.forge_config_api_port_version}") {
+		exclude group: "net.fabricmc", module: "fabric-loader"
+	}
 
-	modRuntimeOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
-	modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+	modCompileOnly ("com.terraformersmc:modmenu:${project.modmenu_version}") {
+		exclude group: "net.fabricmc", module: "fabric-loader"
+	}
+	modRuntimeOnly ("com.terraformersmc:modmenu:${project.modmenu_version}") {
+		exclude group: "net.fabricmc", module: "fabric-loader"
+	}
 
 	// Uncomment the following line to enable the deprecated Fabric API modules. 
 	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
