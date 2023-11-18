@@ -12,6 +12,7 @@ import com.cstav.genshinstrument.client.gui.screen.options.instrument.DrumOption
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.BaseInstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.gui.screens.options.widget.copied.LinearLayoutWidget;
 import com.cstav.genshinstrument.client.gui.screens.options.widget.copied.LinearLayoutWidget.Orientation;
+import com.cstav.genshinstrument.client.midi.InstrumentMidiReceiver;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 
 import net.fabricmc.api.EnvType;
@@ -67,7 +68,7 @@ public class AratakisGreatAndGloriousDrumScreen extends AbstractInstrumentScreen
         layout1.pack();
         layout2.pack();
 
-        
+
         addRenderableWidget(layout1);
         addRenderableWidget(layout2);
 
@@ -110,42 +111,57 @@ public class AratakisGreatAndGloriousDrumScreen extends AbstractInstrumentScreen
         return THEME_LOADER;
     }
 
-    
 
     @Override
-    public boolean isMidiInstrument() {
-        return true;
+    public InstrumentMidiReceiver initMidiReceiver() {
+        return new InstrumentMidiReceiver(this) {
+
+            private static boolean donRight = false, kaRight = false;
+
+            @Override
+            protected NoteButton handleMidiPress(int note, int key) {
+                final boolean isKa = (ddt() == DominantDrumType.KA) || ((ddt() == DominantDrumType.BOTH) && (note >= 12));
+
+                setPitch(note - (isKa ? 19 : 2));
+
+                for (final NoteButton noteButton : notesIterable()) {
+                    final DrumNoteButton dnb = (DrumNoteButton) noteButton;
+                    if (dnb.btnType != (isKa ? DrumButtonType.KA : DrumButtonType.DON))
+                        continue;
+
+                    // Toggle between left/right keys
+                    // just visually fun stuff
+                    if (isKa) {
+                        if (dnb.isRight == kaRight) {
+                            kaRight = !kaRight;
+                            return dnb;
+                        }
+                    } else {
+                        if (dnb.isRight == donRight) {
+                            donRight = !donRight;
+                            return dnb;
+                        }
+                    }
+                }
+
+                return null;
+            }
+
+            @Override
+            protected int minMidiNote() {
+                return ((ddt() == DominantDrumType.BOTH) || ddt() == DominantDrumType.DON) ? -10 : 7;
+            }
+            @Override
+            protected int maxMidiNote() {
+                return ((ddt() == DominantDrumType.BOTH) || ddt() == DominantDrumType.KA) ? 32 : 15;
+            }
+        };
     }
 
-    @Override
-    protected NoteButton handleMidiPress(int note, int pitch) {
-        final boolean isKa = (ddt() == DominentDrumType.KA) || ((ddt() == DominentDrumType.BOTH) && (note >= 12));
-
-        setPitch(note - (isKa ? 19 : 2));
-
-        for (final NoteButton noteButton : notesIterable()) {
-            final DrumNoteButton dnb = (DrumNoteButton) noteButton;
-            if ((dnb.isRight == !isKa) && (dnb.btnType == (isKa ? DrumButtonType.KA : DrumButtonType.DON)))
-                return dnb;
-        }
-
-        return null;
-    }
-
-    @Override
-    protected int minMidiNote() {
-        return ((ddt() == DominentDrumType.BOTH) || ddt() == DominentDrumType.DON) ? -10 : 7;
-    }
-    @Override
-    protected int maxMidiNote() {
-        return ((ddt() == DominentDrumType.BOTH) || ddt() == DominentDrumType.KA) ? 32 : 15;
-    }
-
-    /**
-     * Shorthand for {@code ModClientConfigs.DOMINENT_DRUM_TYPE.get()}
+    /**MINANT_DRUM_TYPE.get()}
      */
-    private final static DominentDrumType ddt() {
-        return ModClientConfigs.DOMINENT_DRUM_TYPE.get();
+    private final static DominantDrumType ddt() {
+        return ModClientConfigs.DOMINANT_DRUM_TYPE.get();
     }
     
 }

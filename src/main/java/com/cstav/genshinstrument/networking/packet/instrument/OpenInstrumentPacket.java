@@ -25,9 +25,6 @@ public class OpenInstrumentPacket implements IModPacket {
         "vintage_lyre", () -> VintageLyreScreen::new,
         "floral_zither", () -> FloralZitherScreen::new,
         "glorious_drum", () -> AratakisGreatAndGloriousDrumScreen::new
-
-        // //TODO remove after tests
-        // "banjo", () -> BanjoInstrumentScreen::new
     );
 
     protected Map<String, Supplier<Function<InteractionHand, Screen>>> getInstrumentMap() {

@@ -12,6 +12,7 @@ import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.label
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.GridInstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.BaseInstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings;
+import com.cstav.genshinstrument.client.midi.InstrumentMidiReceiver;
 import com.cstav.genshinstrument.client.util.ClientUtil;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteGridButtonIdentifier;
@@ -63,7 +64,7 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
     /**
      * <p>
      * An SSTI instrument is a Singular Sound-Type Instrument, such that
-     * only the <b>first</b> note in {@link AbstractGridInstrumentScreen#getSounds} will get used.
+     * only the <b>first</b> note in {@link AbstractGridInstrumentScreen#getInitSounds} will get used.
      * </p><p>
      * Notes will start with the {@link NoteSound#MIN_PITCH set minimum pitch},
      * and increment their pitch up by 1 for every new instance.
@@ -125,7 +126,7 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
     }
 
     /**
-     * @return The perferred label supplier specified in this mod's configs
+     * @return The preferred label supplier specified in this mod's configs
      */
     protected NoteLabelSupplier getInitLabelSupplier() {
         return ModClientConfigs.GRID_LABEL_TYPE.get().getLabelSupplier();
@@ -237,40 +238,8 @@ public abstract class AbstractGridInstrumentScreen extends AbstractInstrumentScr
     }
 
 
-
-    @Override
-    public boolean isMidiInstrument() {
-        // idk how to handle these, nor do i really care tbh
-        return (rows() == 7) && !isSSTI();
-    }
-
-    @Override
-    public boolean allowMidiOverflow() {
-        return true;
-    }
-
-
-    @Override
-    protected NoteButton handleMidiPress(int note, int pitch) {
-
-        final int layoutNote = note % 12;
-        final boolean higherThan3 = layoutNote > pitch + 4;
-
-        // Handle transposition
-        final boolean shouldSharpen = shouldSharpen(layoutNote, higherThan3, pitch);
-        final boolean shouldFlatten = shouldFlatten(shouldSharpen);
-
-        transposeMidi(shouldSharpen, shouldFlatten);
-
-
-        final int playedNote = note + (shouldFlatten ? 1 : shouldSharpen ? -1 : 0);
-
-        final int currNote = ((playedNote + (higherThan3 ? 1 : 0)) / 2)
-            // 12th note should go to the next column
-            + playedNote / (12 + pitch);
-
-        return getNoteButton(currNote % rows(), currNote / rows());
-
+    public InstrumentMidiReceiver initMidiReceiver() {
+        return ((rows() != 7) || isSSTI()) ? null : new GridInstrumentMidiReceiver(this);
     }
     
 }

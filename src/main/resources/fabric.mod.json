@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "genshinstrument",
-	"version": "3.3.1.1",
+	"version": "3.4",
 	"name": "Genshin Instruments",
 	"description": "A mod that brings Genshin Impact's instruments to Minecraft!\nThis is my first ever published mod, and I am quite proud of it :')\nHope you enjoy it as much as I do!!",
 	"authors": [
@@ -26,13 +26,17 @@
 			"com.cstav.genshinstrument.client.ClientInitiator"
 		],
 		"modmenu": [
-			"com.cstav.genshinstrument.client.ModMenuImp"
+			"com.cstav.genshinstrument.client.ModMenuImpl"
 		]
 	},
 	"mixins": [
 		"genshinstrument.optional.mixins.json",
 		"genshinstrument.required.mixins.json"
 	],
+
+	"suggests": {
+		"evenmoreinstruments": "*"
+	},
 	"depends": {
 		"fabricloader": ">=0.14.21",
 		"minecraft": "~1.19.2",

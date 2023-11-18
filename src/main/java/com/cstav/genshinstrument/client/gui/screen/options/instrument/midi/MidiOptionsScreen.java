@@ -94,7 +94,7 @@ public class MidiOptionsScreen extends AbstractInstrumentOptionsScreen {
     }
         
     protected void initThatOtherSection(final GridWidget grid, final RowHelper rowHelper) {
-        final boolean canInstrumentOverflow = !isOverlay || instrumentScreen.allowMidiOverflow();
+        final boolean canInstrumentOverflow = !isOverlay || instrumentScreen.midiReceiver.allowMidiOverflow();
 
         if (canInstrumentOverflow) {
             final CycleButton<Boolean> extendOctaves = CycleButton.booleanBuilder(CommonComponents.OPTION_ON, CommonComponents.OPTION_OFF)

@@ -78,6 +78,11 @@ public abstract class LabelUtil {
         return scale[(CommonUtil.doublyPyWrap(pitch, scale.length))];
     }
 
+    /**
+     * @param omitIfAccurate If the {@link ModClientConfigs#ACCURATE_NOTES} setting is enabled,
+     * get the natural version of the note only
+     * @return The given note, replaced with accurate accidentals unicodes
+     */
     public static String formatNoteName(final String noteName, final boolean omitIfAccurate) {
         if (noteName.isEmpty())
             return "";

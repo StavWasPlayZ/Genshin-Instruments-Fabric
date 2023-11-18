@@ -21,10 +21,6 @@ repositories {
 			name = 'ParchmentMC'
 			url = 'https://maven.parchmentmc.org'
 		}
-		maven {
-			name = 'CurseMaven'
-			url "https://cursemaven.com"
-		}
 		maven { url 'https://maven.terraformersmc.com/releases/' }
 
 		maven {
@@ -47,13 +43,14 @@ dependencies {
 	implementation 'com.electronwill.night-config:core:3.6.5'
 	implementation 'com.electronwill.night-config:toml:3.6.5'
 
-	modImplementation "net.minecraftforge:forgeconfigapiport-fabric:${project.forge_config_api_port_version}"
-
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
-	
+	modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${project.forge_config_api_port_version}"
+
+	modRuntimeOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+	modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+
 	// Uncomment the following line to enable the deprecated Fabric API modules. 
 	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
 

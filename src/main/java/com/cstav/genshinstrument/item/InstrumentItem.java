@@ -26,9 +26,9 @@ public class InstrumentItem extends Item implements ItemPoseModifier {
     /**
      * @param onOpenRequest A server-side event fired when the player has requested to interact
      * with the instrument.
-     * It should should send a packet to the given player for opening this instrument's screen.
-     * 
-     * This item will automatically be added to the {@link ModCreativeModeTabs#INSTRUMENTS instruments} creative tab.
+     * It should send a packet to the given player for opening this instrument's screen.
+     *
+     * This item will automatically be added to the {@link ModCreativeModeTabs#INSTRUMENTS_TAB instruments} creative tab.
      */
     public InstrumentItem(final OpenInstrumentPacketSender onOpenRequest) {
         this(onOpenRequest, new Properties().tab(ModCreativeModeTabs.INSTRUMENTS_TAB));
@@ -36,7 +36,7 @@ public class InstrumentItem extends Item implements ItemPoseModifier {
     /**
      * @param onOpenRequest A server-side event fired when the player has requested to interact
      * with the instrument.
-     * It should should send a packet to the given player for opening this instrument's screen.
+     * It should send a packet to the given player for opening this instrument's screen.
      * @param properties The properties of this instrument item. {@link Properties#stacksTo stack size}
      * will always be set to 1.
      */

@@ -81,24 +81,25 @@ public abstract class BaseInstrumentOptionsScreen extends AbstractInstrumentOpti
         addRenderableWidget(grid);
 
 
-        final int buttonsY = ClientUtil.lowerButtonsY(grid.y, grid.getHeight(), height);
+        final int buttonsY = ClientUtil.lowerButtonsY(grid.getY(), grid.getHeight(), height);
+        final int buttonsWidth = 150;
 
         final Button doneBtn = new Button(
             0, buttonsY,
-            150, getButtonHeight(),  CommonComponents.GUI_DONE, (btn) -> onClose()
+            buttonsWidth, getButtonHeight(),  CommonComponents.GUI_DONE, (btn) -> onClose()
         );
 
         // Add MIDI options button for MIDI instruments
         if (!isOverlay || instrumentScreen.isMidiInstrument()) {
             final LinearLayoutWidget buttonLayout = new LinearLayoutWidget(
-                grid.x + 40, buttonsY,
-                getBigButtonWidth() - 80, getButtonHeight(),
+                grid.x + getSmallButtonWidth() - buttonsWidth + ClientUtil.GRID_HORZ_PADDING, buttonsY,
+                (buttonsWidth + ClientUtil.GRID_HORZ_PADDING) * 2, getButtonHeight(),
                 Orientation.HORIZONTAL
             );
-            
+
             final Button midiOptions = new Button(
                 0, buttonsY,
-                150, getButtonHeight(),  MIDI_OPTIONS.copy().append("..."), (btn) -> openMidiOptions()
+                buttonsWidth, getButtonHeight(),  MIDI_OPTIONS.copy().append("..."), (btn) -> openMidiOptions()
             );
     
             buttonLayout.addChild(midiOptions);
@@ -261,7 +262,7 @@ public abstract class BaseInstrumentOptionsScreen extends AbstractInstrumentOpti
                 return;
 
             // Directly save the pitch if we're on an instrument
-            // Otherwise tranpositions will reset to their previous pitch
+            // Otherwise transpositions will reset to their previous pitch
             instrumentScreen.setPitch(pitch);
             savePitch(pitch);
         } else
@@ -272,10 +273,12 @@ public abstract class BaseInstrumentOptionsScreen extends AbstractInstrumentOpti
     }
 
     protected void onVolumeChanged(final AbstractSliderButton slider, final double volume) {
-        if (isOverlay)
-            instrumentScreen.volume = volume;
+        final int newVolume = (int)(volume * 100);
 
-        queueToSave("volume", () -> saveVolume(volume));
+        if (isOverlay)
+            instrumentScreen.volume = newVolume;
+
+        queueToSave("volume", () -> saveVolume(newVolume / 100d));
     }
     protected void saveVolume(final double newVolume) {
         ModClientConfigs.VOLUME.set(newVolume);
@@ -314,7 +317,7 @@ public abstract class BaseInstrumentOptionsScreen extends AbstractInstrumentOpti
 
 
     /**
-     * Tooltip is being annoying and not rpelacing my args.
+     * Tooltip is being annoying and not replacing my args.
      * So, fine, I'll do it myself.
      * @param key The translation key
      * @param arg The thing to replace with %s

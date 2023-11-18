@@ -1,11 +1,12 @@
 package com.cstav.genshinstrument.client.gui.screen.instrument;
 
 import java.awt.Color;
-import java.util.List;
 
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -15,12 +16,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
 /**
- * @implNote <p>
+ * @implNote
  * This screen was heavily inspired by <a href=https://ko-fi.com/s/665c3cc518>Kistu-Lyre+</a>'s Disclaimer screen.
  * Please consider supporting them on Ko-fi!
- * </p>
- * On a personal note, I unfortunately lack any budget to be in position of donating any sum of money to any one person ;-;
  */
+@Environment(EnvType.CLIENT)
 public class GenshinConsentScreen extends WarningScreen {
 
     private static final Component TITLE = Component.translatable(
@@ -45,8 +45,6 @@ public class GenshinConsentScreen extends WarningScreen {
         return 10;
     }
 
-    private static boolean hasGreeting = false;
-
     @Override
     protected void init() {
         final Button acknowledgeButton = new Button(
@@ -61,29 +59,10 @@ public class GenshinConsentScreen extends WarningScreen {
         acknowledgeButton.x = (width - acknowledgeButton.getWidth()) / 2;
 
         // Make space for if the button is overlayed atop of the greeting
-        final int perferredButtonY = 100 + 140, annoyingButtonY = height - acknowledgeButton.getHeight() - 10;
+        final int preferredButtonY = 100 + 140, annoyingButtonY = height - acknowledgeButton.getHeight() - 10;
 
-        if (annoyingButtonY <= perferredButtonY) {
-            acknowledgeButton.y = annoyingButtonY;
-            
-            if (hasGreeting) {
-                // i have to eradicate brothers alike UmU
-                final List<Component> siblings = CONTENT.getSiblings();
-                for (int i = 0; i < 2; i++)
-                    siblings.remove(siblings.size() - 1);
-                    
-                hasGreeting = false;
-            }
-        } else {
-            acknowledgeButton.y = perferredButtonY;
-
-            if (!hasGreeting) {
-                CONTENT.append("\n\n\n\n")
-                    .append(Component.translatable("genshinstrument.genshin_disclaimer.content.no_legal"));
-
-                hasGreeting = true;
-            }
-        }
+        acknowledgeButton.x = (width - acknowledgeButton.getWidth()) / 2;
+        acknowledgeButton.y = Math.min(annoyingButtonY, preferredButtonY);
 
         this.addRenderableWidget(acknowledgeButton);
 
@@ -94,8 +73,8 @@ public class GenshinConsentScreen extends WarningScreen {
     protected void renderTitle(PoseStack stack) {
         drawCenteredString(stack, font, title, width/2, 30, Color.WHITE.getRGB());
     }
-    
-    
+
+
 
     private static Component bolden(final int index) {
         return Component.translatable("genshinstrument.genshin_disclaimer.bolden"+index).withStyle(ChatFormatting.BOLD);
