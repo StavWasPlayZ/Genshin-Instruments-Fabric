@@ -40,7 +40,7 @@ dependencies {
 
 	modImplementation "curse.maven:forge-config-api-port-fabric-547434:${project.forge_config_api_port_version}"
 
-	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+	modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
 	
 	// Uncomment the following line to enable the deprecated Fabric API modules. 
 	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
