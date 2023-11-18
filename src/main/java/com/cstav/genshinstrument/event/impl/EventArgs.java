@@ -10,7 +10,7 @@ public abstract class EventArgs {
         if (isCancelable())
             this.canceled = isCanceled;
         else if (isCanceled)
-            GInstrumentMod.LOGGER.warn("Attempted to cancel uncancellable event " + getClass().getSimpleName() + "!", this);
+            GInstrumentMod.LOGGER.warn("Attempted to cancel uncancelable event " + getClass().getSimpleName() + "!", this);
     }
     public boolean isCanceled() {
         return canceled;
