@@ -2,7 +2,7 @@ package com.cstav.genshinstrument.event;
 
 import com.cstav.genshinstrument.block.partial.AbstractInstrumentBlock;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
-import com.cstav.genshinstrument.client.gui.screen.instrument.partial.AbstractInstrumentScreen;
+import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.SoundTypeOptionsScreen;
 import com.cstav.genshinstrument.client.midi.MidiController;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.ByPlayer.ByPlayerArgs;
@@ -51,7 +51,7 @@ public abstract class ClientEvents {
     // Responsible for closing the instrument screen when
     // an instrument item is missing from the player's hands
     public static void onClientTick(Minecraft mc) {
-        AbstractInstrumentScreen.getCurrentScreen(mc).ifPresent(AbstractInstrumentScreen::handleAbruptClosing);
+        InstrumentScreen.getCurrentScreen(mc).ifPresent(InstrumentScreen::handleAbruptClosing);
     }
 
     
@@ -71,12 +71,13 @@ public abstract class ClientEvents {
             return;
 
 
-        AbstractInstrumentScreen.getCurrentScreen(MINECRAFT)
+        InstrumentScreen.getCurrentScreen(MINECRAFT)
             // Filter instruments that do not match the one we're on
             .filter((screen) -> screen.getInstrumentId().equals(args.instrumentId))
             .ifPresent((screen) -> {
                 try {
-                    screen.getNoteButton(args.noteIdentifier).playNoteAnimation(true);
+                    screen.getNoteButton(args.noteIdentifier, args.sound, args.pitch)
+                        .playNoteAnimation(true);
                 } catch (Exception e) {
                     // Button was prolly just not found
                 }
@@ -87,8 +88,8 @@ public abstract class ClientEvents {
     
     // Subscribe active instruments to a MIDI event
     public static void onMidiEvent(final MidiEventArgs args) {
-        AbstractInstrumentScreen.getCurrentScreen(Minecraft.getInstance())
-            .filter(AbstractInstrumentScreen::isMidiInstrument)
+        InstrumentScreen.getCurrentScreen(Minecraft.getInstance())
+            .filter(InstrumentScreen::isMidiInstrument)
             .ifPresent((instrument) -> instrument.midiReceiver.onMidi(args));
         
         SoundTypeOptionsScreen.onMidiReceivedEvent(args);

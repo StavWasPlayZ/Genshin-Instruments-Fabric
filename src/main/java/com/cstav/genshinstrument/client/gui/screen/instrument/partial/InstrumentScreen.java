@@ -11,7 +11,7 @@ import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screen.instrument.GenshinConsentScreen;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.NoteButton;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.AbstractInstrumentOptionsScreen;
-import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.BaseInstrumentOptionsScreen;
+import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.InstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings;
 import com.cstav.genshinstrument.client.midi.InstrumentMidiReceiver;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
@@ -35,7 +35,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 
 @Environment(EnvType.CLIENT)
-public abstract class AbstractInstrumentScreen extends Screen {
+public abstract class InstrumentScreen extends Screen {
     
     @SuppressWarnings("resource")
     public int getNoteSize() {
@@ -79,14 +79,14 @@ public abstract class AbstractInstrumentScreen extends Screen {
      */
     public int volume = (int)(ModClientConfigs.VOLUME.get() * 100);
     /**
-     * Convenience method to get the {@link AbstractInstrumentScreen#volume volume}
+     * Convenience method to get the {@link InstrumentScreen#volume volume}
      * of this instrument as a {@code float} percentage
      */
     public float volume() {
         return volume / 100f;
     }
     /**
-     * Convenience method to set the {@link AbstractInstrumentScreen#volume volume}
+     * Convenience method to set the {@link InstrumentScreen#volume volume}
      * of this instrument via a float percentage
      */
     public void setVolume(float volume) {
@@ -114,7 +114,7 @@ public abstract class AbstractInstrumentScreen extends Screen {
     public abstract InstrumentThemeLoader getThemeLoader();
     public abstract ResourceLocation getInstrumentId();
 
-    protected abstract BaseInstrumentOptionsScreen initInstrumentOptionsScreen();
+    protected abstract InstrumentOptionsScreen initInstrumentOptionsScreen();
 
 
     /**
@@ -167,15 +167,63 @@ public abstract class AbstractInstrumentScreen extends Screen {
 
 
     /**
-     * @return The first {@link NoteButton} that matches the description of the given identifier
+     * Uses either {@link InstrumentScreen#getNoteButton(NoteButtonIdentifier)}
+     * or {@link InstrumentScreen#getNoteButton(NoteSound, int)}
+     * based on whether the provided {@code noteIdentifier} is empty
+     *
+     * @see InstrumentScreen#identifyByPitch()
      */
-    public NoteButton getNoteButton(final NoteButtonIdentifier noteIdentifier) throws NoSuchElementException {
+    public NoteButton getNoteButton(Optional<NoteButtonIdentifier> noteIdentifier,
+            NoteSound noteSound, int pitch) throws NoSuchElementException {
+
+        if (noteIdentifier.isEmpty())
+            return getNoteButton(noteSound, pitch);
+        else
+            return getNoteButton(noteIdentifier.get());
+
+    }
+
+    /**
+     * @return The first {@link NoteButton} that matches the description of the given {@code noteIdentifier}.
+     */
+    public NoteButton getNoteButton(final NoteButtonIdentifier noteIdentifier) {
         for (NoteButton note : notesIterable())
             if (noteIdentifier.matches(note))
                 return note;
 
-        throw new NoSuchElementException("Could not find a note in "+getClass().getSimpleName()+" based on the given identifier");
+        throw new NoSuchElementException("Could not find a note in "+getInstrumentId()+" based on the given identifier");
     }
+    /**
+     * @param noteSound The sound of the note button to find.
+     * @param pitch The sound of the pitch to find.
+     *
+     * @return The first note button in this instrument
+     * that matches the sound of the given {@code sound}.
+     */
+    public NoteButton getNoteButton(final NoteSound noteSound, final int pitch) {
+        for (final NoteButton note : notesIterable()) {
+            final NoteSound sound = note.getSound();
+
+            if (!noteSound.equals(sound))
+                continue;
+
+            if (!identifyByPitch() || (note.getPitch() == pitch))
+                return note;
+        }
+
+        throw new NoSuchElementException("Could not find a note in "+getInstrumentId()+" based on the given identifier");
+    }
+
+    /**
+     * Upon {@link InstrumentScreen#getNoteButton(NoteSound, int) retrieving a note button}
+     * defines whether the notes' pitch will be taken account by the comparator.
+     *
+     * @see InstrumentScreen#getNoteButton(NoteSound, int)
+     */
+    protected boolean identifyByPitch() {
+        return false;
+    }
+
 
     /**
      * @return A map holding an integer key as its keycode and a {@link NoteButton} as its value.
@@ -202,13 +250,13 @@ public abstract class AbstractInstrumentScreen extends Screen {
     }
 
     public static ResourceLocation getInstrumentRootPath(final ResourceLocation instrumentId) {
-        return instrumentId.withPath(AbstractInstrumentScreen.getGlobalRootPath() + "instrument/" + instrumentId.getPath());
+        return instrumentId.withPath(InstrumentScreen.getGlobalRootPath() + "instrument/" + instrumentId.getPath());
     }
 
     /**
      * Gets the resource path under this instrument.
      * It will usually be {@code textures/gui/genshinstrument/instrument/<instrument>/}.
-     * {@code instrument} is as specified by {@link AbstractInstrumentScreen#getSourcePath getSourcePath}.
+     * {@code instrument} is as specified by {@link InstrumentScreen#getSourcePath getSourcePath}.
      */
     protected String getPath() {
         return getGlobalRootPath() + "instrument/" + getSourcePath().getPath() + "/";
@@ -246,10 +294,10 @@ public abstract class AbstractInstrumentScreen extends Screen {
     }
 
 
-    public final BaseInstrumentOptionsScreen optionsScreen = initInstrumentOptionsScreen();
+    public final InstrumentOptionsScreen optionsScreen = initInstrumentOptionsScreen();
     
     public final Optional<InteractionHand> interactionHand;
-    public AbstractInstrumentScreen(final InteractionHand hand) {
+    public InstrumentScreen(final InteractionHand hand) {
         super(CommonComponents.EMPTY);
         
         interactionHand = Optional.ofNullable(hand);
@@ -440,9 +488,9 @@ public abstract class AbstractInstrumentScreen extends Screen {
     /**
      * @return The current instrument screen, if present
      */
-    public static Optional<AbstractInstrumentScreen> getCurrentScreen(final Minecraft minecraft) {
-        if (minecraft.screen instanceof AbstractInstrumentScreen)
-            return Optional.of((AbstractInstrumentScreen)minecraft.screen);
+    public static Optional<InstrumentScreen> getCurrentScreen(final Minecraft minecraft) {
+        if (minecraft.screen instanceof InstrumentScreen)
+            return Optional.of((InstrumentScreen)minecraft.screen);
 
         if (minecraft.screen instanceof AbstractInstrumentOptionsScreen instrumentOptionsScreen)
             if (instrumentOptionsScreen.isOverlay)

@@ -1,7 +1,7 @@
 package com.cstav.genshinstrument.item;
 
 import com.cstav.genshinstrument.client.ModArmPose;
-import com.cstav.genshinstrument.client.gui.screen.instrument.partial.AbstractInstrumentScreen;
+import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentScreen;
 import com.cstav.genshinstrument.event.PosePlayerArmEvent.PosePlayerArmEventArgs;
 import com.cstav.genshinstrument.networking.OpenInstrumentPacketSender;
 import com.cstav.genshinstrument.util.ServerUtil;
@@ -17,7 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 /**
- * An item responsible for opening an {@link AbstractInstrumentScreen}.
+ * An item responsible for opening an {@link InstrumentScreen}.
  */
 public class InstrumentItem extends Item implements ItemPoseModifier {
 
