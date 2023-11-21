@@ -64,42 +64,42 @@ public abstract class NoteButtonIdentifier {
      */
     public static abstract class MatchType {
         /**
-         * <p>Executes the match methods such that if the current {@code matchFunction} returned {@code false},
-         * the {@code unmatchFunction} will execute in its stead.</p>
-         * If the type of {@code other} and {@code T} do not match, then {@code unmatchFunction} will be executed.
+         * <p>Executes the match methods such that if the current {@code preferredFunction} returned {@code false},
+         * the {@code secondaryFunction} will execute in its stead.</p>
+         * If the type of {@code other} and {@code T} do not match, then {@code secondaryFunction} will be executed.
          * @param <T> The type of the identifier to expect
          * @param other
-         * @param matchFunction The function for when the type is as expected
-         * @param unmatchFunction The function for when the type is unexpected (generic, {@link NoteButtonIdentifier})
+         * @param preferredFunction The function for when the type is as expected
+         * @param secondaryFunction The function for when the type is unexpected (generic, {@link NoteButtonIdentifier})
          * @return The result of the identification process
          */
         @SuppressWarnings("unchecked")
         public static <T extends NoteButtonIdentifier> boolean hierarchyMatch(NoteButtonIdentifier other,
-                Function<T, Boolean> matchFunction, Function<NoteButtonIdentifier, Boolean> unmatchFunction) {
+                Function<T, Boolean> preferredFunction, Function<NoteButtonIdentifier, Boolean> secondaryFunction) {
 
             try {
-                return matchFunction.apply((T)other) || unmatchFunction.apply(other);
+                return preferredFunction.apply((T)other) || secondaryFunction.apply(other);
             } catch (ClassCastException e) {
-                return unmatchFunction.apply(other);
+                return secondaryFunction.apply(other);
             }
         }
         /**
          * <p>Executes the match methods such that only that if {@code other} did not match the type of {@code matchFunction},
-         * the {@code unmatchFunction} will execute in its stead.</p>
+         * the {@code secondaryFunction} will execute in its stead.</p>
          * @param <T> The type of the identifier to expect
          * @param other
-         * @param matchFunction The function for when the type is as expected
-         * @param unmatchFunction The function for when the type is unexpected (generic, {@link NoteButtonIdentifier})
+         * @param preferredFunction The function for when the type is as expected
+         * @param secondaryFunction The function for when the type is unexpected (generic, {@link NoteButtonIdentifier})
          * @return The result of the identification process
          */
         @SuppressWarnings("unchecked")
         public static <T extends NoteButtonIdentifier> boolean perferMatch(NoteButtonIdentifier other,
-                Function<T, Boolean> matchFunction, Function<NoteButtonIdentifier, Boolean> unmatchFunction) {
+                Function<T, Boolean> preferredFunction, Function<NoteButtonIdentifier, Boolean> secondaryFunction) {
 
             try {
-                return matchFunction.apply((T)other);
+                return preferredFunction.apply((T)other);
             } catch (ClassCastException e) {
-                return unmatchFunction.apply(other);
+                return secondaryFunction.apply(other);
             }
         }
 
@@ -114,9 +114,6 @@ public abstract class NoteButtonIdentifier {
          * 
          * @apiNote It is generally recommended not to use this match method,
          * because a lower type of identifier may be triggered as a result of 3rd-party initiation of notes.
-         * 
-         * Implementors should instead consider using any of the other types
-         * with {@link DefaultNoteButtonIdentifier the default identifier} as their basis.
          */
         @SuppressWarnings("unchecked")
         public static <T extends NoteButtonIdentifier> boolean forceMatch(NoteButtonIdentifier other,

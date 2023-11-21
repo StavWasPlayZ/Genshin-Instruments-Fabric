@@ -37,7 +37,6 @@ public class ModPacketHandler {
 
     @SuppressWarnings("unchecked")
     public static final List<Class<? extends NoteButtonIdentifier>> ACCEPTABLE_IDENTIFIERS = List.of(new Class[] {
-        DefaultNoteButtonIdentifier.class,
         NoteButtonIdentifier.class, NoteGridButtonIdentifier.class, DrumNoteIdentifier.class
     });
 

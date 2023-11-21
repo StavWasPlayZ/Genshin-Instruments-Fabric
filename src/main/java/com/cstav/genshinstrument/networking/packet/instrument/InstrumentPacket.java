@@ -29,10 +29,10 @@ public class InstrumentPacket implements INoteIdentifierSender {
     private final int pitch, volume;
 
     private final ResourceLocation instrumentId;
-    private final NoteButtonIdentifier noteIdentifier;
+    private final Optional<NoteButtonIdentifier> noteIdentifier;
 
     public InstrumentPacket(Optional<BlockPos> pos, NoteSound sound, int pitch, int volume, Optional<InteractionHand> hand,
-            ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier) {
+            ResourceLocation instrumentId, Optional<NoteButtonIdentifier> noteIdentifier) {
         this.pos = pos;
         this.sound = sound;
         this.hand = hand;
@@ -48,7 +48,8 @@ public class InstrumentPacket implements INoteIdentifierSender {
         this(Optional.empty(), noteButton.getSound(),
             noteButton.getPitch(), noteButton.instrumentScreen.volume,
             noteButton.instrumentScreen.interactionHand,
-            noteButton.instrumentScreen.getInstrumentId(), noteButton.getIdentifier()
+            noteButton.instrumentScreen.getInstrumentId(),
+            Optional.ofNullable(noteButton.getIdentifier())
         );
     }
 
@@ -61,7 +62,7 @@ public class InstrumentPacket implements INoteIdentifierSender {
         volume = buf.readInt();
 
         instrumentId = buf.readResourceLocation();
-        noteIdentifier = readNoteIdentifierFromNetwork(buf);
+        noteIdentifier = buf.readOptional(this::readNoteIdentifierFromNetwork);
     }
 
     @Override
@@ -74,7 +75,7 @@ public class InstrumentPacket implements INoteIdentifierSender {
         buf.writeInt(volume);
 
         buf.writeResourceLocation(instrumentId);
-        noteIdentifier.writeToNetwork(buf);
+        buf.writeOptional(noteIdentifier, (fbb, identifier) -> identifier.writeToNetwork(fbb));
     }
 
 
@@ -89,7 +90,7 @@ public class InstrumentPacket implements INoteIdentifierSender {
     protected void sendPlayNotePackets(final ServerPlayer player) {
 
         ServerUtil.sendPlayNotePackets(player, pos, hand,
-            sound, instrumentId, noteIdentifier,
+            sound, instrumentId, noteIdentifier.orElse(null),
             pitch, volume,
             PlayNotePacket::new
         );
