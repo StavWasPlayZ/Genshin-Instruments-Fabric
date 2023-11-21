@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
-import com.cstav.genshinstrument.client.gui.screen.instrument.partial.AbstractInstrumentScreen;
+import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentScreen;
 import com.cstav.genshinstrument.client.util.ClientUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 
@@ -20,19 +20,19 @@ import net.minecraft.network.chat.Component;
 @Environment(EnvType.CLIENT)
 public abstract class AbstractInstrumentOptionsScreen extends Screen {
 
-    public final @Nullable AbstractInstrumentScreen instrumentScreen;
+    public final @Nullable InstrumentScreen instrumentScreen;
     public final Screen lastScreen;
 
     public final boolean isOverlay;
 
-    public AbstractInstrumentOptionsScreen(Component pTitle, AbstractInstrumentScreen instrumentScreen, Screen lastScreen) {
+    public AbstractInstrumentOptionsScreen(Component pTitle, InstrumentScreen instrumentScreen, Screen lastScreen) {
         super(pTitle);
         this.instrumentScreen = instrumentScreen;
         this.lastScreen = lastScreen;
 
         this.isOverlay = instrumentScreen != null;
     }
-    public AbstractInstrumentOptionsScreen(Component pTitle, AbstractInstrumentScreen instrumentScreen) {
+    public AbstractInstrumentOptionsScreen(Component pTitle, InstrumentScreen instrumentScreen) {
         this(pTitle, instrumentScreen, null);
     }
     public AbstractInstrumentOptionsScreen(Component pTitle, Screen lastScreen) {

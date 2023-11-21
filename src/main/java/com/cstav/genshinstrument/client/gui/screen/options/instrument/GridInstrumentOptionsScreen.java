@@ -3,8 +3,8 @@ package com.cstav.genshinstrument.client.gui.screen.options.instrument;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.config.enumType.label.NoteGridLabel;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.label.INoteLabel;
-import com.cstav.genshinstrument.client.gui.screen.instrument.partial.notegrid.AbstractGridInstrumentScreen;
-import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.BaseInstrumentOptionsScreen;
+import com.cstav.genshinstrument.client.gui.screen.instrument.partial.notegrid.GridInstrumentScreen;
+import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.InstrumentOptionsScreen;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -16,9 +16,9 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
 @Environment(EnvType.CLIENT)
-public class GridInstrumentOptionsScreen extends BaseInstrumentOptionsScreen {
+public class GridInstrumentOptionsScreen extends InstrumentOptionsScreen {
 
-    public GridInstrumentOptionsScreen(final AbstractGridInstrumentScreen screen) {
+    public GridInstrumentOptionsScreen(final GridInstrumentScreen screen) {
         super(screen);
     }
     public GridInstrumentOptionsScreen(final Screen lastScreen) {
@@ -45,7 +45,7 @@ public class GridInstrumentOptionsScreen extends BaseInstrumentOptionsScreen {
     @Override
     public boolean isPitchSliderEnabled() {
         return (instrumentScreen == null) ||
-            !((AbstractGridInstrumentScreen)instrumentScreen).isSSTI();
+            !((GridInstrumentScreen)instrumentScreen).isSSTI();
     }
     
     

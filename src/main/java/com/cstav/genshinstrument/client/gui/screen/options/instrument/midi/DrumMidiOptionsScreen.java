@@ -2,7 +2,7 @@ package com.cstav.genshinstrument.client.gui.screen.options.instrument.midi;
 
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screen.instrument.drum.DominantDrumType;
-import com.cstav.genshinstrument.client.gui.screen.instrument.partial.AbstractInstrumentScreen;
+import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentScreen;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -18,7 +18,7 @@ import net.minecraft.network.chat.Component;
 public class DrumMidiOptionsScreen extends MidiOptionsScreen {
     public static final String DDT_KEY = "button.genshinstrument.dominantDrumType";
 
-    public DrumMidiOptionsScreen(Component pTitle, Screen prevScreen, AbstractInstrumentScreen instrumentScreen) {
+    public DrumMidiOptionsScreen(Component pTitle, Screen prevScreen, InstrumentScreen instrumentScreen) {
         super(pTitle, prevScreen, instrumentScreen);
     }
 
