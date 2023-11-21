@@ -4,11 +4,10 @@ import java.awt.Point;
 
 import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
-import com.cstav.genshinstrument.client.gui.screen.instrument.partial.AbstractInstrumentScreen;
+import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.label.NoteLabelSupplier;
 import com.cstav.genshinstrument.client.util.ClientUtil;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
-import com.cstav.genshinstrument.networking.buttonidentifier.DefaultNoteButtonIdentifier;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.networking.packet.instrument.InstrumentPacket;
 import com.cstav.genshinstrument.sound.NoteSound;
@@ -24,6 +23,7 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The abstract implementation of an instrument's note button.
@@ -34,12 +34,13 @@ public abstract class NoteButton extends AbstractButton {
     /**
      * Returns the UI identifier of this button.
     */
+    @Nullable
     public NoteButtonIdentifier getIdentifier() {
-        return new DefaultNoteButtonIdentifier(getSound(), getPitch(), false);
+        return null;
     }
 
 
-    public final AbstractInstrumentScreen instrumentScreen;
+    public final InstrumentScreen instrumentScreen;
     protected final Minecraft minecraft = Minecraft.getInstance();
     
     private NoteSound sound;
@@ -50,7 +51,7 @@ public abstract class NoteButton extends AbstractButton {
 
     
     public NoteButton(NoteSound sound,
-            NoteLabelSupplier labelSupplier, AbstractInstrumentScreen instrumentScreen, int pitch) {
+                      NoteLabelSupplier labelSupplier, InstrumentScreen instrumentScreen, int pitch) {
 
         super(0, 0, 42, 42, Component.empty());
 
@@ -61,7 +62,7 @@ public abstract class NoteButton extends AbstractButton {
         this.instrumentScreen = instrumentScreen;
         this.pitch = pitch;
     }
-    public NoteButton(NoteSound sound, NoteLabelSupplier labelSupplier, AbstractInstrumentScreen instrumentScreen) {
+    public NoteButton(NoteSound sound, NoteLabelSupplier labelSupplier, InstrumentScreen instrumentScreen) {
         this(sound, labelSupplier, instrumentScreen, instrumentScreen.getPitch());
     }
 
@@ -140,7 +141,7 @@ public abstract class NoteButton extends AbstractButton {
         return LabelUtil.getNoteName(instrumentScreen.getPitch(), instrumentScreen.noteLayout(), getNoteOffset());
     }
     /**
-     * Defines the offset of this note relative to the this screen's {@link AbstractInstrumentScreen#noteLayout() note layout}
+     * Defines the offset of this note relative to the this screen's {@link InstrumentScreen#noteLayout() note layout}
      */
     public abstract int getNoteOffset();
 
