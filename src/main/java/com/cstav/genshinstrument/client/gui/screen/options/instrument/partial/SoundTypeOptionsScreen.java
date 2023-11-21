@@ -1,8 +1,8 @@
 package com.cstav.genshinstrument.client.gui.screen.options.instrument.partial;
 
 import com.cstav.genshinstrument.client.config.enumType.SoundType;
-import com.cstav.genshinstrument.client.gui.screen.instrument.partial.AbstractInstrumentScreen;
-import com.cstav.genshinstrument.client.gui.screen.instrument.partial.notegrid.AbstractGridInstrumentScreen;
+import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentScreen;
+import com.cstav.genshinstrument.client.gui.screen.instrument.partial.notegrid.GridInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.GridInstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.util.TogglablePedalSound;
 import com.cstav.genshinstrument.event.MidiEvent.MidiEventArgs;
@@ -16,12 +16,12 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 /**
- * A subclass of {@link GridInstrumentOptionsScreen} that implements a button to cycle through an instrument's sounds
+ * An options screen that implements a button to cycle through an instrument's sounds
  */
 @Environment(EnvType.CLIENT)
 public abstract class SoundTypeOptionsScreen<T extends SoundType> extends SingleButtonOptionsScreen {
 
-    public SoundTypeOptionsScreen(final AbstractGridInstrumentScreen screen) {
+    public SoundTypeOptionsScreen(final GridInstrumentScreen screen) {
         super(screen);
     }
     public SoundTypeOptionsScreen(final Screen lastScreen) {
@@ -70,7 +70,7 @@ public abstract class SoundTypeOptionsScreen<T extends SoundType> extends Single
     }
     protected abstract void saveSoundType(final T soundType);
 
-    protected abstract boolean isValidForSet(final AbstractInstrumentScreen screen);
+    protected abstract boolean isValidForSet(final InstrumentScreen screen);
 
 
 
@@ -85,7 +85,7 @@ public abstract class SoundTypeOptionsScreen<T extends SoundType> extends Single
 
     @SuppressWarnings("unchecked")
     public static void onMidiReceivedEvent(final MidiEventArgs args) {
-        final AbstractInstrumentScreen instrumentScreen = AbstractInstrumentScreen.getCurrentScreen(Minecraft.getInstance()).orElse(null);
+        final InstrumentScreen instrumentScreen = InstrumentScreen.getCurrentScreen(Minecraft.getInstance()).orElse(null);
 
         if ((instrumentScreen == null)
             || !(instrumentScreen.optionsScreen instanceof SoundTypeOptionsScreen optionsScreen)

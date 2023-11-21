@@ -36,7 +36,7 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEventArg
         public final boolean isClientSide;
 
         public final ResourceLocation instrumentId;
-        public final NoteButtonIdentifier noteIdentifier;
+        public final Optional<NoteButtonIdentifier> noteIdentifier;
         public final BlockPos playPos;
 
 
@@ -61,7 +61,7 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEventArg
             this.isClientSide = isClientSide;
 
             this.instrumentId = instrumentId;
-            this.noteIdentifier = noteIdentifier;
+            this.noteIdentifier = Optional.ofNullable(noteIdentifier);
         }
     }
 

@@ -163,7 +163,7 @@ public class NoteSound {
      */
     @Environment(EnvType.CLIENT)
     public void play(int pitch, int volume, Optional<UUID> playerUUID, Optional<InteractionHand> hand,
-            ResourceLocation instrumentId, NoteButtonIdentifier buttonIdentifier, Optional<BlockPos> playPos) {
+            ResourceLocation instrumentId, Optional<NoteButtonIdentifier> buttonIdentifier, Optional<BlockPos> playPos) {
         final Minecraft minecraft = Minecraft.getInstance();
         final Player player = minecraft.player;
 
@@ -181,13 +181,13 @@ public class NoteSound {
 
         if (initiator == null)
             InstrumentPlayedEvent.EVENT.invoker().triggered(
-                new InstrumentPlayedEventArgs(this, pitch, volume, level, pos, instrumentId, buttonIdentifier, true)
+                new InstrumentPlayedEventArgs(this, pitch, volume, level, pos, instrumentId, buttonIdentifier.orElse(null), true)
             );
         else
             InstrumentPlayedEvent.ByPlayer.EVENT.invoker().triggered(
                 new ByPlayerArgs(this, pitch, volume,
                     initiator, pos, hand,
-                    instrumentId, buttonIdentifier, true
+                    instrumentId, buttonIdentifier.orElse(null), true
                 )
             );
         

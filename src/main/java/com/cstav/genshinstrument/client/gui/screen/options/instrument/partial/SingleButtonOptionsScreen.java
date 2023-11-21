@@ -1,6 +1,6 @@
 package com.cstav.genshinstrument.client.gui.screen.options.instrument.partial;
 
-import com.cstav.genshinstrument.client.gui.screen.instrument.partial.notegrid.AbstractGridInstrumentScreen;
+import com.cstav.genshinstrument.client.gui.screen.instrument.partial.notegrid.GridInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.GridInstrumentOptionsScreen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
@@ -13,12 +13,15 @@ import net.minecraft.network.chat.Component;
 
 import java.awt.*;
 
+/**
+ * A subclass of {@link GridInstrumentOptionsScreen} that implements a simple, singular button.
+ */
 @Environment(EnvType.CLIENT)
 public abstract class SingleButtonOptionsScreen extends GridInstrumentOptionsScreen {
     private final static int SPACE_BEFORE = 20, SPACER_HEIGHT = 13;
     private int heightBefore;
 
-    public SingleButtonOptionsScreen(final AbstractGridInstrumentScreen screen) {
+    public SingleButtonOptionsScreen(final GridInstrumentScreen screen) {
         super(screen);
     }
     public SingleButtonOptionsScreen(final Screen lastScreen) {
