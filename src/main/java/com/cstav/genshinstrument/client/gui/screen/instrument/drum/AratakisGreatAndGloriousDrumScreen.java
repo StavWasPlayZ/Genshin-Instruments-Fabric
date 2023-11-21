@@ -5,11 +5,11 @@ import java.util.Map;
 
 import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
-import com.cstav.genshinstrument.client.gui.screen.instrument.partial.AbstractInstrumentScreen;
+import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentThemeLoader;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.NoteButton;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.DrumOptionsScren;
-import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.BaseInstrumentOptionsScreen;
+import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.InstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.midi.InstrumentMidiReceiver;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 
@@ -21,7 +21,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 
 @Environment(EnvType.CLIENT)
-public class AratakisGreatAndGloriousDrumScreen extends AbstractInstrumentScreen {
+public class AratakisGreatAndGloriousDrumScreen extends InstrumentScreen {
     public static final ResourceLocation INSTRUMENT_ID = new ResourceLocation(GInstrumentMod.MODID, "glorious_drum");
     public static final String[] NOTE_LAYOUT = {"D", "G"};
 
@@ -44,7 +44,7 @@ public class AratakisGreatAndGloriousDrumScreen extends AbstractInstrumentScreen
     }
 
     @Override
-    protected BaseInstrumentOptionsScreen initInstrumentOptionsScreen() {
+    protected InstrumentOptionsScreen initInstrumentOptionsScreen() {
         return new DrumOptionsScren(this);
     }
 

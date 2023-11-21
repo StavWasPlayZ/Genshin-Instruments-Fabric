@@ -4,10 +4,10 @@ import org.jetbrains.annotations.Nullable;
 
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.config.enumType.InstrumentChannelType;
-import com.cstav.genshinstrument.client.gui.screen.instrument.partial.AbstractInstrumentScreen;
+import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.NoteButton;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.label.INoteLabel;
-import com.cstav.genshinstrument.client.gui.screen.instrument.partial.notegrid.AbstractGridInstrumentScreen;
+import com.cstav.genshinstrument.client.gui.screen.instrument.partial.notegrid.GridInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.midi.MidiOptionsScreen;
 import com.cstav.genshinstrument.client.gui.widget.SliderButton;
 import com.cstav.genshinstrument.client.util.ClientUtil;
@@ -32,7 +32,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
 @Environment(EnvType.CLIENT)
-public abstract class BaseInstrumentOptionsScreen extends AbstractInstrumentOptionsScreen {
+public abstract class InstrumentOptionsScreen extends AbstractInstrumentOptionsScreen {
     public static final MutableComponent MIDI_OPTIONS = Component.translatable("label.genshinstrument.midiOptions");
 
     private static final String SOUND_CHANNEL_KEY = "button.genshinstrument.audioChannels",
@@ -58,11 +58,11 @@ public abstract class BaseInstrumentOptionsScreen extends AbstractInstrumentOpti
     }
 
 
-    public BaseInstrumentOptionsScreen(@Nullable AbstractInstrumentScreen screen) {
+    public InstrumentOptionsScreen(@Nullable InstrumentScreen screen) {
         super(Component.translatable("button.genshinstrument.instrumentOptions"), screen);
         labels = getLabels();
     }
-    public BaseInstrumentOptionsScreen(final Screen lastScreen) {
+    public InstrumentOptionsScreen(final Screen lastScreen) {
         super(Component.translatable("button.genshinstrument.instrumentOptions"), lastScreen);
         labels = getLabels();
     }
@@ -144,7 +144,7 @@ public abstract class BaseInstrumentOptionsScreen extends AbstractInstrumentOpti
                 public Component getMessage() {
                     return Component.translatable("button.genshinstrument.pitch").append(": "
                         + LabelUtil.formatNoteName(
-                            LabelUtil.getNoteName(pitch, AbstractGridInstrumentScreen.NOTE_LAYOUT, 0),
+                            LabelUtil.getNoteName(pitch, GridInstrumentScreen.NOTE_LAYOUT, 0),
                             false
                         )
                         + " ("+D_FORMAT.format(NoteSound.getPitchByNoteOffset(pitch))+")"
