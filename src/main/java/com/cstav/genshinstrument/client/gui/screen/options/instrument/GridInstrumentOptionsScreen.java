@@ -13,7 +13,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 
 @Environment(EnvType.CLIENT)
 public class GridInstrumentOptionsScreen extends InstrumentOptionsScreen {
@@ -55,7 +55,7 @@ public class GridInstrumentOptionsScreen extends InstrumentOptionsScreen {
             .withInitialValue(ModClientConfigs.RENDER_BACKGROUND.get())
             .create(0, 0,
                 getSmallButtonWidth(), getButtonHeight(),
-                Component.translatable("button.genshinstrument.render_background"), this::onRenderBackgroundChanged
+                new TranslatableComponent("button.genshinstrument.render_background"), this::onRenderBackgroundChanged
             );
         rowHelper.addChild(renderBackground);
 

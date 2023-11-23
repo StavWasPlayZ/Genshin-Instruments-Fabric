@@ -3,7 +3,6 @@ package com.cstav.genshinstrument.client.gui.screen.options.instrument.partial;
 import com.cstav.genshinstrument.client.config.enumType.SoundType;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.notegrid.GridInstrumentScreen;
-import com.cstav.genshinstrument.client.gui.screen.options.instrument.GridInstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.util.TogglablePedalSound;
 import com.cstav.genshinstrument.event.MidiEvent.MidiEventArgs;
 
@@ -13,7 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 
 /**
  * An options screen that implements a button to cycle through an instrument's sounds
@@ -51,13 +50,13 @@ public abstract class SoundTypeOptionsScreen<T extends SoundType> extends Single
     @Override
     protected AbstractButton constructButton() {
         return CycleButton.<T>builder((type) ->
-            Component.translatable(soundTypeButtonKey()+"."+type.toString().toLowerCase())
+            new TranslatableComponent(soundTypeButtonKey()+"."+type.toString().toLowerCase())
         )
             .withValues(values())
             .withInitialValue(getPreferredSoundType())
             .create(0, 0,
                 getBigButtonWidth(), getButtonHeight(),
-                Component.translatable(soundTypeButtonKey()),
+                new TranslatableComponent(soundTypeButtonKey()),
                 this::onSoundTypeChange
             );
     }

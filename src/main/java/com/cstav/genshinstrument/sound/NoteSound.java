@@ -214,7 +214,7 @@ public class NoteSound {
     public void playLocally(final float pitch, final float volume) {
         Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(
             getByPreference().getLocation(), SoundSource.RECORDS,
-            volume, pitch, SoundInstance.createUnseededRandom(),
+            volume, pitch,
             false, 0, SoundInstance.Attenuation.NONE,
             0, 0, 0, true
         ));

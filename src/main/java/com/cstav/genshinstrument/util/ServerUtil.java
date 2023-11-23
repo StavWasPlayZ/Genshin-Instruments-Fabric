@@ -16,9 +16,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 
 import java.util.List;
@@ -75,10 +73,11 @@ public class ServerUtil {
 
         // Trigger an instrument game event
         // This is done so that sculk sensors can pick up the instrument's sound
-        player.getLevel().gameEvent(
-            GameEvent.INSTRUMENT_PLAY, playeredPos,
-            GameEvent.Context.of(player)
-        );
+        // 1.19+
+//        player.getLevel().gameEvent(
+//            GameEvent.INSTRUMENT_PLAY, playeredPos,
+//            GameEvent.Context.of(player)
+//        );
 
         // Fire a player-specific event
         InstrumentPlayedEvent.ByPlayer.EVENT.invoker().triggered(
@@ -133,14 +132,15 @@ public class ServerUtil {
 
         final BlockState bs = level.getBlockState(pos);
         // The sound may have been coming from a block
-        if (bs != Blocks.AIR.defaultBlockState())
-            level.gameEvent(
-                GameEvent.INSTRUMENT_PLAY, pos,
-                GameEvent.Context.of(bs)
-            );
-        // idk what else
-        else
-            level.gameEvent(null, GameEvent.INSTRUMENT_PLAY, pos);
+        //1.19+
+//        if (bs != Blocks.AIR.defaultBlockState())
+//            level.gameEvent(
+//                GameEvent.INSTRUMENT_PLAY, pos,
+//                GameEvent.Context.of(bs)
+//            );
+//        // idk what else
+//        else
+//            level.gameEvent(null, GameEvent.INSTRUMENT_PLAY, pos);
 
         // Fire a generic instrument event
         InstrumentPlayedEvent.EVENT.invoker().triggered(

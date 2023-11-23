@@ -12,6 +12,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 
 @Environment(EnvType.CLIENT)
 public class DrumMidiOptionsScreen extends MidiOptionsScreen {
@@ -27,13 +28,13 @@ public class DrumMidiOptionsScreen extends MidiOptionsScreen {
 
         rowHelper.addChild(SpacerWidget.height(15), 2);
 
-        final CycleButton<DominantDrumType> dominantDrumType = CycleButton.<DominantDrumType>builder((type) -> Component.translatable(type.getKey()))
+        final CycleButton<DominantDrumType> dominantDrumType = CycleButton.<DominantDrumType>builder((type) -> new TranslatableComponent(type.getKey()))
             .withValues(DominantDrumType.values())
-            .withTooltip(tooltip((type) -> Component.translatable(DDT_KEY+"."+type.name().toLowerCase()+".tooltip")))
+            .withTooltip(tooltip((type) -> new TranslatableComponent(DDT_KEY+"."+type.name().toLowerCase()+".tooltip")))
             .withInitialValue(ModClientConfigs.DOMINANT_DRUM_TYPE.get())
             .create(0, 0,
                 getSmallButtonWidth(), getButtonHeight(),
-                Component.translatable(DDT_KEY), this::onDominantDrumTypeChanged
+                new TranslatableComponent(DDT_KEY), this::onDominantDrumTypeChanged
             );
         rowHelper.addChild(dominantDrumType);
     }

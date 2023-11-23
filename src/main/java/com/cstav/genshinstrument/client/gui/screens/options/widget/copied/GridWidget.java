@@ -8,6 +8,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
@@ -21,7 +22,7 @@ public class GridWidget extends AbstractContainerWidget {
    }
 
    public GridWidget(int pX, int pY) {
-      this(pX, pY, Component.empty());
+      this(pX, pY, TextComponent.EMPTY);
    }
 
    public GridWidget(int pX, int pY, Component pMessage) {

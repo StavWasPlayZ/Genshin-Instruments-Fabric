@@ -3,6 +3,7 @@ package com.cstav.genshinstrument.client.gui.screen.options.instrument.partial;
 
 import java.text.DecimalFormat;
 
+import net.minecraft.network.chat.*;
 import org.jetbrains.annotations.Nullable;
 
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
@@ -28,13 +29,10 @@ import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 
 @Environment(EnvType.CLIENT)
 public abstract class InstrumentOptionsScreen extends AbstractInstrumentOptionsScreen {
-    public static final MutableComponent MIDI_OPTIONS = Component.translatable("label.genshinstrument.midiOptions");
+    public static final MutableComponent MIDI_OPTIONS = new TranslatableComponent("label.genshinstrument.midiOptions");
 
     private static final String SOUND_CHANNEL_KEY = "button.genshinstrument.audioChannels",
         STOP_MUSIC_KEY = "button.genshinstrument.stop_music_on_play";
@@ -60,11 +58,11 @@ public abstract class InstrumentOptionsScreen extends AbstractInstrumentOptionsS
 
 
     public InstrumentOptionsScreen(@Nullable InstrumentScreen screen) {
-        super(Component.translatable("button.genshinstrument.instrumentOptions"), screen);
+        super(new TranslatableComponent("button.genshinstrument.instrumentOptions"), screen);
         labels = getLabels();
     }
     public InstrumentOptionsScreen(final Screen lastScreen) {
-        super(Component.translatable("button.genshinstrument.instrumentOptions"), lastScreen);
+        super(new TranslatableComponent("button.genshinstrument.instrumentOptions"), lastScreen);
         labels = getLabels();
     }
 
@@ -117,18 +115,18 @@ public abstract class InstrumentOptionsScreen extends AbstractInstrumentOptionsS
 
     protected void initAudioSection(final GridWidget grid, final RowHelper rowHelper) {
         final CycleButton<InstrumentChannelType> instrumentChannel = CycleButton.<InstrumentChannelType>builder((soundType) ->
-            Component.translatable(SOUND_CHANNEL_KEY +"."+ soundType.toString().toLowerCase())
+            new TranslatableComponent(SOUND_CHANNEL_KEY +"."+ soundType.toString().toLowerCase())
         )
             .withValues(InstrumentChannelType.values())
             .withInitialValue(ModClientConfigs.CHANNEL_TYPE.get())
 
             .withTooltip(tooltip((soundType) -> switch (soundType) {
                 case MIXED -> translatableArgs(SOUND_CHANNEL_KEY+".mixed.tooltip", NoteSound.STEREO_RANGE);
-                case STEREO -> Component.translatable(SOUND_CHANNEL_KEY+".stereo.tooltip");
-                default -> Component.empty();
+                case STEREO -> new TranslatableComponent(SOUND_CHANNEL_KEY+".stereo.tooltip");
+                default -> TextComponent.EMPTY;
             }))
             .create(0, 0,
-                getBigButtonWidth(), 20, Component.translatable(SOUND_CHANNEL_KEY), this::onChannelTypeChanged);
+                getBigButtonWidth(), 20, new TranslatableComponent(SOUND_CHANNEL_KEY), this::onChannelTypeChanged);
         rowHelper.addChild(instrumentChannel, 2);
 
         if (isPitchSliderEnabled()) {
@@ -145,7 +143,7 @@ public abstract class InstrumentOptionsScreen extends AbstractInstrumentOptionsS
     
                 @Override
                 public Component getMessage() {
-                    return Component.translatable("button.genshinstrument.pitch").append(": "
+                    return new TranslatableComponent("button.genshinstrument.pitch").append(": "
                         + LabelUtil.formatNoteName(
                             LabelUtil.getNoteName(pitch, GridInstrumentScreen.NOTE_LAYOUT, 0),
                             false
@@ -167,7 +165,7 @@ public abstract class InstrumentOptionsScreen extends AbstractInstrumentOptionsS
 
             @Override
             public Component getMessage() {
-                return Component.translatable("button.genshinstrument.volume").append(": "
+                return new TranslatableComponent("button.genshinstrument.volume").append(": "
                     + ((int)(value * 100))+"%"
                 );
             }
@@ -186,39 +184,39 @@ public abstract class InstrumentOptionsScreen extends AbstractInstrumentOptionsS
         // Not visual, but no space
         final CycleButton<Boolean> stopMusic = CycleButton.booleanBuilder(CommonComponents.OPTION_ON, CommonComponents.OPTION_OFF)
             .withInitialValue(ModClientConfigs.STOP_MUSIC_ON_PLAY.get())
-            .withTooltip(tooltip((val) -> Component.translatable(STOP_MUSIC_KEY+".tooltip", NoteSound.STOP_SOUND_DISTANCE)))
+            .withTooltip(tooltip((val) -> new TranslatableComponent(STOP_MUSIC_KEY+".tooltip", NoteSound.STOP_SOUND_DISTANCE)))
             .create(0, 0,
                 getSmallButtonWidth(), getButtonHeight(),
-                Component.translatable(STOP_MUSIC_KEY), this::onMusicStopChanged
+                new TranslatableComponent(STOP_MUSIC_KEY), this::onMusicStopChanged
             );
         rowHelper.addChild(stopMusic);
 
         final CycleButton<Boolean> sharedInstrument = CycleButton.booleanBuilder(CommonComponents.OPTION_ON, CommonComponents.OPTION_OFF)
             .withInitialValue(ModClientConfigs.SHARED_INSTRUMENT.get())
-            .withTooltip(tooltip((value) -> Component.translatable("button.genshinstrument.shared_instrument.tooltip")))
+            .withTooltip(tooltip((value) -> new TranslatableComponent("button.genshinstrument.shared_instrument.tooltip")))
             .create(0, 0,
                 getSmallButtonWidth(), getButtonHeight(),
-                Component.translatable("button.genshinstrument.shared_instrument"), this::onSharedInstrumentChanged
+                new TranslatableComponent("button.genshinstrument.shared_instrument"), this::onSharedInstrumentChanged
             );
         rowHelper.addChild(sharedInstrument);
 
         final CycleButton<Boolean> accurateNotes = CycleButton.booleanBuilder(CommonComponents.OPTION_ON, CommonComponents.OPTION_OFF)
             .withInitialValue(ModClientConfigs.ACCURATE_NOTES.get())
-            .withTooltip(tooltip((value) -> Component.translatable("button.genshinstrument.accurate_notes.tooltip")))
+            .withTooltip(tooltip((value) -> new TranslatableComponent("button.genshinstrument.accurate_notes.tooltip")))
             .create(0, 0,
                 getSmallButtonWidth(), getButtonHeight(),
-                Component.translatable("button.genshinstrument.accurate_notes"), this::onAccurateNotesChanged
+                new TranslatableComponent("button.genshinstrument.accurate_notes"), this::onAccurateNotesChanged
             );
         rowHelper.addChild(accurateNotes);
 
 
         if (labels != null) {
-            final CycleButton<INoteLabel> labelType = CycleButton.<INoteLabel>builder((label) -> Component.translatable(label.getKey()))
+            final CycleButton<INoteLabel> labelType = CycleButton.<INoteLabel>builder((label) -> new TranslatableComponent(label.getKey()))
                 .withValues(labels)
                 .withInitialValue(currLabel)
                 .create(0, 0,
                     getBigButtonWidth(), getButtonHeight(),
-                    Component.translatable("button.genshinstrument.label"), this::onLabelChanged
+                    new TranslatableComponent("button.genshinstrument.label"), this::onLabelChanged
                 );
             rowHelper.addChild(labelType, 2);
         }
@@ -324,8 +322,8 @@ public abstract class InstrumentOptionsScreen extends AbstractInstrumentOptionsS
      * @return What should've been return by {@link Component#translatable(String, Object...)}
      */
     private static MutableComponent translatableArgs(final String key, final Object arg) {
-        return Component.literal(
-            Component.translatable(key).getString().replace("%s", arg.toString())
+        return new TextComponent(
+            new TranslatableComponent(key).getString().replace("%s", arg.toString())
         );
     }
 }

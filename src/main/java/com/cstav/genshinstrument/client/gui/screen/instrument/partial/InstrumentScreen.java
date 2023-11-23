@@ -30,8 +30,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 
@@ -40,7 +40,7 @@ public abstract class InstrumentScreen extends Screen {
     
     @SuppressWarnings("resource")
     public int getNoteSize() {
-        return switch (Minecraft.getInstance().options.guiScale().get()) {
+        return switch (Minecraft.getInstance().options.guiScale) {
             case 1 -> 36;
             case 2 -> 46;
             case 3 -> 48;
@@ -299,7 +299,7 @@ public abstract class InstrumentScreen extends Screen {
     
     public final Optional<InteractionHand> interactionHand;
     public InstrumentScreen(final InteractionHand hand) {
-        super(CommonComponents.EMPTY);
+        super(TextComponent.EMPTY);
         
         interactionHand = Optional.ofNullable(hand);
         midiReceiver = initMidiReceiver();
@@ -323,7 +323,7 @@ public abstract class InstrumentScreen extends Screen {
     protected AbstractWidget initOptionsButton(final int vertOffset) {
         final Button button = new Button(0, 0,
             150, 20,
-            Component.translatable("button.genshinstrument.instrumentOptions").append("..."),
+            new TranslatableComponent("button.genshinstrument.instrumentOptions").append("..."),
             (btn) -> onOptionsOpen()
         );
 
@@ -456,7 +456,7 @@ public abstract class InstrumentScreen extends Screen {
     }
     /**
      * Unlocks a {@link NoteButton} based on its corresponding key.
-     * If not present, will perform {@link AbstractInstrumentScreen#unlockFocused} instead.
+     * If not present, will perform {@link InstrumentScreen#unlockFocused} instead.
      */
     private void unlockFocused(final int keyCode) {
         final NoteButton note = getNoteByKey(keyCode);

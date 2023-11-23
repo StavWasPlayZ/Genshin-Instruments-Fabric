@@ -5,14 +5,14 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import com.cstav.genshinstrument.mixin.required.AbstractWidgetAccessor;
 import com.google.common.collect.Lists;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.network.chat.Component;
-import net.minecraftforge.mixin.client.accessor.AbstractWidgetAccessor;
+import net.minecraft.network.chat.TextComponent;
 
 @Environment(EnvType.CLIENT)
 public class LinearLayoutWidget extends AbstractContainerWidget {
@@ -28,7 +28,7 @@ public class LinearLayoutWidget extends AbstractContainerWidget {
    }
 
    public LinearLayoutWidget(int pX, int pY, int pWidth, int pHeight, LinearLayoutWidget.Orientation pOrientation) {
-      super(pX, pY, pWidth, pHeight, Component.empty());
+      super(pX, pY, pWidth, pHeight, TextComponent.EMPTY);
       this.orientation = pOrientation;
    }
 

@@ -21,7 +21,7 @@ import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.sounds.SoundManager;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,7 +53,7 @@ public abstract class NoteButton extends AbstractButton {
     public NoteButton(NoteSound sound,
                       NoteLabelSupplier labelSupplier, InstrumentScreen instrumentScreen, int pitch) {
 
-        super(0, 0, 42, 42, Component.empty());
+        super(0, 0, 42, 42, TextComponent.EMPTY);
 
         width = height = instrumentScreen.getNoteSize();
 

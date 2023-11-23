@@ -9,7 +9,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import java.awt.*;
 
@@ -48,7 +48,7 @@ public abstract class SingleButtonOptionsScreen extends GridInstrumentOptionsScr
         super.render(stack, pMouseX, pMouseY, pPartialTick);
 
         drawCenteredString(stack, font,
-            Component.translatable(optionsLabelKey()),
+            new TranslatableComponent(optionsLabelKey()),
             width/2, heightBefore + SPACE_BEFORE
             , Color.WHITE.getRGB()
         );

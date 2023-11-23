@@ -10,6 +10,8 @@ import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.label.INoteLabel;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 
 public abstract class LabelUtil {
 
@@ -100,10 +102,10 @@ public abstract class LabelUtil {
     public static Component toDoReMi(final String noteName) {
         if (noteName.isEmpty()) {
             GInstrumentMod.LOGGER.warn("Cannot convert empty note to Do Re Mi!");
-            return Component.empty();
+            return TextComponent.EMPTY;
         }
 
-        return Component.translatable(INoteLabel.TRANSLATABLE_PATH + ABC_TO_DO_RE_MI.get(noteName.charAt(0)))
+        return new TranslatableComponent(INoteLabel.TRANSLATABLE_PATH + ABC_TO_DO_RE_MI.get(noteName.charAt(0)))
             .append(noteName.substring(1));
     }
 

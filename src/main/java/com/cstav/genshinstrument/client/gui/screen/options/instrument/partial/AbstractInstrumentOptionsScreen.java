@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.function.Function;
 
+import net.minecraft.client.gui.components.CycleButton.TooltipSupplier;
 import org.jetbrains.annotations.Nullable;
 
 import com.cstav.genshinstrument.GInstrumentMod;
@@ -15,7 +16,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.OptionInstance.TooltipSupplier;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 

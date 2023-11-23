@@ -9,7 +9,8 @@ import com.cstav.genshinstrument.util.LabelUtil;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 
 @Environment(EnvType.CLIENT)
 public enum DrumNoteLabel implements INoteLabel {
@@ -21,9 +22,9 @@ public enum DrumNoteLabel implements INoteLabel {
 	),
 
 	DON_KA((note) ->
-		Component.translatable(dn(note).btnType.getTransKey())
+		new TranslatableComponent(dn(note).btnType.getTransKey())
 	),
-	NOTE_NAME((note) -> Component.literal(
+	NOTE_NAME((note) -> new TextComponent(
 		note.getFormattedNoteName()
 	)),
 	DO_RE_MI((note) ->
