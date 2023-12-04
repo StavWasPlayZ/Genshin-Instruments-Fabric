@@ -10,6 +10,7 @@ import com.cstav.genshinstrument.event.InstrumentPlayedEvent.ByPlayer.ByPlayerAr
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEventArgs;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.util.CommonUtil;
+import com.cstav.genshinstrument.util.InstrumentEntityData;
 import com.cstav.genshinstrument.util.LabelUtil;
 
 import net.fabricmc.api.EnvType;
@@ -23,7 +24,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
@@ -158,11 +158,10 @@ public class NoteSound {
      * A method for packets to use for playing this note on the client's end.
      * Will also stop the client's background music per preference.
      * @param playerUUID The UUID of the player who initiated the sound. Empty for when it wasn't a player.
-     * @param hand The hand of the player who initiated the sound. Empty for when it wasn't a player.
      * @param playPos The position at which the sound was fired from. Empty for the player's.
      */
     @Environment(EnvType.CLIENT)
-    public void play(int pitch, int volume, Optional<UUID> playerUUID, Optional<InteractionHand> hand,
+    public void play(int pitch, int volume, Optional<UUID> playerUUID,
             ResourceLocation instrumentId, Optional<NoteButtonIdentifier> buttonIdentifier, Optional<BlockPos> playPos) {
         final Minecraft minecraft = Minecraft.getInstance();
         final Player player = minecraft.player;
@@ -186,7 +185,7 @@ public class NoteSound {
         else
             InstrumentPlayedEvent.ByPlayer.EVENT.invoker().triggered(
                 new ByPlayerArgs(this, pitch, volume,
-                    initiator, pos, hand,
+                    initiator, pos, InstrumentEntityData.getHand(initiator),
                     instrumentId, buttonIdentifier.orElse(null), true
                 )
             );
