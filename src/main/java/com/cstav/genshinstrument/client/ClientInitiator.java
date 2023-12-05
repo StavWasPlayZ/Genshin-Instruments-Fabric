@@ -11,6 +11,7 @@ import com.cstav.genshinstrument.client.gui.screen.instrument.windsonglyre.Winds
 import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings;
 import com.cstav.genshinstrument.event.ClientEvents;
 import com.cstav.genshinstrument.item.ModItemPredicates;
+import com.cstav.genshinstrument.networking.IModPacket;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
 import com.cstav.genshinstrument.util.CommonUtil;
 
