@@ -14,20 +14,20 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 
-public abstract class ModItems {
+public class ModItems {
     
     public static final Item
         WINDSONG_LYRE = register("windsong_lyre", new InstrumentItem(
-            (player, hand) -> sendInternalOpenPacket(player, hand, "windsong_lyre")
+            (player) -> sendInternalOpenPacket(player, "windsong_lyre")
         )),
         VINTAGE_LYRE = register("vintage_lyre", new InstrumentItem(
-            (player, hand) -> sendInternalOpenPacket(player, hand, "vintage_lyre")
+            (player) -> sendInternalOpenPacket(player, "vintage_lyre")
         )),
         FLORAL_ZITHER = register("floral_zither", new InstrumentItem(
-            (player, hand) -> sendInternalOpenPacket(player, hand, "floral_zither")
+            (player) -> sendInternalOpenPacket(player, "floral_zither")
         )),
         GLORIOUS_DRUM = register("glorious_drum", new InstrumentItem(
-            (player, hand) -> sendInternalOpenPacket(player, hand, "glorious_drum")
+            (player) -> sendInternalOpenPacket(player, "glorious_drum")
         ))
     ;
     

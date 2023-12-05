@@ -10,15 +10,11 @@ import com.cstav.genshinstrument.sound.NoteSound;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
 
 @Environment(EnvType.CLIENT)
 public class FloralZitherScreen extends GridInstrumentScreen {
     public static final ResourceLocation INSTRUMENT_ID = new ResourceLocation(GInstrumentMod.MODID, "floral_zither");
-    
-    public FloralZitherScreen(InteractionHand hand) {
-        super(hand);
-    }
+
     @Override
     public ResourceLocation getInstrumentId() {
         return INSTRUMENT_ID;
