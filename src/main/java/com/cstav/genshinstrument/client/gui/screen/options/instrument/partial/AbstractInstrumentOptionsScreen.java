@@ -100,7 +100,7 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
 
     @Override
     public void onClose() {
-        onSave();
+        saveOptions();
 
         if (lastScreen != null)
             minecraft.setScreen(lastScreen);
@@ -131,15 +131,14 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
             appliedOptions.put(optionKey, saveRunnable);
     }
 
-    protected void onSave() {
+    protected void saveOptions() {
         if (appliedOptions.isEmpty())
             return;
 
         appliedOptions.values().forEach(Runnable::run);
         ModClientConfigs.CONFIGS.save();
 
-        GInstrumentMod.LOGGER.info("Successfully saved "+appliedOptions.size()+" option"+((appliedOptions.size() == 1) ? "" : "s")
-            + " for "+title.getString());
+        GInstrumentMod.LOGGER.info("Successfully saved "+appliedOptions.size()+" option(s) for "+title.getString());
     }
 
 
