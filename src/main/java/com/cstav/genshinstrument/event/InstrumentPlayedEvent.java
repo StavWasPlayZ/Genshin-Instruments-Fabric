@@ -93,7 +93,7 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEventArg
             }
 
     
-            public ByPlayerArgs(NoteSound sound, int pitch, int volume, Player player, BlockPos pos, Optional<InteractionHand> hand,
+            public ByPlayerArgs(NoteSound sound, int pitch, int volume, Player player, BlockPos pos, InteractionHand hand,
                     ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, boolean isClientSide) {
                 super(
                     sound, pitch, volume,
@@ -103,10 +103,10 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEventArg
                 );
 
                 this.player = player;
-                this.hand = hand;
+                this.hand = Optional.ofNullable(hand);
     
                 itemInstrument = isBlockInstrument() ? Optional.empty()
-                    : Optional.of(player.getItemInHand(hand.get()));
+                    : Optional.of(player.getItemInHand(hand));
             }
         }
     }
