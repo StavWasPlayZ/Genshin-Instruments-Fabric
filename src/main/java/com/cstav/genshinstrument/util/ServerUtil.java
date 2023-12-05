@@ -30,13 +30,12 @@ public class ServerUtil {
      * Sends {@link PlayNotePacket}s in the specified {@link ServerUtil#PLAY_DISTANCE}.
      * This method treats the sound as it was produced by a player.
      * @param player The player producing the sounds
-     * @param hand The hand of the player producing the sounds. Empty for when it was not a player.
-     * @param sound The sound tp initiate
+     * @param sound The sound to initiate
      * @param instrumentId The ID of the instrument initiating the sound
      * @param pitch The pitch of the sound to initiate
      * @param volume The volume of the sound to initiate
      */
-    public static void sendPlayNotePackets(ServerPlayer player, Optional<InteractionHand> hand,
+    public static void sendPlayNotePackets(ServerPlayer player,
             NoteSound sound, ResourceLocation instrumentId, int pitch, int volume) {
 
         sendPlayNotePackets(
@@ -50,7 +49,7 @@ public class ServerUtil {
      * Sends {@link PlayNotePacket}s in the specified {@link ServerUtil#PLAY_DISTANCE}.
      * This method treats the sound as it was produced by a player.
      * @param player The player producing the sounds
-     * @param sound The sound tp initiate
+     * @param sound The sound to initiate
      * @param pitch The pitch of the sound to initiate
      * @param volume The volume of the sound to initiate
      * @param notePacketDelegate The initiator of the {@link PlayNotePacket} to be sent
