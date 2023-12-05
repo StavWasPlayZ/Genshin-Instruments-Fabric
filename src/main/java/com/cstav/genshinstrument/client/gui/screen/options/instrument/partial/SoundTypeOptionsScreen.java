@@ -3,7 +3,6 @@ package com.cstav.genshinstrument.client.gui.screen.options.instrument.partial;
 import com.cstav.genshinstrument.client.config.enumType.SoundType;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.notegrid.GridInstrumentScreen;
-import com.cstav.genshinstrument.client.gui.screen.options.instrument.GridInstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.util.TogglablePedalSound;
 import com.cstav.genshinstrument.event.MidiEvent.MidiEventArgs;
 

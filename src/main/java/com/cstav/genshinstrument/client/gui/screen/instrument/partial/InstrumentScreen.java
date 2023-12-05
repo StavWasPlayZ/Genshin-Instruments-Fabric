@@ -32,7 +32,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
 
 @Environment(EnvType.CLIENT)
 public abstract class InstrumentScreen extends Screen {
@@ -295,12 +294,9 @@ public abstract class InstrumentScreen extends Screen {
 
 
     public final InstrumentOptionsScreen optionsScreen = initInstrumentOptionsScreen();
-    
-    public final Optional<InteractionHand> interactionHand;
-    public InstrumentScreen(final InteractionHand hand) {
+
+    public InstrumentScreen() {
         super(CommonComponents.EMPTY);
-        
-        interactionHand = Optional.ofNullable(hand);
         midiReceiver = initMidiReceiver();
     }
 
@@ -497,6 +493,9 @@ public abstract class InstrumentScreen extends Screen {
                 return Optional.of(instrumentOptionsScreen.instrumentScreen);
 
         return Optional.empty();
+    }
+    public static Optional<InstrumentScreen> getCurrentScreen() {
+        return getCurrentScreen(Minecraft.getInstance());
     }
     
 
