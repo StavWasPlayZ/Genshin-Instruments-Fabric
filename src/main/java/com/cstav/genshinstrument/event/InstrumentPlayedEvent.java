@@ -2,6 +2,7 @@ package com.cstav.genshinstrument.event;
 
 import java.util.Optional;
 
+import com.cstav.genshinstrument.block.partial.InstrumentBlockEntity;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.ByPlayer.ByPlayerArgs;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEventArgs;
 import com.cstav.genshinstrument.event.impl.Cancelable;
@@ -88,8 +89,30 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEventArg
             /** The hand holding the instrument played by this player */
             public final Optional<InteractionHand> hand;
 
+
+            /**
+             * <p>Returns whether this event was fired by an item instrument.</p>
+             * A {@code false} result does NOT indicate a block instrument.
+             * @see ByPlayerArgs#isBlockInstrument
+             */
+            public boolean isItemInstrument() {
+                return hand.isPresent();
+            }
+            /**
+             * <p>Returns whether this event was fired by a block instrument.</p>
+             * A {@code false} result does NOT indicate an instrument item.
+             * @see ByPlayerArgs#isItemInstrument()
+             */
             public boolean isBlockInstrument() {
-                return hand.isEmpty();
+                return !isItemInstrument()
+                    && player.level().getBlockEntity(playPos) instanceof InstrumentBlockEntity;
+            }
+
+            /**
+             * @return Whether the played sound was not produced by an instrument
+             */
+            public boolean isNotInstrument() {
+                return !isBlockInstrument() && !isItemInstrument();
             }
 
     
@@ -104,9 +127,10 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEventArg
 
                 this.player = player;
                 this.hand = Optional.ofNullable(hand);
-    
-                itemInstrument = isBlockInstrument() ? Optional.empty()
-                    : Optional.of(player.getItemInHand(hand));
+
+                itemInstrument = isItemInstrument()
+                    ? Optional.of(player.getItemInHand(hand))
+                    : Optional.empty();
             }
         }
     }
