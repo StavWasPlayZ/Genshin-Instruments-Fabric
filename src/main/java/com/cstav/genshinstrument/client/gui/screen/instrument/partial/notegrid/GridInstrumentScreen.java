@@ -24,7 +24,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.layouts.AbstractLayout;
-import net.minecraft.world.InteractionHand;
 
 @Environment(EnvType.CLIENT)
 public abstract class GridInstrumentScreen extends InstrumentScreen {
@@ -35,10 +34,6 @@ public abstract class GridInstrumentScreen extends InstrumentScreen {
 
     protected AbstractLayout grid;
 
-
-    public GridInstrumentScreen(InteractionHand hand) {
-        super(hand);
-    }
 
     public int columns() {
         return DEF_COLUMNS;

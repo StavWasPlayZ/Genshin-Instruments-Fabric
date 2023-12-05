@@ -18,16 +18,12 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.layouts.LinearLayout.Orientation;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
 
 @Environment(EnvType.CLIENT)
 public class AratakisGreatAndGloriousDrumScreen extends InstrumentScreen {
     public static final ResourceLocation INSTRUMENT_ID = new ResourceLocation(GInstrumentMod.MODID, "glorious_drum");
     public static final String[] NOTE_LAYOUT = {"D", "G"};
 
-    public AratakisGreatAndGloriousDrumScreen(InteractionHand hand) {
-        super(hand);
-    }
     @Override
     public ResourceLocation getInstrumentId() {
         return INSTRUMENT_ID;

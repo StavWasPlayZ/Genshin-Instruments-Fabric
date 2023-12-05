@@ -28,7 +28,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -297,12 +296,9 @@ public abstract class InstrumentScreen extends Screen {
 
 
     public final InstrumentOptionsScreen optionsScreen = initInstrumentOptionsScreen();
-    
-    public final Optional<InteractionHand> interactionHand;
-    public InstrumentScreen(final InteractionHand hand) {
-        super(CommonComponents.EMPTY);
 
-        interactionHand = Optional.ofNullable(hand);
+    public InstrumentScreen() {
+        super(CommonComponents.EMPTY);
         midiReceiver = initMidiReceiver();
     }
 
@@ -508,7 +504,10 @@ public abstract class InstrumentScreen extends Screen {
 
         return Optional.empty();
     }
-    
+    public static Optional<InstrumentScreen> getCurrentScreen() {
+        return getCurrentScreen(Minecraft.getInstance());
+    }
+
 
     @Override
     public boolean isPauseScreen() {

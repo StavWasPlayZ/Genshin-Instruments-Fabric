@@ -3,12 +3,14 @@ package com.cstav.genshinstrument.event;
 import com.cstav.genshinstrument.block.partial.AbstractInstrumentBlock;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentScreen;
+import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentThemeLoader;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.SoundTypeOptionsScreen;
 import com.cstav.genshinstrument.client.midi.MidiController;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.ByPlayer.ByPlayerArgs;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEventArgs;
 import com.cstav.genshinstrument.event.MidiEvent.MidiEventArgs;
 import com.cstav.genshinstrument.event.PosePlayerArmEvent.PosePlayerArmEventArgs;
+import com.cstav.genshinstrument.item.ItemPoseModifier;
 import com.cstav.genshinstrument.sound.NoteSound;
 import com.cstav.genshinstrument.util.InstrumentEntityData;
 
@@ -18,6 +20,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 
 @Environment(EnvType.CLIENT)
@@ -31,21 +34,43 @@ public abstract class ClientEvents {
         ClientTickEvents.START_CLIENT_TICK.register(ClientEvents::onClientTick);
         InstrumentPlayedEvent.EVENT.register(ClientEvents::onInstrumentPlayed);
 
-        MidiEvent.EVENT.register(ClientEvents::onMidiEvent);
+        PosePlayerArmEvent.EVENT.register(ClientEvents::posePlayerArmEvent);
+
         ClientLifecycleEvents.CLIENT_STOPPING.register(ClientEvents::onGameShutdown);
+        ResourcesLoadedEvent.EVENT.register(InstrumentThemeLoader::onResourcesReload);
+        MidiEvent.EVENT.register(ClientEvents::onMidiEvent);
     }
 
-    // Handle block instrument arm pose
+
+    // Handle instrument arm pose
+
+    private static void poseForBlockInstrument(PosePlayerArmEventArgs args, Player player) {
+        final Block block = player.level().getBlockState(InstrumentEntityData.getBlockPos(player)).getBlock();
+        if (!(block instanceof AbstractInstrumentBlock blockInstrument))
+            return;
+
+        blockInstrument.onPosePlayerArm(args);
+    }
+    private static void poseForItemInstrument(PosePlayerArmEventArgs args, Player player) {
+        final ItemStack instrumentItem = player.getItemInHand(InstrumentEntityData.getHand(player));
+        if (instrumentItem == ItemStack.EMPTY)
+            return;
+
+        if (!(instrumentItem.getItem() instanceof ItemPoseModifier item))
+            return;
+
+        item.onPosePlayerArm(args);
+    }
+
     public static void posePlayerArmEvent(final PosePlayerArmEventArgs args) {
         final Player player = args.player;
+        if (!InstrumentEntityData.isOpen(player))
+            return;
 
-        if (!InstrumentEntityData.isOpen(player) || InstrumentEntityData.isItem(player))
-			return;
-
-
-        final Block block = player.level().getBlockState(InstrumentEntityData.getBlockPos(player)).getBlock();
-        if (block instanceof AbstractInstrumentBlock blockInstrument)
-            blockInstrument.onPosePlayerArm(args);
+        if (InstrumentEntityData.isItem(player))
+            poseForItemInstrument(args, player);
+        else
+            poseForBlockInstrument(args, player);
     }
     
     // Responsible for closing the instrument screen when
