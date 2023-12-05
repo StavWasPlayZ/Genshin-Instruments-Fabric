@@ -11,7 +11,6 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 
 public class PlayNotePacket implements INoteIdentifierSender {
@@ -24,10 +23,9 @@ public class PlayNotePacket implements INoteIdentifierSender {
     private final Optional<NoteButtonIdentifier> noteIdentifier;
     
     private final Optional<UUID> playerUUID;
-    private final Optional<InteractionHand> hand;
 
     public PlayNotePacket(Optional<BlockPos> pos, NoteSound sound, int pitch, int volume, ResourceLocation instrumentId,
-        Optional<NoteButtonIdentifier> noteIdentifier, Optional<UUID> playerUUID, Optional<InteractionHand> hand) {
+        Optional<NoteButtonIdentifier> noteIdentifier, Optional<UUID> playerUUID) {
 
         this.pitch = pitch;
         this.volume = volume;
@@ -38,7 +36,6 @@ public class PlayNotePacket implements INoteIdentifierSender {
         this.noteIdentifier = noteIdentifier;
 
         this.playerUUID = playerUUID;
-        this.hand = hand;
     }
     public PlayNotePacket(FriendlyByteBuf buf) {
         pitch = buf.readInt();
@@ -50,7 +47,6 @@ public class PlayNotePacket implements INoteIdentifierSender {
         noteIdentifier = buf.readOptional(this::readNoteIdentifierFromNetwork);
 
         playerUUID = buf.readOptional(FriendlyByteBuf::readUUID);
-        hand = buf.readOptional((fbb) -> fbb.readEnum(InteractionHand.class));
     }
 
     @Override
@@ -64,14 +60,13 @@ public class PlayNotePacket implements INoteIdentifierSender {
         buf.writeOptional(noteIdentifier, (fbb, identifier) -> identifier.writeToNetwork(fbb));
 
         buf.writeOptional(playerUUID, FriendlyByteBuf::writeUUID);
-        buf.writeOptional(hand, FriendlyByteBuf::writeEnum);
     }
 
 
     @Override
     public void handle(Player player, PacketSender responseSender) {
         sound.play(
-            pitch, volume, playerUUID, hand,
+            pitch, volume, playerUUID,
             instrumentId, noteIdentifier, position
         );
     }

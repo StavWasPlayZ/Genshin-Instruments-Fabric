@@ -33,7 +33,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
 
 @Environment(EnvType.CLIENT)
 public abstract class InstrumentScreen extends Screen {
@@ -296,12 +295,9 @@ public abstract class InstrumentScreen extends Screen {
 
 
     public final InstrumentOptionsScreen optionsScreen = initInstrumentOptionsScreen();
-    
-    public final Optional<InteractionHand> interactionHand;
-    public InstrumentScreen(final InteractionHand hand) {
+
+    public InstrumentScreen() {
         super(TextComponent.EMPTY);
-        
-        interactionHand = Optional.ofNullable(hand);
         midiReceiver = initMidiReceiver();
     }
 
@@ -516,7 +512,10 @@ public abstract class InstrumentScreen extends Screen {
 
         return Optional.empty();
     }
-    
+    public static Optional<InstrumentScreen> getCurrentScreen() {
+        return getCurrentScreen(Minecraft.getInstance());
+    }
+
 
     @Override
     public boolean isPauseScreen() {

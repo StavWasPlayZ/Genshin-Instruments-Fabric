@@ -40,7 +40,7 @@ public class ServerUtil {
             NoteSound sound, ResourceLocation instrumentId, int pitch, int volume) {
 
         sendPlayNotePackets(
-            player, Optional.empty(), hand,
+            player, Optional.empty(),
             sound, instrumentId, null,
             pitch, volume,
             PlayNotePacket::new
@@ -50,20 +50,19 @@ public class ServerUtil {
      * Sends {@link PlayNotePacket}s in the specified {@link ServerUtil#PLAY_DISTANCE}.
      * This method treats the sound as it was produced by a player.
      * @param player The player producing the sounds
-     * @param hand The hand of the player producing the sounds
      * @param sound The sound tp initiate
      * @param pitch The pitch of the sound to initiate
      * @param volume The volume of the sound to initiate
      * @param notePacketDelegate The initiator of the {@link PlayNotePacket} to be sent
      */
-    public static void sendPlayNotePackets(ServerPlayer player, Optional<BlockPos> pos, Optional<InteractionHand> hand,
+    public static void sendPlayNotePackets(ServerPlayer player, Optional<BlockPos> pos,
             NoteSound sound, ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, int pitch, int volume,
             PlayNotePacketDelegate notePacketDelegate) {
 
         final PlayNotePacket packet = notePacketDelegate.create(
             pos, sound, pitch, volume,
             instrumentId, Optional.ofNullable(noteIdentifier),
-            Optional.of(player.getUUID()), hand
+            Optional.of(player.getUUID())
         );
 
         final BlockPos playeredPos = CommonUtil.getPlayeredPosition(player, pos);
@@ -81,7 +80,12 @@ public class ServerUtil {
 
         // Fire a player-specific event
         InstrumentPlayedEvent.ByPlayer.EVENT.invoker().triggered(
-            new ByPlayerArgs(sound, pitch, volume, player, playeredPos, hand, instrumentId, noteIdentifier, false)
+            new ByPlayerArgs(
+                sound, pitch, volume,
+                player, playeredPos, InstrumentEntityData.getHand(player),
+                instrumentId, noteIdentifier,
+                false
+            )
         );
     }
 
@@ -123,7 +127,7 @@ public class ServerUtil {
         final PlayNotePacket packet = notePacketDelegate.create(
             Optional.of(pos), sound, pitch, volume,
             instrumentId, Optional.ofNullable(noteIdentifier),
-            Optional.empty(), Optional.empty()
+            Optional.empty()
         );
 
         for (final Player listener : noteListeners(level, pos))
@@ -163,7 +167,7 @@ public class ServerUtil {
         // And clients
         player.getLevel().players().forEach((nearbyPlayer) ->
             ModPacketHandler.sendToClient(
-                new NotifyInstrumentOpenPacket(player.getUUID(), false),
+                new NotifyInstrumentOpenPacket(player.getUUID()),
                 (ServerPlayer)nearbyPlayer
             )
         );
@@ -210,33 +214,34 @@ public class ServerUtil {
     private static boolean sendOpenPacket(ServerPlayer player, InteractionHand usedHand, OpenInstrumentPacketSender onOpenRequest,
             BlockPos pos) {
 
-        // Update the capability on the server
-        if (pos == null)
-            InstrumentEntityData.setOpen(player);
-        else
-            InstrumentEntityData.setOpen(player, pos);
+        NotifyInstrumentOpenPacket instrumentOpenPacket;
 
-        // Notify the other players
-        final Optional<BlockPos> playPos = Optional.ofNullable(pos);
+        // Update the capability on the server
+        if (pos == null) {
+            InstrumentEntityData.setOpen(player, usedHand);
+            instrumentOpenPacket = new NotifyInstrumentOpenPacket(player.getUUID(), usedHand);
+        } else {
+            InstrumentEntityData.setOpen(player, pos);
+            instrumentOpenPacket = new NotifyInstrumentOpenPacket(player.getUUID(), pos);
+        }
 
         player.getLevel().players().forEach((otherPlayer) ->
             ModPacketHandler.sendToClient(
-                new NotifyInstrumentOpenPacket(player.getUUID(), playPos),
+                instrumentOpenPacket,
                 (ServerPlayer)otherPlayer
             )
         );
 
         // Send open packet after everyone is aware of the state
-        onOpenRequest.send(player, usedHand);
-
+        onOpenRequest.send(player);
         return true;
     }
 
     /**
      * @apiNote This method should only be used by the internal Genshin Instruments mod!
      */
-    public static void sendInternalOpenPacket(ServerPlayer player, InteractionHand hand, String instrumentType) {
-        ModPacketHandler.sendToClient(new OpenInstrumentPacket(instrumentType, hand), player);
+    public static void sendInternalOpenPacket(ServerPlayer player, String instrumentType) {
+        ModPacketHandler.sendToClient(new OpenInstrumentPacket(instrumentType), player);
     }
 
 }

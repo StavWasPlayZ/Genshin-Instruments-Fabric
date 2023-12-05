@@ -10,7 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 public class CloseInstrumentPacket implements IModPacket {
-    
+
     public CloseInstrumentPacket() {}
     public CloseInstrumentPacket(FriendlyByteBuf buf) {}
 
@@ -20,7 +20,7 @@ public class CloseInstrumentPacket implements IModPacket {
         InstrumentEntityData.setClosed(player);
 
         for (final Player oPlayer : player.getLevel().players())
-            ModPacketHandler.sendToClient(new NotifyInstrumentOpenPacket(player.getUUID(), false), (ServerPlayer)oPlayer);
+            ModPacketHandler.sendToClient(new NotifyInstrumentOpenPacket(player.getUUID()), (ServerPlayer)oPlayer);
     }
     
 }
