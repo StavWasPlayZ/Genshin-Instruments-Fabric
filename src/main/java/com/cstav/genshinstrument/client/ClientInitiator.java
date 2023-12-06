@@ -20,10 +20,10 @@ import net.minecraftforge.fml.config.ModConfig;
 
 public class ClientInitiator implements ClientModInitializer {
 
-	private static final List<Class<?>> LOAD_ME = List.of(
+	private static final Class<?>[] LOAD_ME = new Class[] {
 		WindsongLyreScreen.class, VintageLyreScreen.class,
 		FloralZitherScreen.class, AratakisGreatAndGloriousDrumScreen.class
-	);
+	};
 
     
 	@Override

@@ -79,8 +79,7 @@ public abstract class CommonUtil {
     }
 
 
-    //TODO replace with array
-    public static void loadClasses(final List<Class<?>> classes) {
+    public static void loadClasses(final Class<?>[] classes) {
         for (final Class<?> loadMe : classes) {
 			
 			try {
