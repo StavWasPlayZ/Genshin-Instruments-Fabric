@@ -11,6 +11,7 @@ import com.cstav.genshinstrument.event.impl.ModEvent;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.sound.NoteSound;
 
+import com.cstav.genshinstrument.util.InstrumentEntityData;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.core.BlockPos;
@@ -96,7 +97,7 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEventArg
              * @see ByPlayerArgs#isBlockInstrument
              */
             public boolean isItemInstrument() {
-                return hand.isPresent();
+                return itemInstrument.isPresent();
             }
             /**
              * <p>Returns whether this event was fired by a block instrument.</p>
@@ -116,7 +117,7 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEventArg
             }
 
     
-            public ByPlayerArgs(NoteSound sound, int pitch, int volume, Player player, BlockPos pos, InteractionHand hand,
+            public ByPlayerArgs(NoteSound sound, int pitch, int volume, Player player, BlockPos pos,
                     ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, boolean isClientSide) {
                 super(
                     sound, pitch, volume,
@@ -126,11 +127,14 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEventArg
                 );
 
                 this.player = player;
-                this.hand = Optional.ofNullable(hand);
 
-                itemInstrument = isItemInstrument()
-                    ? Optional.of(player.getItemInHand(hand))
-                    : Optional.empty();
+                if (InstrumentEntityData.isItem(player)) {
+                    this.hand = Optional.of(InstrumentEntityData.getHand(player));
+                    this.itemInstrument = Optional.of(player.getItemInHand(hand.get()));
+                } else {
+                    this.hand = Optional.empty();
+                    this.itemInstrument = Optional.empty();
+                }
             }
         }
     }
