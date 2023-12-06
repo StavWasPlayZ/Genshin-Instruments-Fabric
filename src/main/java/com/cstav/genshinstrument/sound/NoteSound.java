@@ -10,7 +10,6 @@ import com.cstav.genshinstrument.event.InstrumentPlayedEvent.ByPlayer.ByPlayerAr
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEventArgs;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.util.CommonUtil;
-import com.cstav.genshinstrument.util.InstrumentEntityData;
 import com.cstav.genshinstrument.util.LabelUtil;
 
 import net.fabricmc.api.EnvType;
