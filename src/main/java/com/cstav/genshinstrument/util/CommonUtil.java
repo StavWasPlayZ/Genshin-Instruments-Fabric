@@ -74,14 +74,14 @@ public abstract class CommonUtil {
         return index % arrLength;
     }
     /**
-     * Performs both {@link LabelUtil#pyWrap} and {@link LabelUtil#wrapAround}
+     * Performs both {@link CommonUtil#pyWrap} and {@link CommonUtil#wrapAround}
      */
     public static int doublyPyWrap(int index, final int arrLength) {
         return wrapAround(pyWrap(index, arrLength), arrLength);
     }
 
 
-    public static void loadClasses(final List<Class<?>> classes) {
+    public static void loadClasses(final Class<?>[] classes) {
         for (final Class<?> loadMe : classes) {
 			
 			try {

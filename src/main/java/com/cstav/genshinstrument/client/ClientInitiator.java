@@ -1,7 +1,5 @@
 package com.cstav.genshinstrument.client;
 
-import java.util.List;
-
 import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screen.instrument.drum.AratakisGreatAndGloriousDrumScreen;
@@ -25,10 +23,10 @@ import net.minecraftforge.fml.config.ModConfig;
 @Environment(EnvType.CLIENT)
 public class ClientInitiator implements ClientModInitializer {
 
-	private static final List<Class<?>> LOAD_ME = List.of(
+	private static final Class<?>[] LOAD_ME = new Class[] {
 		WindsongLyreScreen.class, VintageLyreScreen.class,
 		FloralZitherScreen.class, AratakisGreatAndGloriousDrumScreen.class
-	);
+	};
 
     
 	@Override
