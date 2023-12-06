@@ -81,7 +81,7 @@ public class ServerUtil {
         InstrumentPlayedEvent.ByPlayer.EVENT.invoker().triggered(
             new ByPlayerArgs(
                 sound, pitch, volume,
-                player, playeredPos, InstrumentEntityData.getHand(player),
+                player, playeredPos,
                 instrumentId, noteIdentifier,
                 false
             )
