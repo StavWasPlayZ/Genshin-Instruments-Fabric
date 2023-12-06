@@ -185,7 +185,7 @@ public class NoteSound {
         else
             InstrumentPlayedEvent.ByPlayer.EVENT.invoker().triggered(
                 new ByPlayerArgs(this, pitch, volume,
-                    initiator, pos, InstrumentEntityData.getHand(initiator),
+                    initiator, pos,
                     instrumentId, buttonIdentifier.orElse(null), true
                 )
             );
