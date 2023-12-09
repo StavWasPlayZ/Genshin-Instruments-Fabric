@@ -488,14 +488,28 @@ public abstract class InstrumentScreen extends Screen {
         onClose(true);
     }
     public void onClose(final boolean notify) {
-        if (notify) {
-            InstrumentEntityData.setClosed(minecraft.player);
-            ModPacketHandler.sendToServer(new CloseInstrumentPacket());
-        }
+        if (notify)
+            notifyClosed();
 
         if (isOptionsScreenActive)
             optionsScreen.onClose();
+
         super.onClose();
+    }
+
+    @Override
+    public void removed() {
+        notifyClosed();
+
+        if (isOptionsScreenActive)
+            optionsScreen.saveOptions();
+
+        super.removed();
+    }
+
+    private void notifyClosed() {
+        InstrumentEntityData.setClosed(minecraft.player);
+        ModPacketHandler.sendToServer(new CloseInstrumentPacket());
     }
 
 
