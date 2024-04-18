@@ -3,6 +3,7 @@ package com.cstav.genshinstrument.client.gui.screen.options.instrument.partial;
 
 import java.text.DecimalFormat;
 
+import com.cstav.genshinstrument.util.CommonUtil;
 import org.jetbrains.annotations.Nullable;
 
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
@@ -281,7 +282,7 @@ public abstract class InstrumentOptionsScreen extends AbstractInstrumentOptionsS
         queueToSave("volume", () -> saveVolume(newVolume / 100d));
     }
     protected void saveVolume(final double newVolume) {
-        ModClientConfigs.VOLUME.set(newVolume);
+        ModClientConfigs.VOLUME.set(CommonUtil.round(newVolume, 4));
     }
 
     // These values derive from the config directly, so just update them on-spot

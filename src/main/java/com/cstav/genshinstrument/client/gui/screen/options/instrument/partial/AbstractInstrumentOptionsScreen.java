@@ -138,7 +138,7 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
             appliedOptions.put(optionKey, saveRunnable);
     }
 
-    protected void saveOptions() {
+    public void saveOptions() {
         if (appliedOptions.isEmpty())
             return;
 

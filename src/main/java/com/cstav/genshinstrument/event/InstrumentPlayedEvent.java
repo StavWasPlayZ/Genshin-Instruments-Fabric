@@ -35,7 +35,6 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEventArg
         public final int pitch, volume;
 
         public final Level level;
-        public final boolean isClientSide;
 
         public final ResourceLocation instrumentId;
         public final Optional<NoteButtonIdentifier> noteIdentifier;
@@ -52,7 +51,7 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEventArg
         
 
         public InstrumentPlayedEventArgs(NoteSound sound, int pitch, int volume, Level level, BlockPos pos,
-                ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, boolean isClientSide) {
+                ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier) {
                     
             this.sound = sound;
             this.pitch = pitch;
@@ -60,7 +59,6 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEventArg
 
             this.level = level;
             this.playPos = pos;
-            this.isClientSide = isClientSide;
 
             this.instrumentId = instrumentId;
             this.noteIdentifier = Optional.ofNullable(noteIdentifier);
@@ -84,9 +82,7 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEventArg
         public static class ByPlayerArgs extends InstrumentPlayedEventArgs {
             public final Player player;
 
-            // The values below will only be supplied if initiated from an item
-            /** The instrument held by the player who initiated the sound */
-            public final Optional<ItemStack> itemInstrument;
+            // The value below will only be supplied if initiated from an item
             /** The hand holding the instrument played by this player */
             public final Optional<InteractionHand> hand;
 
@@ -97,7 +93,7 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEventArg
              * @see ByPlayerArgs#isBlockInstrument
              */
             public boolean isItemInstrument() {
-                return itemInstrument.isPresent();
+                return hand.isPresent();
             }
             /**
              * <p>Returns whether this event was fired by a block instrument.</p>
@@ -118,22 +114,19 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEventArg
 
     
             public ByPlayerArgs(NoteSound sound, int pitch, int volume, Player player, BlockPos pos,
-                    ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier, boolean isClientSide) {
+                    ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier) {
                 super(
                     sound, pitch, volume,
                     player.getLevel(), pos,
-                    instrumentId, noteIdentifier,
-                    isClientSide
+                    instrumentId, noteIdentifier
                 );
 
                 this.player = player;
 
                 if (InstrumentEntityData.isItem(player)) {
                     this.hand = Optional.of(InstrumentEntityData.getHand(player));
-                    this.itemInstrument = Optional.of(player.getItemInHand(hand.get()));
                 } else {
                     this.hand = Optional.empty();
-                    this.itemInstrument = Optional.empty();
                 }
             }
         }

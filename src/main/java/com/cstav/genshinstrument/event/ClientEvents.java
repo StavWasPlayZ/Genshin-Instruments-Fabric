@@ -82,7 +82,7 @@ public abstract class ClientEvents {
     
     // Responsible for showing the notes other players play
     public static void onInstrumentPlayed(final InstrumentPlayedEventArgs args) {
-        if (!args.isClientSide)
+        if (!args.level.isClientSide)
             return;
         if (!ModClientConfigs.SHARED_INSTRUMENT.get())
             return;
@@ -98,7 +98,9 @@ public abstract class ClientEvents {
 
         InstrumentScreen.getCurrentScreen(MINECRAFT)
             // Filter instruments that do not match the one we're on
-            .filter((screen) -> screen.getInstrumentId().equals(args.instrumentId))
+            // If the note identifier is empty, it matters not - since the check is on the sound itself,
+            // which is bound to be unique for every note.
+            .filter((screen) -> args.noteIdentifier.isEmpty() || screen.getInstrumentId().equals(args.instrumentId))
             .ifPresent((screen) -> {
                 try {
                     screen.getNoteButton(args.noteIdentifier, args.sound, args.pitch)

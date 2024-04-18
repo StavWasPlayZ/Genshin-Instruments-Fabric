@@ -14,7 +14,7 @@ public class ModCriteria {
 
     public static void register() {
         InstrumentPlayedEvent.ByPlayer.EVENT.register((args) -> {
-            if (!args.isClientSide)
+            if (!args.level.isClientSide)
                 INSTRUMENT_PLAYED_TRIGGER.trigger((ServerPlayer)args.player, new ItemStack(Registry.ITEM.get(args.instrumentId)));
         });
     }

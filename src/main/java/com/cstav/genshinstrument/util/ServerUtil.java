@@ -83,8 +83,7 @@ public class ServerUtil {
             new ByPlayerArgs(
                 sound, pitch, volume,
                 player, playeredPos,
-                instrumentId, noteIdentifier,
-                false
+                instrumentId, noteIdentifier
             )
         );
     }
@@ -147,7 +146,7 @@ public class ServerUtil {
 
         // Fire a generic instrument event
         InstrumentPlayedEvent.EVENT.invoker().triggered(
-            new InstrumentPlayedEventArgs(sound, pitch, volume, level, pos, instrumentId, noteIdentifier, false)
+            new InstrumentPlayedEventArgs(sound, pitch, volume, level, pos, instrumentId, noteIdentifier)
         );
     }
 
