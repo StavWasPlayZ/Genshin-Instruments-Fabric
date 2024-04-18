@@ -179,13 +179,13 @@ public class NoteSound {
 
         if (initiator == null)
             InstrumentPlayedEvent.EVENT.invoker().triggered(
-                new InstrumentPlayedEventArgs(this, pitch, volume, level, pos, instrumentId, buttonIdentifier.orElse(null), true)
+                new InstrumentPlayedEventArgs(this, pitch, volume, level, pos, instrumentId, buttonIdentifier.orElse(null))
             );
         else
             InstrumentPlayedEvent.ByPlayer.EVENT.invoker().triggered(
                 new ByPlayerArgs(this, pitch, volume,
                     initiator, pos,
-                    instrumentId, buttonIdentifier.orElse(null), true
+                    instrumentId, buttonIdentifier.orElse(null)
                 )
             );
         

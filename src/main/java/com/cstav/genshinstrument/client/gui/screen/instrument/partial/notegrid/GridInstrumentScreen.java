@@ -175,7 +175,7 @@ public abstract class GridInstrumentScreen extends InstrumentScreen {
 
 
     @Override
-    public void render(GuiGraphics gui, int pMouseX, int pMouseY, float pPartialTick) {
+    public void renderInstrument(GuiGraphics gui, int pMouseX, int pMouseY, float pPartialTick) {
         if (ModClientConfigs.RENDER_BACKGROUND.get()) {
             RenderSystem.enableBlend();
 
@@ -184,7 +184,7 @@ public abstract class GridInstrumentScreen extends InstrumentScreen {
             ClientUtil.resetShaderColor();
         }
             
-        super.render(gui, pMouseX, pMouseY, pPartialTick);
+        super.renderInstrument(gui, pMouseX, pMouseY, pPartialTick);
     }
 
 

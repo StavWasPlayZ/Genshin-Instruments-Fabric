@@ -28,6 +28,24 @@ public abstract class ModArmPose {
         args.setCanceled(true);
     }
 
+    public static void poseForWindInstrument(final PosePlayerArmEventArgs args) {
+        if (!InstrumentEntityData.isOpen(args.player) || !InstrumentEntityData.isItem(args.player))
+			return;
+
+        if (args.hand == HandType.RIGHT) {
+            args.arm.xRot = -1.5f;
+            args.arm.zRot = -0.35f;
+            args.arm.yRot = -0.5f;
+        } else {
+            args.arm.xRot = -1.5f;
+            args.arm.zRot = 0.55f;
+            args.arm.yRot = 0.5f;
+        }
+
+        args.setCanceled(true);
+    }
+
+
     public static void poseForBlockInstrument(final PosePlayerArmEventArgs args) {            
         args.arm.xRot = -HAND_HEIGHT_ROT;
 
