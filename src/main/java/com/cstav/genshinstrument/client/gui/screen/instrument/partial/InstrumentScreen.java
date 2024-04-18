@@ -385,13 +385,7 @@ public abstract class InstrumentScreen extends Screen {
         renderInstrument(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
     }
     public void renderInstrument(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
-    }
-
-
-    // To omit background
-    @Override
-    public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        // To omit background
         for (Renderable renderable : ((ScreenAccessor)this).getRenderables())
             renderable.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
     }
