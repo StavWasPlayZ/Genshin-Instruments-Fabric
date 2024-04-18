@@ -12,7 +12,7 @@ import com.cstav.genshinstrument.item.ModItemPredicates;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
 import com.cstav.genshinstrument.util.CommonUtil;
 
-import fuzs.forgeconfigapiport.api.config.v2.ForgeConfigRegistry;
+import fuzs.forgeconfigapiport.fabric.api.forge.v4.ForgeConfigRegistry;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraftforge.fml.config.ModConfig;
 
