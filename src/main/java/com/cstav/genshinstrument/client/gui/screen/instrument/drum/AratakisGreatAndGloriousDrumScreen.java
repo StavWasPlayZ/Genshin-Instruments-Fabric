@@ -18,6 +18,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.layouts.LinearLayout.Orientation;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
 @Environment(EnvType.CLIENT)
 public class AratakisGreatAndGloriousDrumScreen extends InstrumentScreen {
@@ -113,7 +114,7 @@ public class AratakisGreatAndGloriousDrumScreen extends InstrumentScreen {
             private static boolean donRight = false, kaRight = false;
 
             @Override
-            protected NoteButton handleMidiPress(int note, int key) {
+            protected @Nullable NoteButton handleMidiPress(int note, int key) {
                 final boolean isKa = (ddt() == DominantDrumType.KA) || ((ddt() == DominantDrumType.BOTH) && (note >= 12));
 
                 setPitch(note - (isKa ? 19 : 2));
@@ -152,9 +153,7 @@ public class AratakisGreatAndGloriousDrumScreen extends InstrumentScreen {
         };
     }
 
-    /**MINANT_DRUM_TYPE.get()}
-     */
-    private final static DominantDrumType ddt() {
+    private static DominantDrumType ddt() {
         return ModClientConfigs.DOMINANT_DRUM_TYPE.get();
     }
     

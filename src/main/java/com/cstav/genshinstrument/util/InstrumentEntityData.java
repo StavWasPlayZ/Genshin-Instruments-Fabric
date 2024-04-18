@@ -11,10 +11,10 @@ import net.minecraft.world.entity.player.Player;
 
 public abstract class InstrumentEntityData {
     public static final String
-        OPEN_TAG = "instrumentOpen",
-        IS_ITEM_TAG = "isItem",
-        BLOCK_POS_TAG = "blockPos",
-        HAND_TAG = "isOffhand"
+        OPEN_TAG = "InstrumentOpen",
+        IS_ITEM_TAG = "IsItem",
+        BLOCK_POS_TAG = "BlockPos",
+        HAND_TAG = "IsOffhand"
     ;
 
 
