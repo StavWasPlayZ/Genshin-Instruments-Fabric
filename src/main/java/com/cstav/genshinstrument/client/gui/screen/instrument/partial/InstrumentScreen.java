@@ -12,6 +12,7 @@ import com.cstav.genshinstrument.client.gui.screen.instrument.GenshinConsentScre
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.NoteButton;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.AbstractInstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.InstrumentOptionsScreen;
+import com.cstav.genshinstrument.client.gui.screens.options.widget.copied.AbstractContainerWidget;
 import com.cstav.genshinstrument.client.gui.widget.IconToggleButton;
 import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings;
 import com.cstav.genshinstrument.client.midi.InstrumentMidiReceiver;
@@ -23,14 +24,15 @@ import com.cstav.genshinstrument.util.CommonUtil;
 import com.cstav.genshinstrument.util.InstrumentEntityData;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.platform.InputConstants.Type;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.logging.LogUtils;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -366,27 +368,30 @@ public abstract class InstrumentScreen extends Screen {
             notesIterable().forEach((note) -> note.getRenderer().ResetAnimations());
         }
 
-        children().forEach((renderable) -> {
-            if (renderable instanceof AbstractWidget widget)
-                widget.active = isVisible;
-        });
+        children().forEach((renderable) -> setActive(renderable, isVisible));
         visibilityButton.active = true;
+    }
+    private static void setActive(GuiEventListener renderable, final boolean isActive) {
+        if (renderable instanceof AbstractWidget widget)
+            widget.active = isActive;
+        if (renderable instanceof AbstractContainerWidget container)
+            container.children().forEach((innerRenderable) -> setActive(innerRenderable, isActive));
     }
 
     /**
      * @apiNote Prefer overwriting {@link InstrumentScreen#renderInstrument} instead.
      */
     @Override
-    public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+    public void render(PoseStack stack, int pMouseX, int pMouseY, float pPartialTick) {
         if (!instrumentRenders()) {
-            visibilityButton.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+            visibilityButton.render(stack, pMouseX, pMouseY, pPartialTick);
             return;
         }
 
-        renderInstrument(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+        renderInstrument(stack, pMouseX, pMouseY, pPartialTick);
     }
-    public void renderInstrument(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+    public void renderInstrument(PoseStack stack, int pMouseX, int pMouseY, float pPartialTick) {
+        super.render(stack, pMouseX, pMouseY, pPartialTick);
     }
 
 
@@ -510,7 +515,7 @@ public abstract class InstrumentScreen extends Screen {
     }
     /**
      * Unlocks a {@link NoteButton} based on its corresponding key.
-     * If not present, will perform {@link AbstractInstrumentScreen#unlockFocused} instead.
+     * If not present, will perform {@link InstrumentScreen#unlockFocused} instead.
      */
     private void unlockFocused(final int keyCode) {
         final NoteButton note = getNoteByKey(keyCode);
