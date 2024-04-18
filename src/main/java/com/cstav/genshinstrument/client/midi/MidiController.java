@@ -13,6 +13,7 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.Transmitter;
 
+import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import org.slf4j.Logger;
 
 import com.cstav.genshinstrument.event.MidiEvent;
@@ -50,9 +51,9 @@ public abstract class MidiController {
                 DEVICES.put(infos[i], device);
 
             } catch (MidiUnavailableException e) {
-                LOGGER.warn("MIDI device "+infos[i]+" cannot transmit any MIDI; ommitting!");
+                LOGGER.warn("MIDI device "+infos[i]+" cannot transmit MIDI; ommitting!");
             } catch (Exception e) {
-                LOGGER.error("Unexpected error occured while trying to obtain MIDI device!", e);
+                LOGGER.error("Unexpected error occurred while trying to obtain MIDI device!", e);
             }
         }
     }
@@ -67,19 +68,6 @@ public abstract class MidiController {
             reloadDevices();
 
         return DEVICES.isEmpty();
-    }
-
-    /**
-     * @return A list of available MIDI devices by their indexes, including -1 for None
-     */
-    public static List<Integer> getValuesForOption() {
-        final List<Integer> result = new ArrayList<>(DEVICES.size() + 1);
-        result.add(-1);
-
-        for (int i = 0; i < DEVICES.size(); i++)
-            result.add(i);
-
-        return result;
     }
 
 
@@ -102,6 +90,31 @@ public abstract class MidiController {
 
         isTransmitting = false;
     }
+
+    public static void loadByConfigs() {
+        if (!ModClientConfigs.MIDI_ENABLED.get()) {
+            unloadDevice();
+            return;
+        }
+
+        final int infoIndex = ModClientConfigs.MIDI_DEVICE_INDEX.get();
+        if (infoIndex == -1)
+            return;
+
+
+        MidiController.reloadIfEmpty();
+        if (infoIndex > (MidiController.DEVICES.size() - 1)) {
+            LogUtils.getLogger().warn("MIDI device out of range; setting device to none");
+            ModClientConfigs.MIDI_DEVICE_INDEX.set(-1);
+            return;
+        }
+
+        if (!MidiController.isLoaded(infoIndex)) {
+            MidiController.loadDevice(infoIndex);
+            MidiController.openForListen();
+        }
+    }
+
 
     public static MidiDevice getCurrDevice() {
         return currDevice;
@@ -142,7 +155,7 @@ public abstract class MidiController {
 
             isTransmitting = true;
         } catch (Exception e) {
-            LOGGER.error("Error occured while opening MIDI device for listen!\nDevice: "+infoAsString(info), e);
+            LOGGER.error("Error occurred while opening MIDI device for listen!\nDevice: "+infoAsString(info), e);
         }
 
     }

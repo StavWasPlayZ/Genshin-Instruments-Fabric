@@ -1,5 +1,7 @@
 package com.cstav.genshinstrument.util;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,7 +58,7 @@ public abstract class CommonUtil {
     
 
     /**
-     * Provides a similar behaviour to python's indexing,
+     * Provides a similar behaviour to Python's indexing,
      * where negatives are counted backwards.
      */
     public static int pyWrap(int index, final int arrLength) {
@@ -89,6 +91,16 @@ public abstract class CommonUtil {
 			}
 
 		}
+    }
+
+
+    /**
+     * @return The given {@code value} rounded by the provided {@code places}.
+     */
+    public static double round(double value, int places) {
+        return BigDecimal.valueOf(value)
+            .setScale(places, RoundingMode.HALF_UP)
+            .doubleValue();
     }
 
 }

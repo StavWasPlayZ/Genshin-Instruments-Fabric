@@ -11,4 +11,24 @@ For full Mod and "in-game" API documentations, visit [the Forge version's reposi
 
 > WhY NoT JuSt uSe mUlTiLoAdEr
 
-I didn't know about it and I regret my life for it its to late to turn back send help
+I didn't know about it and I regret my life for it its too late to turn back send help
+
+# Contributing
+
+Unless directly related to the Fabric port, do refer to the [Forge port](https://github.com/StavWasPlayZ/Genshin-Instruments/).
+Those get synced here eventually.
+
+## Reporting Bugs
+It's very common I do an oopsie while I code.  
+For most developers too.  
+If you observe a wrong behavior and believe I am at fault, feel free to compose a bug report!
+
+I would appreciate reports that state more than _"My game crashed!"_, but rather, what you *did* to achieve such a state.
+
+**MAKE SURE TO ATTACH YOUR FULL `debug.log`/`latest.log`, REGARDLESS OF THE BUG TYPE!**  
+Online tutorials for how to retrieve one are present online.
+
+## Why won't he respond to my query??
+GitHub has 1 dire issue: that I for some reason, sometimes, don't get notified one new
+issues/PRs being made.  
+If you notice a lack of response, please DM me in CurseForge and I'll be sure to be present!

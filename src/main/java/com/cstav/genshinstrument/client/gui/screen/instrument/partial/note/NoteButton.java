@@ -67,6 +67,10 @@ public abstract class NoteButton extends AbstractButton {
     }
 
 
+    public NoteButtonRenderer getRenderer() {
+        return noteRenderer;
+    }
+
     public void setLabelSupplier(final NoteLabelSupplier labelSupplier) {
         this.labelSupplier = labelSupplier;
         updateNoteLabel();
@@ -184,7 +188,8 @@ public abstract class NoteButton extends AbstractButton {
     }
 
     public void playNoteAnimation(final boolean isForeign) {
-        noteRenderer.playNoteAnimation(isForeign);
+        if (instrumentScreen.instrumentRenders())
+            noteRenderer.playNoteAnimation(isForeign);
     }
 
 
