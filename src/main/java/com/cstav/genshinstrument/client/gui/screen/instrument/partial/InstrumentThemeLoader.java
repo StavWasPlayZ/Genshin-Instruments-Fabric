@@ -240,37 +240,43 @@ public class InstrumentThemeLoader {
 
         final ResourceLocation styleLocation = getStylerLocation();
         JsonObject styleInfo;
-        
-        try {
 
+        try {
             // If it is already cached, then let it be
             if (CACHES.containsKey(styleLocation)) {
                 styleInfo = CACHES.get(styleLocation);
-    
+
                 for (final Consumer<JsonObject> listener : listeners)
                     listener.accept(styleInfo);
-    
+
                 LOGGER.info("Loaded instrument style from already cached "+styleLocation + logSuffix);
                 return;
             }
-    
-    
-            styleInfo = JsonParser.parseReader(
-                resourceManager.getResource(styleLocation).get().openAsReader()
-            ).getAsJsonObject();
-    
-            // Call all load listeners on the current loader
-            for (final Consumer<JsonObject> listener : listeners)
-                listener.accept(styleInfo);
-    
-            
-            CACHES.put(styleLocation, styleInfo);
-            LOGGER.info("Loaded and cached instrument style from "+styleLocation + logSuffix);
 
         } catch (Exception e) {
             LOGGER.error("Met an exception upon loading the instrument styler from "+styleLocation + logSuffix, e);
         }
 
+        // Make sure styler exists
+        final Optional<Resource> styler = resourceManager.getResource(styleLocation);
+        if (styler.isEmpty()) {
+            LOGGER.error("Could not retrieve styler information from "+styleLocation+"!");
+            return;
+        }
+
+        try (final BufferedReader reader = styler.get().openAsReader()) {
+            styleInfo = JsonParser.parseReader(reader).getAsJsonObject();
+
+            // Call all load listeners on the current loader
+            for (final Consumer<JsonObject> listener : listeners)
+                listener.accept(styleInfo);
+
+            CACHES.put(styleLocation, styleInfo);
+        } catch (Exception e) {
+            LOGGER.error("Met an exception upon loading the instrument styler from "+styleLocation + logSuffix, e);
+        }
+
+        LOGGER.info("Loaded and cached instrument style from "+styleLocation + logSuffix);
     }
 
 
