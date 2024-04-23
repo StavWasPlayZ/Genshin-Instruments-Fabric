@@ -216,18 +216,20 @@ public class InstrumentThemeLoader {
         CACHES.clear();
     }
     private static void updateIsGlobalThemed(final ResourceManager resourceManager) {
+        isGlobalThemed = false;
         final Optional<Resource> instrumentsMeta = resourceManager.getResource(INSTRUMENTS_META_LOC);
 
         if (instrumentsMeta.isEmpty()) {
-            LOGGER.warn("No instrument meta found for "+INSTRUMENTS_META_LOC+"!");
-        } else {
-            try (final BufferedReader reader = instrumentsMeta.get().openAsReader()) {
-                isGlobalThemed = JsonParser.parseReader(reader)
-                    .getAsJsonObject()
-                    .get("is_global_pack")
-                    .getAsBoolean();
-            } catch (Exception e) {}
+            LOGGER.warn("No instrument meta found for " + INSTRUMENTS_META_LOC + "!");
+            return;
         }
+
+        try (final BufferedReader reader = instrumentsMeta.get().openAsReader()) {
+            isGlobalThemed = JsonParser.parseReader(reader)
+                .getAsJsonObject()
+                .get("is_global_pack")
+                .getAsBoolean();
+        } catch (Exception e) {}
 
         if (isGlobalThemed)
             LOGGER.info("Instrument global themes enabled; loading all instrument resources from "+GLOBAL_LOC);
