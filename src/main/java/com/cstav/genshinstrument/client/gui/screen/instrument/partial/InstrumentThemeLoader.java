@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -11,9 +12,9 @@ import com.cstav.genshinstrument.GInstrumentMod;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.Resource;
 import org.slf4j.Logger;
 
-import com.cstav.genshinstrument.event.impl.EventArgs;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -21,7 +22,6 @@ import com.mojang.logging.LogUtils;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 
@@ -208,24 +208,29 @@ public class InstrumentThemeLoader {
 
 
     private static void reload(final ResourceManager resourceManager) {
-        // Handle global resource packs
-        isGlobalThemed = false;
-
-        try (final BufferedReader reader = resourceManager.getResource(INSTRUMENTS_META_LOC).get().openAsReader()) {
-            isGlobalThemed = JsonParser.parseReader(reader)
-                .getAsJsonObject()
-                .get("is_global_pack")
-                .getAsBoolean();
-
-            if (isGlobalThemed)
-                LOGGER.info("Instrument global themes enabled; loading all instrument resources from "+GLOBAL_LOC);
-        } catch (Exception e) {}
-
+        updateIsGlobalThemed(resourceManager);
 
         for (final InstrumentThemeLoader instrumentLoader : LOADERS)
             instrumentLoader.performReload(resourceManager);
 
         CACHES.clear();
+    }
+    private static void updateIsGlobalThemed(final ResourceManager resourceManager) {
+        final Optional<Resource> instrumentsMeta = resourceManager.getResource(INSTRUMENTS_META_LOC);
+
+        if (instrumentsMeta.isEmpty()) {
+            LOGGER.warn("No instrument meta found for "+INSTRUMENTS_META_LOC+"!");
+        } else {
+            try (final BufferedReader reader = instrumentsMeta.get().openAsReader()) {
+                isGlobalThemed = JsonParser.parseReader(reader)
+                    .getAsJsonObject()
+                    .get("is_global_pack")
+                    .getAsBoolean();
+            } catch (Exception e) {}
+        }
+
+        if (isGlobalThemed)
+            LOGGER.info("Instrument global themes enabled; loading all instrument resources from "+GLOBAL_LOC);
     }
 
     private void performReload(final ResourceManager resourceManager) {
