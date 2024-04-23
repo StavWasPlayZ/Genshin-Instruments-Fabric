@@ -30,7 +30,7 @@ public class GInstrumentMod implements ModInitializer {
 		ModBlocks.load();
 		ModBlockEntities.load();
 
-		ModCreativeModeTabs.load();
+		GICreativeModeTabs.load();
 		ModItems.load();
 	}
 	

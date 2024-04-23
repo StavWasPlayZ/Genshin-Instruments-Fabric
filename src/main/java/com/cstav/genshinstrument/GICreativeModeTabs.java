@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 
-public abstract class ModCreativeModeTabs {
+public abstract class GICreativeModeTabs {
     public static void load() {}
     
     public static final ResourceKey<CreativeModeTab> INSTRUMENTS_TAB = register("instruments_tab",
