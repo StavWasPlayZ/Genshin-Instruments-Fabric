@@ -16,7 +16,7 @@ import net.fabricmc.fabric.api.networking.v1.FabricPacket;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.level.ServerPlayer;
 
-public class ModPacketHandler {
+public class GIPacketHandler {
 
     @SuppressWarnings("unchecked")
     private static final List<Class<IModPacket>>

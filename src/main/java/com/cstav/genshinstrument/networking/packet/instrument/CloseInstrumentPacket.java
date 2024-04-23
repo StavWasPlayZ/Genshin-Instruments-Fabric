@@ -1,7 +1,7 @@
 package com.cstav.genshinstrument.networking.packet.instrument;
 
 import com.cstav.genshinstrument.networking.IModPacket;
-import com.cstav.genshinstrument.networking.ModPacketHandler;
+import com.cstav.genshinstrument.networking.GIPacketHandler;
 import com.cstav.genshinstrument.util.InstrumentEntityData;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -20,7 +20,7 @@ public class CloseInstrumentPacket implements IModPacket {
         InstrumentEntityData.setClosed(player);
 
         for (final Player oPlayer : player.level().players())
-            ModPacketHandler.sendToClient(new NotifyInstrumentOpenPacket(player.getUUID()), (ServerPlayer)oPlayer);
+            GIPacketHandler.sendToClient(new NotifyInstrumentOpenPacket(player.getUUID()), (ServerPlayer)oPlayer);
     }
     
 }

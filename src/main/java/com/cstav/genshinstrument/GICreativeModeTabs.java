@@ -1,6 +1,6 @@
 package com.cstav.genshinstrument;
 
-import com.cstav.genshinstrument.item.ModItems;
+import com.cstav.genshinstrument.item.GIItems;
 
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.core.Registry;
@@ -17,7 +17,7 @@ public abstract class GICreativeModeTabs {
     
     public static final ResourceKey<CreativeModeTab> INSTRUMENTS_TAB = register("instruments_tab",
         FabricItemGroup.builder()
-            .icon(() -> new ItemStack(ModItems.FLORAL_ZITHER))
+            .icon(() -> new ItemStack(GIItems.FLORAL_ZITHER))
             .title(Component.translatable("genshinstrument.itemGroup.instruments"))
             .build()
     );

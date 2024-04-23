@@ -3,7 +3,7 @@ package com.cstav.genshinstrument.client.gui.screen.instrument.drum;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.label.INoteLabel;
 import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings;
 import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings.DrumKeys;
-import com.cstav.genshinstrument.sound.ModSounds;
+import com.cstav.genshinstrument.sound.GISounds;
 import com.cstav.genshinstrument.sound.NoteSound;
 
 import net.fabricmc.api.EnvType;
@@ -11,8 +11,8 @@ import net.fabricmc.api.Environment;
 
 // This class is also used by the server as an identifier for the drum
 public enum DrumButtonType {
-    DON(ModSounds.GLORIOUS_DRUM[0], "glorious_drum.don"),
-    KA(ModSounds.GLORIOUS_DRUM[1], "glorious_drum.ka");
+    DON(GISounds.GLORIOUS_DRUM[0], "glorious_drum.don"),
+    KA(GISounds.GLORIOUS_DRUM[1], "glorious_drum.ka");
 
     private final String transKey;
     private final NoteSound sound;

@@ -4,7 +4,7 @@ import com.cstav.genshinstrument.GInstrumentMod;
 
 import net.minecraft.resources.ResourceLocation;
 
-public class ModSounds {
+public class GISounds {
 
     public static final NoteSound[]
         WINDSONG_LYRE_NOTE_SOUNDS = nsr(loc("windsong_lyre")).stereo().registerGrid(),

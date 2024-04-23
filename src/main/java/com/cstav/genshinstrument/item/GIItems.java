@@ -14,7 +14,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 
-public class ModItems {
+public class GIItems {
     
     public static final Item
         WINDSONG_LYRE = register("windsong_lyre", new InstrumentItem(
