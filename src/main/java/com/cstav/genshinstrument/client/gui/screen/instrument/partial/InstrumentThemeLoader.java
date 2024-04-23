@@ -1,11 +1,16 @@
 package com.cstav.genshinstrument.client.gui.screen.instrument.partial;
 
 import java.awt.Color;
+import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import com.cstav.genshinstrument.GInstrumentMod;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
+import net.minecraft.server.packs.PackType;
 import org.slf4j.Logger;
 
 import com.cstav.genshinstrument.event.impl.EventArgs;
@@ -29,7 +34,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
  * This class must be initialized during mod setup.
  */
 @Environment(EnvType.CLIENT)
-public class  InstrumentThemeLoader {
+public class InstrumentThemeLoader {
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final String JSON_STYLER_NAME = "instrument_style.json";
 
@@ -37,6 +42,10 @@ public class  InstrumentThemeLoader {
         INSTRUMENTS_META_LOC = InstrumentScreen.getInternalResourceFromGlob("instruments.meta.json"),
         GLOBAL_LOC = InstrumentScreen.getInternalResourceFromGlob("instrument/global")
     ;
+
+    static {
+        subscribeResourcesReloadEvent();
+    }
 
     private static boolean isGlobalThemed;
     public static boolean isGlobalThemed() {
@@ -183,17 +192,30 @@ public class  InstrumentThemeLoader {
     }
 
 
-    public static void onResourcesReload(final EventArgs.Empty args) {
-        InstrumentThemeLoader.reload(Minecraft.getInstance().getResourceManager());
+    private static void subscribeResourcesReloadEvent() {
+        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
+            @Override
+            public ResourceLocation getFabricId() {
+                return new ResourceLocation(GInstrumentMod.MODID, "instrument_theme_loaders");
+            }
+
+            @Override
+            public void onResourceManagerReload(ResourceManager resourceManager) {
+                InstrumentThemeLoader.reload(resourceManager);
+            }
+        });
     }
+
 
     private static void reload(final ResourceManager resourceManager) {
         // Handle global resource packs
         isGlobalThemed = false;
 
-        try {
-            isGlobalThemed = JsonParser.parseReader(resourceManager.getResource(INSTRUMENTS_META_LOC).get().openAsReader())
-                .getAsJsonObject().get("is_global_pack").getAsBoolean();
+        try (final BufferedReader reader = resourceManager.getResource(INSTRUMENTS_META_LOC).get().openAsReader()) {
+            isGlobalThemed = JsonParser.parseReader(reader)
+                .getAsJsonObject()
+                .get("is_global_pack")
+                .getAsBoolean();
 
             if (isGlobalThemed)
                 LOGGER.info("Instrument global themes enabled; loading all instrument resources from "+GLOBAL_LOC);
