@@ -16,7 +16,7 @@ import com.cstav.genshinstrument.client.gui.screens.options.widget.copied.Abstra
 import com.cstav.genshinstrument.client.gui.widget.IconToggleButton;
 import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings;
 import com.cstav.genshinstrument.client.midi.InstrumentMidiReceiver;
-import com.cstav.genshinstrument.networking.ModPacketHandler;
+import com.cstav.genshinstrument.networking.GIPacketHandler;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.networking.packet.instrument.CloseInstrumentPacket;
 import com.cstav.genshinstrument.sound.NoteSound;
@@ -572,7 +572,7 @@ public abstract class InstrumentScreen extends Screen {
 
     private void notifyClosed() {
         InstrumentEntityData.setClosed(minecraft.player);
-        ModPacketHandler.sendToServer(new CloseInstrumentPacket());
+        GIPacketHandler.sendToServer(new CloseInstrumentPacket());
     }
 
 

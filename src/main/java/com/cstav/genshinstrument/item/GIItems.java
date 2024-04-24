@@ -3,12 +3,13 @@ package com.cstav.genshinstrument.item;
 import static com.cstav.genshinstrument.util.ServerUtil.sendInternalOpenPacket;
 
 import com.cstav.genshinstrument.GInstrumentMod;
+import com.cstav.genshinstrument.GICreativeModeTabs;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 
-public class ModItems {
+public class GIItems {
     
     public static final Item
         WINDSONG_LYRE = register("windsong_lyre", new InstrumentItem(

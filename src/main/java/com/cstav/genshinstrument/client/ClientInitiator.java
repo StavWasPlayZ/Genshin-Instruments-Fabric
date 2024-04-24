@@ -11,6 +11,7 @@ import com.cstav.genshinstrument.event.ClientEvents;
 import com.cstav.genshinstrument.item.ModItemPredicates;
 import com.cstav.genshinstrument.networking.IModPacket;
 import com.cstav.genshinstrument.networking.ModPacketHandler;
+import com.cstav.genshinstrument.networking.GIPacketHandler;
 import com.cstav.genshinstrument.util.CommonUtil;
 
 import net.fabricmc.api.ClientModInitializer;

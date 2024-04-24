@@ -18,7 +18,9 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -37,7 +39,6 @@ public abstract class ClientEvents {
         PosePlayerArmEvent.EVENT.register(ClientEvents::posePlayerArmEvent);
 
         ClientLifecycleEvents.CLIENT_STOPPING.register(ClientEvents::onGameShutdown);
-        ResourcesLoadedEvent.EVENT.register(InstrumentThemeLoader::onResourcesReload);
         MidiEvent.EVENT.register(ClientEvents::onMidiEvent);
     }
 

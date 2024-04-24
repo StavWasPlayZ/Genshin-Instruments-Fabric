@@ -21,7 +21,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
-public class ModPacketHandler {
+public class GIPacketHandler {
 
     @SuppressWarnings("unchecked")
     public static final List<Class<IModPacket>>

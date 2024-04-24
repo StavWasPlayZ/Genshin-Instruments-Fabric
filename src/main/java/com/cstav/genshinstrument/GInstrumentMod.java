@@ -6,9 +6,9 @@ import org.slf4j.LoggerFactory;
 import com.cstav.genshinstrument.block.ModBlocks;
 import com.cstav.genshinstrument.criteria.ModCriteria;
 import com.cstav.genshinstrument.event.ServerEvents;
-import com.cstav.genshinstrument.item.ModItems;
-import com.cstav.genshinstrument.networking.ModPacketHandler;
-import com.cstav.genshinstrument.sound.ModSounds;
+import com.cstav.genshinstrument.item.GIItems;
+import com.cstav.genshinstrument.networking.GIPacketHandler;
+import com.cstav.genshinstrument.sound.GISounds;
 
 import net.fabricmc.api.ModInitializer;
 
@@ -18,18 +18,18 @@ public class GInstrumentMod implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		ModPacketHandler.registerServerPackets();
+		GIPacketHandler.registerServerPackets();
 		ServerEvents.register();
 
 		ModCriteria.register();
 		
-		ModSounds.load();
+		GISounds.load();
 		
 
 		ModBlocks.load();
 //		ModBlockEntities.load();
 
-		ModItems.load();
+        GIItems.load();
 	}
 	
 }
