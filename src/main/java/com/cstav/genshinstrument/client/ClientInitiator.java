@@ -9,7 +9,7 @@ import com.cstav.genshinstrument.client.gui.screen.instrument.windsonglyre.Winds
 import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings;
 import com.cstav.genshinstrument.event.ClientEvents;
 import com.cstav.genshinstrument.item.ModItemPredicates;
-import com.cstav.genshinstrument.networking.ModPacketHandler;
+import com.cstav.genshinstrument.networking.GIPacketHandler;
 import com.cstav.genshinstrument.util.CommonUtil;
 
 import fuzs.forgeconfigapiport.fabric.api.forge.v4.ForgeConfigRegistry;
@@ -26,7 +26,7 @@ public class ClientInitiator implements ClientModInitializer {
     
 	@Override
 	public void onInitializeClient() {
-		ModPacketHandler.registerClientPackets();
+		GIPacketHandler.registerClientPackets();
 		ForgeConfigRegistry.INSTANCE.register(GInstrumentMod.MODID, ModConfig.Type.CLIENT, ModClientConfigs.CONFIGS);
 		
 		ClientEvents.register();

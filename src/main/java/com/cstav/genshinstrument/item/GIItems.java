@@ -3,7 +3,7 @@ package com.cstav.genshinstrument.item;
 import static com.cstav.genshinstrument.util.ServerUtil.sendInternalOpenPacket;
 
 import com.cstav.genshinstrument.GInstrumentMod;
-import com.cstav.genshinstrument.ModCreativeModeTabs;
+import com.cstav.genshinstrument.GICreativeModeTabs;
 
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.core.Registry;
@@ -14,7 +14,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 
-public class ModItems {
+public class GIItems {
     
     public static final Item
         WINDSONG_LYRE = register("windsong_lyre", new InstrumentItem(
@@ -42,7 +42,7 @@ public class ModItems {
 
     private static void addToItemGroups(final Item item) {
         // All shall go to the instruments and tools tab
-        addToTab(ModCreativeModeTabs.INSTRUMENTS_TAB, item);
+        addToTab(GICreativeModeTabs.INSTRUMENTS_TAB, item);
         addToTab(CreativeModeTabs.TOOLS_AND_UTILITIES, item);
     }
 
