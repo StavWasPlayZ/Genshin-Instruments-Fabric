@@ -9,7 +9,7 @@ import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.In
 import com.cstav.genshinstrument.client.gui.widget.IconToggleButton;
 import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings;
 import com.cstav.genshinstrument.client.midi.InstrumentMidiReceiver;
-import com.cstav.genshinstrument.mixin.required.ScreenAccessor;
+import com.cstav.genshinstrument.networking.GIPacketHandler;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.networking.packet.instrument.CloseInstrumentPacket;
 import com.cstav.genshinstrument.sound.NoteSound;
@@ -19,6 +19,7 @@ import com.mojang.blaze3d.platform.InputConstants.Type;
 import com.mojang.logging.LogUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -385,7 +386,7 @@ public abstract class InstrumentScreen extends Screen {
     }
     public void renderInstrument(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         // To omit background
-        for (Renderable renderable : ((ScreenAccessor)this).getRenderables())
+        for (Renderable renderable : Screens.getButtons(this))
             renderable.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
     }
 
