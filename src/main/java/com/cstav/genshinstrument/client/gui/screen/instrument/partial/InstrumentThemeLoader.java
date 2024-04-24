@@ -1,14 +1,20 @@
 package com.cstav.genshinstrument.client.gui.screen.instrument.partial;
 
 import java.awt.Color;
+import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import com.cstav.genshinstrument.GInstrumentMod;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.Resource;
 import org.slf4j.Logger;
 
-import com.cstav.genshinstrument.event.impl.EventArgs;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -16,7 +22,6 @@ import com.mojang.logging.LogUtils;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 
@@ -29,7 +34,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
  * This class must be initialized during mod setup.
  */
 @Environment(EnvType.CLIENT)
-public class  InstrumentThemeLoader {
+public class InstrumentThemeLoader {
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final String JSON_STYLER_NAME = "instrument_style.json";
 
@@ -37,6 +42,10 @@ public class  InstrumentThemeLoader {
         INSTRUMENTS_META_LOC = InstrumentScreen.getInternalResourceFromGlob("instruments.meta.json"),
         GLOBAL_LOC = InstrumentScreen.getInternalResourceFromGlob("instrument/global")
     ;
+
+    static {
+        subscribeResourcesReloadEvent();
+    }
 
     private static boolean isGlobalThemed;
     public static boolean isGlobalThemed() {
@@ -183,27 +192,47 @@ public class  InstrumentThemeLoader {
     }
 
 
-    public static void onResourcesReload(final EventArgs.Empty args) {
-        InstrumentThemeLoader.reload(Minecraft.getInstance().getResourceManager());
+    private static void subscribeResourcesReloadEvent() {
+        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
+            @Override
+            public ResourceLocation getFabricId() {
+                return new ResourceLocation(GInstrumentMod.MODID, "instrument_theme_loaders");
+            }
+
+            @Override
+            public void onResourceManagerReload(ResourceManager resourceManager) {
+                InstrumentThemeLoader.reload(resourceManager);
+            }
+        });
     }
 
+
     private static void reload(final ResourceManager resourceManager) {
-        // Handle global resource packs
-        isGlobalThemed = false;
-
-        try {
-            isGlobalThemed = JsonParser.parseReader(resourceManager.getResource(INSTRUMENTS_META_LOC).get().openAsReader())
-                .getAsJsonObject().get("is_global_pack").getAsBoolean();
-
-            if (isGlobalThemed)
-                LOGGER.info("Instrument global themes enabled; loading all instrument resources from "+GLOBAL_LOC);
-        } catch (Exception e) {}
-
+        updateIsGlobalThemed(resourceManager);
 
         for (final InstrumentThemeLoader instrumentLoader : LOADERS)
             instrumentLoader.performReload(resourceManager);
 
         CACHES.clear();
+    }
+    private static void updateIsGlobalThemed(final ResourceManager resourceManager) {
+        isGlobalThemed = false;
+        final Optional<Resource> instrumentsMeta = resourceManager.getResource(INSTRUMENTS_META_LOC);
+
+        if (instrumentsMeta.isEmpty()) {
+            LOGGER.warn("No instrument meta found for " + INSTRUMENTS_META_LOC + "!");
+            return;
+        }
+
+        try (final BufferedReader reader = instrumentsMeta.get().openAsReader()) {
+            isGlobalThemed = JsonParser.parseReader(reader)
+                .getAsJsonObject()
+                .get("is_global_pack")
+                .getAsBoolean();
+        } catch (Exception e) {}
+
+        if (isGlobalThemed)
+            LOGGER.info("Instrument global themes enabled; loading all instrument resources from "+GLOBAL_LOC);
     }
 
     private void performReload(final ResourceManager resourceManager) {
@@ -211,37 +240,43 @@ public class  InstrumentThemeLoader {
 
         final ResourceLocation styleLocation = getStylerLocation();
         JsonObject styleInfo;
-        
-        try {
 
+        try {
             // If it is already cached, then let it be
             if (CACHES.containsKey(styleLocation)) {
                 styleInfo = CACHES.get(styleLocation);
-    
+
                 for (final Consumer<JsonObject> listener : listeners)
                     listener.accept(styleInfo);
-    
+
                 LOGGER.info("Loaded instrument style from already cached "+styleLocation + logSuffix);
                 return;
             }
-    
-    
-            styleInfo = JsonParser.parseReader(
-                resourceManager.getResource(styleLocation).get().openAsReader()
-            ).getAsJsonObject();
-    
-            // Call all load listeners on the current loader
-            for (final Consumer<JsonObject> listener : listeners)
-                listener.accept(styleInfo);
-    
-            
-            CACHES.put(styleLocation, styleInfo);
-            LOGGER.info("Loaded and cached instrument style from "+styleLocation + logSuffix);
 
         } catch (Exception e) {
             LOGGER.error("Met an exception upon loading the instrument styler from "+styleLocation + logSuffix, e);
         }
 
+        // Make sure styler exists
+        final Optional<Resource> styler = resourceManager.getResource(styleLocation);
+        if (styler.isEmpty()) {
+            LOGGER.error("Could not retrieve styler information from "+styleLocation+"!");
+            return;
+        }
+
+        try (final BufferedReader reader = styler.get().openAsReader()) {
+            styleInfo = JsonParser.parseReader(reader).getAsJsonObject();
+
+            // Call all load listeners on the current loader
+            for (final Consumer<JsonObject> listener : listeners)
+                listener.accept(styleInfo);
+
+            CACHES.put(styleLocation, styleInfo);
+        } catch (Exception e) {
+            LOGGER.error("Met an exception upon loading the instrument styler from "+styleLocation + logSuffix, e);
+        }
+
+        LOGGER.info("Loaded and cached instrument style from "+styleLocation + logSuffix);
     }
 
 

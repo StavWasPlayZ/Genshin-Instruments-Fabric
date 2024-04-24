@@ -3,7 +3,7 @@ package com.cstav.genshinstrument.util;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.ByPlayer.ByPlayerArgs;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEventArgs;
-import com.cstav.genshinstrument.networking.ModPacketHandler;
+import com.cstav.genshinstrument.networking.GIPacketHandler;
 import com.cstav.genshinstrument.networking.OpenInstrumentPacketSender;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.networking.packet.instrument.NotifyInstrumentOpenPacket;
@@ -69,7 +69,7 @@ public class ServerUtil {
         final BlockPos playeredPos = CommonUtil.getPlayeredPosition(player, pos);
 
         for (final Player listener : noteListeners(player.level(), playeredPos))
-            ModPacketHandler.sendToClient(packet, (ServerPlayer)listener);
+            GIPacketHandler.sendToClient(packet, (ServerPlayer)listener);
 
         // Trigger an instrument game event
         // This is done so that sculk sensors can pick up the instrument's sound
@@ -130,7 +130,7 @@ public class ServerUtil {
         );
 
         for (final Player listener : noteListeners(level, pos))
-            ModPacketHandler.sendToClient(packet, (ServerPlayer)listener);
+            GIPacketHandler.sendToClient(packet, (ServerPlayer)listener);
 
 
         final BlockState bs = level.getBlockState(pos);
@@ -164,7 +164,7 @@ public class ServerUtil {
 
         // And clients
         player.level().players().forEach((nearbyPlayer) ->
-            ModPacketHandler.sendToClient(
+            GIPacketHandler.sendToClient(
                 new NotifyInstrumentOpenPacket(player.getUUID()),
                 (ServerPlayer)nearbyPlayer
             )
@@ -224,7 +224,7 @@ public class ServerUtil {
         }
 
         player.level().players().forEach((otherPlayer) ->
-            ModPacketHandler.sendToClient(
+            GIPacketHandler.sendToClient(
                 instrumentOpenPacket,
                 (ServerPlayer)otherPlayer
             )
@@ -239,7 +239,7 @@ public class ServerUtil {
      * @apiNote This method should only be used by the internal Genshin Instruments mod!
      */
     public static void sendInternalOpenPacket(ServerPlayer player, String instrumentType) {
-        ModPacketHandler.sendToClient(new OpenInstrumentPacket(instrumentType), player);
+        GIPacketHandler.sendToClient(new OpenInstrumentPacket(instrumentType), player);
     }
 
 }
