@@ -9,9 +9,8 @@ import com.cstav.genshinstrument.client.gui.screen.instrument.windsonglyre.Winds
 import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings;
 import com.cstav.genshinstrument.event.ClientEvents;
 import com.cstav.genshinstrument.item.ModItemPredicates;
-import com.cstav.genshinstrument.networking.IModPacket;
-import com.cstav.genshinstrument.networking.ModPacketHandler;
 import com.cstav.genshinstrument.networking.GIPacketHandler;
+import com.cstav.genshinstrument.networking.IModPacket;
 import com.cstav.genshinstrument.util.CommonUtil;
 
 import net.fabricmc.api.ClientModInitializer;
@@ -45,12 +44,12 @@ public class ClientInitiator implements ClientModInitializer {
 	}
     
 	private static void registerClientPackets() {
-        for (final Class<IModPacket> packetClass : ModPacketHandler.S2C_PACKETS) {
+        for (final Class<IModPacket> packetClass : GIPacketHandler.S2C_PACKETS) {
 
             ClientPlayNetworking.registerGlobalReceiver(
                 IModPacket.getChannelName(packetClass),
                 (client, handler, buf, sender) ->
-                    ModPacketHandler.handlePacket(client.player, sender, buf, packetClass, client::execute)
+                    GIPacketHandler.handlePacket(client.player, sender, buf, packetClass, client::execute)
 			);
 
         }
