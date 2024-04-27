@@ -14,8 +14,8 @@ import com.cstav.genshinstrument.sound.GISounds;
 import net.fabricmc.api.ModInitializer;
 
 public class GInstrumentMod implements ModInitializer {
-    public static final Logger LOGGER = LoggerFactory.getLogger("genshinstrument");
 	public static final String MODID = "genshinstrument";
+	public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
 
 	@Override
 	public void onInitialize() {
