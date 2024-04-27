@@ -13,7 +13,9 @@
 		"issues": "https://github.com/StavWasPlayZ/Genshin-Instruments-Fabric/issues"
 	},
 	"contributors": [
-		"GenMode"
+		"GenMode",
+		"charmaznable",
+		"SteveNotSet"
 	],
 	"license": "CC-BY-NC 4.0",
 	"icon": "icon.png",
