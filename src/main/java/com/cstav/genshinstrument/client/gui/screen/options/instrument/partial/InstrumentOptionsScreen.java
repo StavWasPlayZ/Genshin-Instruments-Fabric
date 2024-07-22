@@ -122,11 +122,10 @@ public abstract class InstrumentOptionsScreen extends AbstractInstrumentOptionsS
 
     protected void initAudioSection(final GridLayout grid, final RowHelper rowHelper) {
         final CycleButton<InstrumentChannelType> instrumentChannel = CycleButton.<InstrumentChannelType>builder((soundType) ->
-            Component.translatable(SOUND_CHANNEL_KEY +"."+ soundType.toString().toLowerCase(Locale.ENGLISH))
+            Component.translatable(SOUND_CHANNEL_KEY +"."+ soundType.getKey())
         )
             .withValues(InstrumentChannelType.values())
             .withInitialValue(ModClientConfigs.CHANNEL_TYPE.get())
-
             .withTooltip((soundType) -> Tooltip.create(switch (soundType) {
                 case MIXED -> translatableArgs(SOUND_CHANNEL_KEY+".mixed.tooltip", NoteSound.STEREO_RANGE);
                 case STEREO -> Component.translatable(SOUND_CHANNEL_KEY+".stereo.tooltip");
