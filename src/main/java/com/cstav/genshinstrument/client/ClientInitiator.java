@@ -20,7 +20,8 @@ public class ClientInitiator implements ClientModInitializer {
 
 	private static final Class<?>[] LOAD_ME = new Class[] {
 		WindsongLyreScreen.class, VintageLyreScreen.class,
-		FloralZitherScreen.class, AratakisGreatAndGloriousDrumScreen.class
+		FloralZitherScreen.class, AratakisGreatAndGloriousDrumScreen.class,
+		NightwindHornScreen.class
 	};
 
     

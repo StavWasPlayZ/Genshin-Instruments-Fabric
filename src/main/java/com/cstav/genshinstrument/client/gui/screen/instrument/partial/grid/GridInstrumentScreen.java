@@ -1,4 +1,4 @@
-package com.cstav.genshinstrument.client.gui.screen.instrument.partial.notegrid;
+package com.cstav.genshinstrument.client.gui.screen.instrument.partial.grid;
 
 import java.awt.Color;
 import java.util.Map;
@@ -128,7 +128,7 @@ public abstract class GridInstrumentScreen extends InstrumentScreen {
     /**
      * @return The preferred label supplier specified in this mod's configs
      */
-    protected NoteLabelSupplier getInitLabelSupplier() {
+    public static NoteLabelSupplier getInitLabelSupplier() {
         return ModClientConfigs.GRID_LABEL_TYPE.get().getLabelSupplier();
     }
 

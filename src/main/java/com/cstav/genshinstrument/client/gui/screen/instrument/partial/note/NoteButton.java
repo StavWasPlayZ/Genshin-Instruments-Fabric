@@ -9,7 +9,6 @@ import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.label
 import com.cstav.genshinstrument.client.util.ClientUtil;
 import com.cstav.genshinstrument.networking.GIPacketHandler;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
-import com.cstav.genshinstrument.networking.packet.instrument.InstrumentPacket;
 import com.cstav.genshinstrument.sound.NoteSound;
 import com.cstav.genshinstrument.util.LabelUtil;
 
@@ -129,6 +128,13 @@ public abstract class NoteButton extends AbstractButton {
         updateNoteLabel();
     }
 
+    /**
+     * @return The sound index of this note
+     */
+    public int soundIndex() {
+        return getSound().index;
+    }
+
     public NoteNotation getNotation() {
         return ModClientConfigs.ACCURATE_NOTES.get()
             ? NoteNotation.getNotation(getNoteName())
@@ -165,27 +171,53 @@ public abstract class NoteButton extends AbstractButton {
     public void renderWidget(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
         noteRenderer.render(gui, mouseX, mouseY, partialTick, instrumentScreen.getThemeLoader());
     }
+    private boolean locked = false;
+    public void release() {
+        unlockInput();
+    }
 
 
-    public boolean locked = false;
-    public void play() {
-        if (locked)
-            return;
-        
-        sound.playLocally(getPitch(), instrumentScreen.volume());
-        sendNotePlayPacket();
-        playNoteAnimation(false);
-
+    protected void lockInput() {
         locked = true;
     }
+    public void unlockInput() {
+        locked = false;
+    }
+
+
+    /**
+     * Plays this note button.
+     * @return Whether the operation succeed
+     * @implNote Overriders should call {@link NoteButton#lockInput}
+     * before a true signal.
+     */
+    public boolean play(final NoteSound sound, final int pitch) {
+        if (locked)
+            return false;
+
+        playLocalSound(sound, pitch);
+        sendNotePlayPacket(sound, pitch);
+        playNoteAnimation(false);
+
+        lockInput();
+        return true;
+    }
+    public boolean play() {
+        return play(getSound(), getPitch());
+    }
+
     @Override
     public void onPress() {
         play();
     }
 
-    protected void sendNotePlayPacket() {
-        GIPacketHandler.sendToServer(new InstrumentPacket(this));
+    protected void playLocalSound(final NoteSound sound, final int pitch) {
+        sound.playLocally(pitch, instrumentScreen.volume());
     }
+    protected void sendNotePlayPacket(final NoteSound sound, final int pitch) {
+        GIPacketHandler.sendToServer(new C2SNoteSoundPacket(this, sound, pitch));
+    }
+
 
     public void playNoteAnimation(final boolean isForeign) {
         if (instrumentScreen.instrumentRenders())

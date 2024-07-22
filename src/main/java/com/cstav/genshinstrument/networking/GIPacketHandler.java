@@ -6,7 +6,7 @@ import com.cstav.genshinstrument.networking.buttonidentifier.DrumNoteIdentifier;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteGridButtonIdentifier;
 import com.cstav.genshinstrument.networking.packet.instrument.CloseInstrumentPacket;
-import com.cstav.genshinstrument.networking.packet.instrument.InstrumentPacket;
+import com.cstav.genshinstrument.networking.packet.instrument.C2SNotePacket;
 import com.cstav.genshinstrument.networking.packet.instrument.NotifyInstrumentOpenPacket;
 import com.cstav.genshinstrument.networking.packet.instrument.OpenInstrumentPacket;
 import com.cstav.genshinstrument.networking.packet.instrument.PlayNotePacket;
@@ -25,7 +25,7 @@ public class GIPacketHandler {
             NotifyInstrumentOpenPacket.class
         }),
         C2S_PACKETS = List.of(new Class[] {
-            InstrumentPacket.class, CloseInstrumentPacket.class
+            C2SNotePacket.class, CloseInstrumentPacket.class
         })
     ;
 

@@ -6,7 +6,9 @@ import com.cstav.genshinstrument.event.InstrumentPlayedEvent;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public class ModCriteria {
 
@@ -14,8 +16,21 @@ public class ModCriteria {
 
     public static void register() {
         InstrumentPlayedEvent.ByPlayer.EVENT.register((args) -> {
-            if (!args.level.isClientSide)
-                INSTRUMENT_PLAYED_TRIGGER.trigger((ServerPlayer)args.player, new ItemStack(BuiltInRegistries.ITEM.get(args.instrumentId)));
+            if (args.level.isClientSide)
+                return;
+            // Only get player events
+            if (!(args instanceof InstrumentPlayedEvent.IByPlayer<?> e))
+                return;
+
+            final Item instrument = BuiltInRegistries.ITEM.get(args.instrumentId);
+            // Perhaps troll packets
+            if (instrument == Items.AIR)
+                return;
+
+            INSTRUMENT_PLAYED_TRIGGER.trigger(
+                (ServerPlayer) e.getPlayer(),
+                new ItemStack(instrument)
+            );
         });
     }
     

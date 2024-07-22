@@ -3,6 +3,7 @@ package com.cstav.genshinstrument.mixin.optional;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -26,13 +27,19 @@ public abstract class InstrumentAnimMixin {
 	@Shadow
 	public ModelPart leftArm;
 
+	@Unique
+	@SuppressWarnings("unchecked")
+	public HumanoidModel<Player> self() {
+		return(HumanoidModel<Player>) ((Object)this);
+	}
+
 
 	@Inject(at = @At("HEAD"), method = "poseLeftArm", cancellable = true)
 	private void injectLeftArmPose(LivingEntity entity, CallbackInfo info) {
 		if (!(entity instanceof Player player))
             return;
 
-		final PosePlayerArmEventArgs args = new PosePlayerArmEventArgs(player, HandType.LEFT, leftArm);
+		final PosePlayerArmEventArgs args = new PosePlayerArmEventArgs(player, self(), HandType.LEFT, leftArm);
 		PosePlayerArmEvent.EVENT.invoker().triggered(args);
 
 		if (args.isCanceled())
@@ -44,7 +51,7 @@ public abstract class InstrumentAnimMixin {
 		if (!(entity instanceof Player player))
             return;
 
-		final PosePlayerArmEventArgs args = new PosePlayerArmEventArgs(player, HandType.RIGHT, rightArm);
+		final PosePlayerArmEventArgs args = new PosePlayerArmEventArgs(player, self(), HandType.RIGHT, rightArm);
 		PosePlayerArmEvent.EVENT.invoker().triggered(args);
 
 		if (args.isCanceled())

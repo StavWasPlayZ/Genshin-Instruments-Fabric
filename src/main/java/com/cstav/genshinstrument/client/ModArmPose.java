@@ -7,6 +7,7 @@ import com.cstav.genshinstrument.util.InstrumentEntityData;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.world.entity.HumanoidArm;
 
 @Environment(EnvType.CLIENT)
 public abstract class ModArmPose {
@@ -28,28 +29,52 @@ public abstract class ModArmPose {
         args.setCanceled(true);
     }
 
-    public static void poseForWindInstrument(final PosePlayerArmEventArgs args) {
-        if (!InstrumentEntityData.isOpen(args.player) || !InstrumentEntityData.isItem(args.player))
-			return;
-
-        if (args.hand == HandType.RIGHT) {
-            args.arm.xRot = -1.5f;
-            args.arm.zRot = -0.35f;
-            args.arm.yRot = -0.5f;
-        } else {
-            args.arm.xRot = -1.5f;
-            args.arm.zRot = 0.55f;
-            args.arm.yRot = 0.5f;
-        }
+    public static void poseForBlockInstrument(final PosePlayerArmEventArgs args) {
+        args.arm.xRot = -HAND_HEIGHT_ROT;
 
         args.setCanceled(true);
     }
 
 
-    public static void poseForBlockInstrument(final PosePlayerArmEventArgs args) {            
-        args.arm.xRot = -HAND_HEIGHT_ROT;
+    /**Applies the default*/
+    private static void defRightWind(ModelPart arm) {
+        arm.xRot = -1.5f;
+        arm.zRot = -0.35f;
+        arm.yRot = -0.5f;
+    }
+    private static void defLeftWind(ModelPart arm) {
+        arm.xRot = -1.5f;
+        arm.zRot = 0.55f;
+        arm.yRot = 0.5f;
+    }
+
+    public static void poseForWindInstrument(final PosePlayerArmEventArgs args) {
+        if (!InstrumentEntityData.isOpen(args.player) || !InstrumentEntityData.isItem(args.player))
+			return;
+
+        if (args.hand == HandType.RIGHT) {
+            defRightWind(args.arm);
+        } else {
+            defLeftWind(args.arm);
+        }
 
         args.setCanceled(true);
+    }
+
+    public static void poseForNightwindHornInstrument(final PosePlayerArmEventArgs args) {
+        if (args.hand == HandType.RIGHT) {
+            defRightWind(args.arm);
+
+            args.model.leftArm.xRot = -1.65f;
+            args.model.leftArm.zRot = -0.1f;
+            args.model.leftArm.yRot = -0.1f;
+        } else {
+            defLeftWind(args.arm);
+
+            args.model.rightArm.xRot = -1.65f;
+            args.model.rightArm.zRot = 0.1f;
+            args.model.rightArm.yRot = 0;
+        }
     }
 
 }

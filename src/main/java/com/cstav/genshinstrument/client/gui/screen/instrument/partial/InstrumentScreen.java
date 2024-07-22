@@ -10,6 +10,7 @@ import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screen.instrument.GenshinConsentScreen;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.NoteButton;
+import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.label.NoteLabelSupplier;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.AbstractInstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.InstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.gui.widget.IconToggleButton;
@@ -62,6 +63,11 @@ public abstract class InstrumentScreen extends Screen {
     public int getPitch() {
         return pitch;
     }
+
+    /**
+     * Sets the pitch of all notes in this instrument
+     * @param pitch The new pitch to apply
+     */
     public void setPitch(int pitch) {
         this.pitch = NoteSound.clampPitch(pitch);
         notesIterable().forEach((note) -> note.setPitch(this.pitch));
@@ -115,6 +121,20 @@ public abstract class InstrumentScreen extends Screen {
 
         if (noteIterator.hasNext() || (i < sounds.length))
             LogUtils.getLogger().warn("Not all sounds were set for instrument "+getInstrumentId()+"!");
+    }
+
+    private NoteLabelSupplier noteLabelSupplier;
+    /**
+     * Updates all buttons in this instrument to use
+     * the specified label supplier
+     * @param supplier The new supplier to use
+     */
+    public void setLabelSupplier(final NoteLabelSupplier supplier) {
+        noteLabelSupplier = supplier;
+        notesIterable().forEach((note) -> note.setLabelSupplier(supplier));
+    }
+    public NoteLabelSupplier getNoteLabelSupplier() {
+        return noteLabelSupplier;
     }
 
 
@@ -316,8 +336,14 @@ public abstract class InstrumentScreen extends Screen {
         resetPitch();
         optionsScreen.init(minecraft, width, height);
 
+        boolean wasEnabled = false;
+        // Could be not null on screen refresh event
+        if (visibilityButton != null)
+            wasEnabled = visibilityButton.enabled();
+
         visibilityButton = initVisibilityButton();
         addRenderableWidget(visibilityButton);
+        visibilityButton.setEnabled(wasEnabled);
 
         if (isGenshinInstrument() && !ModClientConfigs.ACCEPTED_GENSHIN_CONSENT.get())
             minecraft.setScreen(new GenshinConsentScreen(this));
@@ -356,12 +382,38 @@ public abstract class InstrumentScreen extends Screen {
     }
 
 
+    /**
+     * Play a note button as a foreign
+     * player. "Shared instrument screen".
+     * @param event The event referring to this function
+     */
+    public void foreignPlay(final InstrumentPlayedEvent<?> event) {
+        if (!(event instanceof NoteSoundPlayedEvent e))
+            return;
+
+        try {
+
+            getNoteButton(
+                event.soundMeta.noteIdentifier(),
+                e.sound, event.soundMeta.pitch()
+            ).playNoteAnimation(true);
+
+        } catch (Exception ignore) {
+            // Button was prolly just not found
+        }
+    }
+
+
+    /**
+     * @return True whether this instrument's GUI
+     * is to be rendered
+     */
     public boolean instrumentRenders() {
         return !visibilityButton.enabled();
     }
     protected void onInstrumentRenderStateChanged(final boolean isVisible) {
         if (!isVisible) {
-            notesIterable().forEach((note) -> note.getRenderer().ResetAnimations());
+            notesIterable().forEach((note) -> note.getRenderer().resetAnimations());
         }
 
         children().forEach((renderable) -> {
@@ -407,11 +459,19 @@ public abstract class InstrumentScreen extends Screen {
         if (checkTransposeDown(pKeyCode, pScanCode))
             return true;
 
+        // Release a focused note (in case pressed Enter)
+        if (isFocused() && (getFocused() instanceof NoteButton btn))
+            btn.release();
+
+        // Filter non-instrument keys
+        if (!isKeyConsumed(pKeyCode, pScanCode))
+            return false;
+
         unlockFocused();
 
         final NoteButton note = getNoteByKey(pKeyCode);
         if (note != null)
-            note.locked = false;
+            note.release();
 
         return super.keyReleased(pKeyCode, pScanCode, pModifiers);
     }
@@ -499,8 +559,10 @@ public abstract class InstrumentScreen extends Screen {
      * Unlocks any focused {@link NoteButton}s
      */
     private void unlockFocused() {
-        if ((getFocused() != null) && (getFocused() instanceof NoteButton))
-            ((NoteButton)getFocused()).locked = false;
+        if ((getFocused() != null) && (getFocused() instanceof NoteButton)) {
+            ((NoteButton)getFocused()).release();
+            setFocused(null);
+        }
     }
 
 
@@ -561,8 +623,7 @@ public abstract class InstrumentScreen extends Screen {
             return Optional.of((InstrumentScreen)minecraft.screen);
 
         if (minecraft.screen instanceof AbstractInstrumentOptionsScreen instrumentOptionsScreen)
-            if (instrumentOptionsScreen.isOverlay)
-                return Optional.of(instrumentOptionsScreen.instrumentScreen);
+            return instrumentOptionsScreen.instrumentScreen;
 
         return Optional.empty();
     }

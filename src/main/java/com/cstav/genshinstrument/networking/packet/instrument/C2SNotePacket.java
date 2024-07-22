@@ -18,7 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
-public class InstrumentPacket implements INoteIdentifierSender {
+public class C2SNotePacket implements INoteIdentifierSender {
 
     /** Optionally pass a position that defers from the player's */
     private final Optional<BlockPos> pos;
@@ -29,8 +29,8 @@ public class InstrumentPacket implements INoteIdentifierSender {
     private final ResourceLocation instrumentId;
     private final Optional<NoteButtonIdentifier> noteIdentifier;
 
-    public InstrumentPacket(Optional<BlockPos> pos, NoteSound sound, int pitch, int volume,
-            ResourceLocation instrumentId, Optional<NoteButtonIdentifier> noteIdentifier) {
+    public C2SNotePacket(Optional<BlockPos> pos, NoteSound sound, int pitch, int volume,
+                         ResourceLocation instrumentId, Optional<NoteButtonIdentifier> noteIdentifier) {
         this.pos = pos;
         this.sound = sound;
 
@@ -41,7 +41,7 @@ public class InstrumentPacket implements INoteIdentifierSender {
         this.noteIdentifier = noteIdentifier;
     }
     @Environment(EnvType.CLIENT)
-    public InstrumentPacket(final NoteButton noteButton) {
+    public C2SNotePacket(final NoteButton noteButton) {
         this(Optional.empty(), noteButton.getSound(),
             noteButton.getPitch(), noteButton.instrumentScreen.volume,
             noteButton.instrumentScreen.getInstrumentId(),
@@ -49,7 +49,7 @@ public class InstrumentPacket implements INoteIdentifierSender {
         );
     }
 
-    public InstrumentPacket(FriendlyByteBuf buf) {
+    public C2SNotePacket(FriendlyByteBuf buf) {
         pos = buf.readOptional(FriendlyByteBuf::readBlockPos);
         sound = NoteSound.readFromNetwork(buf);
 

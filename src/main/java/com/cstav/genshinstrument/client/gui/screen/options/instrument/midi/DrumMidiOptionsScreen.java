@@ -14,11 +14,13 @@ import net.minecraft.client.gui.layouts.SpacerElement;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
+import java.util.Optional;
+
 @Environment(EnvType.CLIENT)
 public class DrumMidiOptionsScreen extends MidiOptionsScreen {
     public static final String DDT_KEY = "button.genshinstrument.dominantDrumType";
 
-    public DrumMidiOptionsScreen(Component pTitle, Screen prevScreen, InstrumentScreen instrumentScreen) {
+    public DrumMidiOptionsScreen(Component pTitle, Screen prevScreen, Optional<InstrumentScreen> instrumentScreen) {
         super(pTitle, prevScreen, instrumentScreen);
     }
 

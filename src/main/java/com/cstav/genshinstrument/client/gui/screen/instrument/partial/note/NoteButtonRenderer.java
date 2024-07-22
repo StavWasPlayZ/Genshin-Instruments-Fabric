@@ -10,14 +10,18 @@ import com.cstav.genshinstrument.client.util.ClientUtil;
 import com.cstav.genshinstrument.util.CommonUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
+@Environment(EnvType.CLIENT)
 public class NoteButtonRenderer {
-    private static final Minecraft MINECRAFT = Minecraft.getInstance();
+    protected static final Minecraft MINECRAFT = Minecraft.getInstance();
 
     private static final double SHARP_MULTIPLIER = .9;
+    protected static final double NOTE_DUR = .15, NOTE_TARGET_VAL = 9;
     
     public final NoteButton noteButton;
     protected final InstrumentScreen instrumentScreen;
@@ -31,8 +35,12 @@ public class NoteButtonRenderer {
 
     // Animations
     public final NoteAnimationController noteAnimation;
-    private boolean foreignPlaying = false;
+    public boolean foreignPlaying = false;
     protected final ArrayList<NoteRing> rings = new ArrayList<>();
+
+    protected NoteAnimationController initNoteAnimation() {
+        return new NoteAnimationController(NOTE_DUR, NOTE_TARGET_VAL, noteButton);
+    }
 
 
     public NoteButtonRenderer(NoteButton noteButton, Supplier<ResourceLocation> noteTextureProvider) {
@@ -40,7 +48,7 @@ public class NoteButtonRenderer {
         this.noteTextureProvider = noteTextureProvider;
         this.instrumentScreen = noteButton.instrumentScreen;
 
-        noteAnimation = new NoteAnimationController(.15f, 9, noteButton);
+        noteAnimation = initNoteAnimation();
 
         
         rootLocation = instrumentScreen.getResourceFromRoot("note");
@@ -188,10 +196,15 @@ public class NoteButtonRenderer {
         foreignPlaying = isForeign;
 
         noteAnimation.play(isForeign);
-        rings.add(new NoteRing(noteButton, isForeign));
+        addRing();
+    }
+    public void addRing() {
+        final NoteRing ring = new NoteRing(noteButton, foreignPlaying);
+        rings.add(ring);
+        ring.playAnim();
     }
 
-    public void ResetAnimations() {
+    public void resetAnimations() {
         rings.clear();
         noteAnimation.stop();
     }

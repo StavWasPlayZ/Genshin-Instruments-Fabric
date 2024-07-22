@@ -1,4 +1,4 @@
-package com.cstav.genshinstrument.client.gui.screen.instrument.partial.notegrid;
+package com.cstav.genshinstrument.client.gui.screen.instrument.partial.grid;
 
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentScreen;
@@ -31,7 +31,7 @@ public class NoteGridButton extends NoteButton {
     public NoteGridButton(int row, int column, GridInstrumentScreen instrumentScreen) {
         super(
             getSoundFromArr(instrumentScreen, instrumentScreen.getInitSounds(), row, column),
-            instrumentScreen.getInitLabelSupplier(), instrumentScreen
+            GridInstrumentScreen.getInitLabelSupplier(), instrumentScreen
         );
         
         this.row = row;
@@ -54,21 +54,29 @@ public class NoteGridButton extends NoteButton {
     
 
     public void updateSoundArr() {
-        if (!(instrumentScreen instanceof GridInstrumentScreen gridInstrument))
-            return;
-
-        final NoteGrid grid = gridInstrument.noteGrid;
+        final NoteGrid grid = gridInstrument().noteGrid;
         final NoteSound[] sounds = grid.getNoteSounds();
 
-        setSound(gridInstrument.isSSTI() ? sounds[0]
-            : getSoundFromArr(gridInstrument, sounds, row, column)
+        setSound(gridInstrument().isSSTI() ? sounds[0]
+            : sounds[posToIndex()]
         );
     }
+
     /**
-     * Evaluates the sound at the current position, and sets it as this note's sound
-     * @param sounds The sound array of the instrument
+     * @return The position of this button ({@link NoteGridButton#row}, {@link NoteGridButton#column})
+     * as an array index
      */
-    public static NoteSound getSoundFromArr(GridInstrumentScreen gridInstrument, NoteSound[] sounds, int row, int column) {
+    public int posToIndex() {
+        return row + NoteGrid.getFlippedColumn(column, gridInstrument().columns()) * gridInstrument().rows();
+    }
+
+    /**
+     * Evaluates the sound at the current position.
+     * Meant for static initialization of sounds.
+     * @param sounds The sound array of the instrument
+     * @see NoteGridButton#posToIndex
+     */
+    protected static NoteSound getSoundFromArr(GridInstrumentScreen gridInstrument, NoteSound[] sounds, int row, int column) {
         return sounds[row + NoteGrid.getFlippedColumn(column, gridInstrument.columns()) * gridInstrument.rows()];
     }
 
@@ -86,10 +94,17 @@ public class NoteGridButton extends NoteButton {
 
     @Override
     protected NoteButtonRenderer initNoteRenderer() {
-        return new NoteButtonRenderer(this, () -> GRID_LABELS[textureRow()]);
+        return new NoteButtonRenderer(this, this::getTextureAtRow);
     }
     protected int textureRow() {
         return ModClientConfigs.ACCURATE_NOTES.get() ? getABCOffset() : (row % GRID_LABELS.length);
+    }
+
+    protected ResourceLocation getTextureAtRow(final int row) {
+        return GRID_LABELS[row];
+    }
+    protected ResourceLocation getTextureAtRow() {
+        return getTextureAtRow(textureRow());
     }
 
 

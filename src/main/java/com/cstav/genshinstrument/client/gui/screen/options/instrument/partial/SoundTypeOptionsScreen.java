@@ -2,7 +2,7 @@ package com.cstav.genshinstrument.client.gui.screen.options.instrument.partial;
 
 import com.cstav.genshinstrument.client.config.enumType.SoundType;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentScreen;
-import com.cstav.genshinstrument.client.gui.screen.instrument.partial.notegrid.GridInstrumentScreen;
+import com.cstav.genshinstrument.client.gui.screen.instrument.partial.grid.GridInstrumentScreen;
 import com.cstav.genshinstrument.client.util.TogglablePedalSound;
 import com.cstav.genshinstrument.event.MidiEvent.MidiEventArgs;
 import net.fabricmc.api.EnvType;
@@ -36,8 +36,8 @@ public abstract class SoundTypeOptionsScreen<T extends SoundType> extends Single
         this.preferredSoundType = preferredSoundType;
 
         // Update the sound for this instrument
-        if (isValidForSet(instrumentScreen))
-            instrumentScreen.setNoteSounds(preferredSoundType.getSoundArr().get());
+        if (instrumentScreen.map(this::isValidForSet).orElse(false))
+            instrumentScreen.get().setNoteSounds(preferredSoundType.getSoundArr().get());
     }
 
     protected abstract T getInitSoundType();
@@ -64,7 +64,9 @@ public abstract class SoundTypeOptionsScreen<T extends SoundType> extends Single
     protected void onSoundTypeChange(final CycleButton<T> btn, final T soundType) {
         setPreferredSoundType(soundType);
 
-        queueToSave(instrumentScreen.getInstrumentId().getPath()+"_sound_type", () -> saveSoundType(soundType));
+        instrumentScreen.ifPresent((screen) ->
+            queueToSave(screen.getInstrumentId().getPath() + "_sound_type", () -> saveSoundType(soundType))
+        );
     }
     protected abstract void saveSoundType(final T soundType);
 

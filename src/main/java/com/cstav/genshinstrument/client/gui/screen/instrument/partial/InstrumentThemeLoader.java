@@ -207,6 +207,8 @@ public class InstrumentThemeLoader {
     }
 
 
+    //#region File Reading
+
     private static void reload(final ResourceManager resourceManager) {
         updateIsGlobalThemed(resourceManager);
 
@@ -280,7 +282,6 @@ public class InstrumentThemeLoader {
     }
 
 
-
     public ResourceLocation getResourcesRootDir() {
         return resourcesRootDir;
     }
@@ -289,6 +290,8 @@ public class InstrumentThemeLoader {
         return ((!ignoreGlobal && isGlobalThemed) ? GLOBAL_LOC : getResourcesRootDir())
             .withSuffix("/"+JSON_STYLER_NAME);
     }
+
+    //#endregion
 
 
 
