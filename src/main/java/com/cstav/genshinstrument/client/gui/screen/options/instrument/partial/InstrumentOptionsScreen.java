@@ -32,6 +32,8 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
+import java.util.Locale;
+
 /**
  * The base class for all main instrument options screens.
  * Includes basic configurations all instruments should share
@@ -120,7 +122,7 @@ public abstract class InstrumentOptionsScreen extends AbstractInstrumentOptionsS
 
     protected void initAudioSection(final GridLayout grid, final RowHelper rowHelper) {
         final CycleButton<InstrumentChannelType> instrumentChannel = CycleButton.<InstrumentChannelType>builder((soundType) ->
-            Component.translatable(SOUND_CHANNEL_KEY +"."+ soundType.toString().toLowerCase())
+            Component.translatable(SOUND_CHANNEL_KEY +"."+ soundType.toString().toLowerCase(Locale.ENGLISH))
         )
             .withValues(InstrumentChannelType.values())
             .withInitialValue(ModClientConfigs.CHANNEL_TYPE.get())

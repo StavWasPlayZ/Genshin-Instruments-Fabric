@@ -14,6 +14,7 @@ import net.minecraft.client.gui.layouts.SpacerElement;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
+import java.util.Locale;
 import java.util.Optional;
 
 @Environment(EnvType.CLIENT)
@@ -32,7 +33,7 @@ public class DrumMidiOptionsScreen extends MidiOptionsScreen {
 
         final CycleButton<DominantDrumType> dominantDrumType = CycleButton.<DominantDrumType>builder((type) -> Component.translatable(type.getKey()))
             .withValues(DominantDrumType.values())
-            .withTooltip((type) -> Tooltip.create(Component.translatable(DDT_KEY+"."+type.name().toLowerCase()+".tooltip")))
+            .withTooltip((type) -> Tooltip.create(Component.translatable(DDT_KEY+"."+type.name().toLowerCase(Locale.ENGLISH)+".tooltip")))
             .withInitialValue(ModClientConfigs.DOMINANT_DRUM_TYPE.get())
             .create(0, 0,
                 getSmallButtonWidth(), getButtonHeight(),

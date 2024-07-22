@@ -13,6 +13,8 @@ import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
+import java.util.Locale;
+
 /**
  * An options screen that implements a button to cycle through an instrument's sounds
  */
@@ -48,8 +50,8 @@ public abstract class SoundTypeOptionsScreen<T extends SoundType> extends Single
 
     @Override
     protected AbstractButton constructButton() {
-        return CycleButton.<T>builder((type) ->
-            Component.translatable(soundTypeButtonKey()+"."+type.toString().toLowerCase())
+        return CycleButton.<T>builder((soundType) ->
+            Component.translatable(soundTypeButtonKey()+"."+soundType.getName())
         )
             .withValues(values())
             .withInitialValue(getPreferredSoundType())
