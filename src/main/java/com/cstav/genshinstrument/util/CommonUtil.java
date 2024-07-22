@@ -17,7 +17,7 @@ import net.minecraft.world.phys.AABB;
 public abstract class CommonUtil {
 
     /**
-     * @return What the default level shouldve returned, but without any conditions
+     * @return What the default level should've returned, but without any conditions
      */
     public static List<Player> getPlayersInArea(final Level level, final AABB area) {
         final List<Player> list = Lists.newArrayList();
@@ -27,19 +27,6 @@ public abstract class CommonUtil {
                 list.add(player);
 
         return list;
-    }
-
-    /**
-     * Converts the given {@code netPos} to the played position;
-     * when said optional is empty, provides either the player's position
-     * (if hand-held instrument) or the block's position (block instrument).
-     * @param netPos The play position as provided by the network
-     */
-    public static BlockPos getPlayeredPosition(Player player, Optional<BlockPos> netPos) {
-        return netPos.orElseGet(() -> !InstrumentEntityData.isItem(player)
-            ? InstrumentEntityData.getBlockPos(player)
-            : player.blockPosition()
-        );
     }
     
 

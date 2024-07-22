@@ -2,7 +2,7 @@ package com.cstav.genshinstrument.client.gui.screen.instrument.vintagelyre;
 
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.NoteNotation;
-import com.cstav.genshinstrument.client.gui.screen.instrument.partial.grid.NoteGridButton;
+import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.grid.NoteGridButton;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 

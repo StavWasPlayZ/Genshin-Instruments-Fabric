@@ -1,6 +1,6 @@
 package com.cstav.genshinstrument.criteria;
 
-import com.cstav.genshinstrument.networking.packet.instrument.C2SNotePacket;
+import com.cstav.genshinstrument.networking.packet.instrument.c2s.C2SNotePacket;
 import com.google.gson.JsonObject;
 
 import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;

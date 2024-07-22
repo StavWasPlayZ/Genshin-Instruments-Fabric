@@ -15,20 +15,20 @@ public class ModCriteria {
     public static final InstrumentPlayedTrigger INSTRUMENT_PLAYED_TRIGGER = CriteriaTriggers.register(new InstrumentPlayedTrigger());
 
     public static void register() {
-        InstrumentPlayedEvent.ByPlayer.EVENT.register((args) -> {
-            if (args.level.isClientSide)
+        InstrumentPlayedEvent.EVENT.register((args) -> {
+            if (args.level().isClientSide)
                 return;
             // Only get player events
-            if (!(args instanceof InstrumentPlayedEvent.IByPlayer<?> e))
+            if (args.playerInfo().isEmpty())
                 return;
 
-            final Item instrument = BuiltInRegistries.ITEM.get(args.instrumentId);
+            final Item instrument = BuiltInRegistries.ITEM.get(args.soundMeta().instrumentId());
             // Perhaps troll packets
             if (instrument == Items.AIR)
                 return;
 
             INSTRUMENT_PLAYED_TRIGGER.trigger(
-                (ServerPlayer) e.getPlayer(),
+                (ServerPlayer) args.playerInfo().get().player,
                 new ItemStack(instrument)
             );
         });

@@ -1,6 +1,6 @@
 package com.cstav.genshinstrument.networking.buttonidentifier;
 
-import com.cstav.genshinstrument.client.gui.screen.instrument.partial.grid.NoteGridButton;
+import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.grid.NoteGridButton;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

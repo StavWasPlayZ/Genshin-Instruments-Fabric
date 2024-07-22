@@ -1,7 +1,5 @@
 package com.cstav.genshinstrument.item;
 
-import static com.cstav.genshinstrument.util.ServerUtil.sendInternalOpenPacket;
-
 import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.GICreativeModeTabs;
 
@@ -13,6 +11,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+
+import static com.cstav.genshinstrument.networking.packet.instrument.util.InstrumentPacketUtil.sendInternalOpenPacket;
 
 public class GIItems {
     
@@ -28,6 +28,10 @@ public class GIItems {
         )),
         GLORIOUS_DRUM = register("glorious_drum", new InstrumentItem(
             (player) -> sendInternalOpenPacket(player, "glorious_drum")
+        )),
+
+        NIGHTWIND_HORN = register("nightwind_horn", new NightwindHornItem(
+            (player) -> sendInternalOpenPacket(player, "nightwind_horn")
         ))
     ;
     

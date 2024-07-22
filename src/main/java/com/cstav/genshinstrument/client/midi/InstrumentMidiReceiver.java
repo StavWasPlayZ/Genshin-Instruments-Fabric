@@ -5,7 +5,7 @@ import com.cstav.genshinstrument.client.gui.screen.instrument.partial.Instrument
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.NoteButton;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.held.IHoldableNoteButton;
 import com.cstav.genshinstrument.client.midi.MidiOverflowResult.OverflowType;
-import com.cstav.genshinstrument.event.MidiEvent;
+import com.cstav.genshinstrument.event.MidiEvent.MidiEventArgs;
 import com.cstav.genshinstrument.sound.NoteSound;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -52,7 +52,7 @@ public abstract class InstrumentMidiReceiver {
     }
 
 
-    public void onMidi(final MidiEvent event) {
+    public void onMidi(final MidiEventArgs event) {
         if (!canPerformMidi(event))
             return;
 
@@ -128,7 +128,7 @@ public abstract class InstrumentMidiReceiver {
     }
 
 
-    protected boolean canPerformMidi(final MidiEvent event) {
+    protected boolean canPerformMidi(final MidiEventArgs event) {
         final byte[] message = event.message.getMessage();
 
         final PressedMIDINote prevNoteBtn = pressedMidiNotes.get(message[1]);

@@ -6,7 +6,7 @@ import java.util.function.Function;
 import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.NoteButton;
 import com.cstav.genshinstrument.networking.packet.INoteIdentifierSender;
-import com.cstav.genshinstrument.util.ServerUtil;
+import com.cstav.genshinstrument.networking.packet.instrument.util.InstrumentPacketUtil;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -49,7 +49,7 @@ public abstract class NoteButtonIdentifier {
             List<Class<? extends NoteButtonIdentifier>> acceptableIdentifiers) {
 
         try {
-            return ServerUtil.getValidNoteIdentifier(buf.readUtf(), acceptableIdentifiers)
+            return InstrumentPacketUtil.getValidNoteIdentifier(buf.readUtf(), acceptableIdentifiers)
                 .getDeclaredConstructor(FriendlyByteBuf.class).newInstance(buf);
         } catch (Exception e) {
             GInstrumentMod.LOGGER.error("Error initializing button identifier", e);

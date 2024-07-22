@@ -9,6 +9,9 @@ import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.NoteB
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.VintageLyreOptionsScreen;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.InstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.midi.InstrumentMidiReceiver;
+import com.cstav.genshinstrument.client.midi.MidiOverflowResult;
+import com.cstav.genshinstrument.client.midi.MidiOverflowResult.OverflowType;
+import com.cstav.genshinstrument.client.midi.PressedMIDINote;
 import com.cstav.genshinstrument.sound.GISounds;
 import com.cstav.genshinstrument.sound.NoteSound;
 

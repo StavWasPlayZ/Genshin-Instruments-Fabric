@@ -5,11 +5,11 @@ import java.util.UUID;
 
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.config.enumType.InstrumentChannelType;
-import com.cstav.genshinstrument.event.InstrumentPlayedEvent;
-import com.cstav.genshinstrument.event.InstrumentPlayedEvent.ByPlayer.ByPlayerArgs;
-import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEventArgs;
-import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
-import com.cstav.genshinstrument.util.CommonUtil;
+import com.cstav.genshinstrument.client.util.ClientUtil;
+import com.cstav.genshinstrument.event.NoteSoundPlayedEvent;
+import com.cstav.genshinstrument.event.NoteSoundPlayedEvent.NoteSoundPlayedEventArgs;
+import com.cstav.genshinstrument.networking.packet.instrument.NoteSoundMetadata;
+import com.cstav.genshinstrument.sound.registrar.NoteSoundRegistrar;
 import com.cstav.genshinstrument.util.LabelUtil;
 
 import net.fabricmc.api.EnvType;
@@ -17,7 +17,6 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -25,19 +24,18 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.ApiStatus.Internal;
 
 /**
  * A class holding sound information for an instrument's note
  */
 public class NoteSound {
+    public static final SoundSource INSTRUMENT_SOUND_SOURCE = SoundSource.RECORDS;
+
     /**
      * The range at which players with Mixed instrument sound type will start to hear Mono.
     */
     public static final double STEREO_RANGE = 5.5;
-    /**
-     * The range from which players will stop hearing Minecraft's background music on playing
-     */
-    public static final double STOP_SOUND_DISTANCE = 10;
     /**
      * The range from which players will hear instruments from their local sound output rather than the level's
      */
@@ -53,15 +51,17 @@ public class NoteSound {
     public final int index;
     public final ResourceLocation baseSoundLocation;
 
-    SoundEvent mono;
-    SoundEvent stereo;
-    
-    NoteSound(int index, ResourceLocation baseSoundLocation, SoundEvent mono, SoundEvent stereo) {
+    public SoundEvent mono;
+    public SoundEvent stereo;
+
+    /**
+     * Constructor for assigning mono & stereo lazily
+     * @apiNote Please use {@link NoteSoundRegistrar}!
+     */
+    @Internal
+    public NoteSound(int index, ResourceLocation baseSoundLocation) {
         this.index = index;
         this.baseSoundLocation = baseSoundLocation;
-
-        this.mono = mono;
-        this.stereo = stereo;
     }
     
 
@@ -126,22 +126,13 @@ public class NoteSound {
     }
     /**
      * Returns the literal preference of the client. Defaults to Stereo.
-     * <p>This method is fired from the client.</p>
+     * <p>This method is usually fired from the client.</p>
+     * <p>Shorthand for {@code getByPreference(0)}</p>
      * @return Either the Mono or Stereo sound, based on the client's preference
      */
     @Environment(EnvType.CLIENT)
     public SoundEvent getByPreference() {
-        if (!hasStereo())
-            return mono;
-        
-        final InstrumentChannelType preference = ModClientConfigs.CHANNEL_TYPE.get();
-
-        return switch (preference) {
-            case MIXED -> metInstrumentVolume() ? stereo : mono;
-
-            case STEREO -> stereo;
-            case MONO -> mono;
-        };
+        return getByPreference(0);
     }
 
     /**
@@ -149,60 +140,48 @@ public class NoteSound {
      */
     @SuppressWarnings("resource")
     private static boolean metInstrumentVolume() {
-        return Minecraft.getInstance().options.getSoundSourceVolume(SoundSource.RECORDS) == 1;
+        return Minecraft.getInstance().options.getSoundSourceVolume(INSTRUMENT_SOUND_SOURCE) == 1;
     }
 
 
     /**
      * A method for packets to use for playing this note on the client's end.
      * Will also stop the client's background music per preference.
-     * @param playerUUID The UUID of the player who initiated the sound. Empty for when it wasn't a player.
-     * @param playPos The position at which the sound was fired from. Empty for the player's.
+     * @param initiatorUUID The UUID of the player who initiated the sound. Empty for when it wasn't a player.
+     * @param meta Additional metadata of the Note Sound being played
      */
     @Environment(EnvType.CLIENT)
-    public void play(int pitch, int volume, Optional<UUID> playerUUID,
-            ResourceLocation instrumentId, Optional<NoteButtonIdentifier> buttonIdentifier, Optional<BlockPos> playPos) {
+    public void playFromServer(Optional<UUID> initiatorUUID, NoteSoundMetadata meta) {
         final Minecraft minecraft = Minecraft.getInstance();
         final Player player = minecraft.player;
 
         final Level level = minecraft.level;
-        final Player initiator = playerUUID.map(level::getPlayerByUUID).orElse(null);
+        final Player initiator = initiatorUUID.map(level::getPlayerByUUID).orElse(null);
 
-        final BlockPos pos = CommonUtil.getPlayeredPosition(initiator, playPos);
-        
+        final double distanceFromPlayer = meta.pos().getCenter().distanceTo(player.position());
+        ClientUtil.stopMusicIfClose(distanceFromPlayer);
 
-        final double distanceFromPlayer = Math.sqrt(pos.distToCenterSqr(player.position()));
-        
-        if (ModClientConfigs.STOP_MUSIC_ON_PLAY.get() && (distanceFromPlayer < NoteSound.STOP_SOUND_DISTANCE))
-            minecraft.getMusicManager().stopPlaying();
+        NoteSoundPlayedEvent.EVENT.invoker().triggered(
+            (initiator == null)
+                ? new NoteSoundPlayedEventArgs(level, this, meta)
+                : new NoteSoundPlayedEventArgs(initiator, this, meta)
+        );
 
 
-        if (initiator == null)
-            InstrumentPlayedEvent.EVENT.invoker().triggered(
-                new InstrumentPlayedEventArgs(this, pitch, volume, level, pos, instrumentId, buttonIdentifier.orElse(null))
-            );
-        else
-            InstrumentPlayedEvent.ByPlayer.EVENT.invoker().triggered(
-                new ByPlayerArgs(this, pitch, volume,
-                    initiator, pos,
-                    instrumentId, buttonIdentifier.orElse(null)
-                )
-            );
-        
-
+        // Do not play for oneself.
         if (player.equals(initiator))
             return;
 
-        
-        final float mcPitch = getPitchByNoteOffset(clampPitch(pitch));
+        final float mcPitch = getPitchByNoteOffset(clampPitch(meta.pitch()));
             
         if (distanceFromPlayer > LOCAL_RANGE)
-            level.playLocalSound(pos,
-                getByPreference(distanceFromPlayer), SoundSource.RECORDS,
-                1, mcPitch
-            , false);
+            level.playLocalSound(meta.pos(),
+                getByPreference(distanceFromPlayer), INSTRUMENT_SOUND_SOURCE,
+                1, mcPitch,
+                false
+            );
         else
-            playLocally(mcPitch, volume / 100f);
+            playLocally(mcPitch, meta.volume() / 100f);
     }
 
     /**
@@ -211,7 +190,7 @@ public class NoteSound {
     @Environment(EnvType.CLIENT)
     public void playLocally(final float pitch, final float volume) {
         Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(
-            getByPreference().getLocation(), SoundSource.RECORDS,
+            getByPreference().getLocation(), INSTRUMENT_SOUND_SOURCE,
             volume, pitch, SoundInstance.createUnseededRandom(),
             false, 0, SoundInstance.Attenuation.NONE,
             0, 0, 0, true

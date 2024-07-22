@@ -1,10 +1,13 @@
 package com.cstav.genshinstrument.event;
 
 import com.cstav.genshinstrument.item.InstrumentItem;
+import com.cstav.genshinstrument.networking.packet.instrument.util.InstrumentPacketUtil;
 import com.cstav.genshinstrument.util.InstrumentEntityData;
-import com.cstav.genshinstrument.util.ServerUtil;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -15,14 +18,20 @@ public abstract class ServerEvents {
 
     public static void register() {
         ServerTickEvents.START_WORLD_TICK.register(ServerEvents::onServerTick);
+        ServerPlayConnectionEvents.DISCONNECT.register(ServerEvents::onPlayerLeave);
     }
 
     public static void onServerTick(final Level level) {
         level.players().forEach((player) -> {
             if (shouldAbruptlyClose(player))
-                ServerUtil.setInstrumentClosed(player);
+                InstrumentPacketUtil.setInstrumentClosed(player);
         });
     }
+
+    private static void onPlayerLeave(ServerGamePacketListenerImpl handler, MinecraftServer server) {
+        InstrumentPacketUtil.setInstrumentClosed(handler.player);
+    }
+
 
     private static boolean shouldAbruptlyClose(final Player player) {
         if (!InstrumentEntityData.isOpen(player))

@@ -16,9 +16,12 @@ import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.In
 import com.cstav.genshinstrument.client.gui.widget.IconToggleButton;
 import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings;
 import com.cstav.genshinstrument.client.midi.InstrumentMidiReceiver;
+import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEventArgs;
+import com.cstav.genshinstrument.event.NoteSoundPlayedEvent;
+import com.cstav.genshinstrument.event.NoteSoundPlayedEvent.NoteSoundPlayedEventArgs;
 import com.cstav.genshinstrument.networking.GIPacketHandler;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
-import com.cstav.genshinstrument.networking.packet.instrument.CloseInstrumentPacket;
+import com.cstav.genshinstrument.networking.packet.instrument.c2s.CloseInstrumentPacket;
 import com.cstav.genshinstrument.sound.NoteSound;
 import com.cstav.genshinstrument.util.InstrumentEntityData;
 import com.mojang.blaze3d.platform.InputConstants.Key;
@@ -387,15 +390,15 @@ public abstract class InstrumentScreen extends Screen {
      * player. "Shared instrument screen".
      * @param event The event referring to this function
      */
-    public void foreignPlay(final InstrumentPlayedEvent<?> event) {
-        if (!(event instanceof NoteSoundPlayedEvent e))
+    public void foreignPlay(final InstrumentPlayedEventArgs<?> event) {
+        if (!(event instanceof NoteSoundPlayedEventArgs e))
             return;
 
         try {
 
             getNoteButton(
-                event.soundMeta.noteIdentifier(),
-                e.sound, event.soundMeta.pitch()
+                event.soundMeta().noteIdentifier(),
+                e.sound(), event.soundMeta().pitch()
             ).playNoteAnimation(true);
 
         } catch (Exception ignore) {

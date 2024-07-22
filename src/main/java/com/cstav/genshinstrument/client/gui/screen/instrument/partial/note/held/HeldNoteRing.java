@@ -5,8 +5,6 @@ import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.NoteR
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.animation.RingAnimationController;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * A note ring designed for use with a {@link IHoldableNoteButton}.

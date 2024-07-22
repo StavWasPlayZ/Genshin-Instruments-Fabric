@@ -67,13 +67,13 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
 
     @Override
     public void render(GuiGraphics gui, int pMouseX, int pMouseY, float pPartialTick) {
-        if (isOverlay) {
-            instrumentScreen.render(gui, Integer.MAX_VALUE, Integer.MAX_VALUE, pPartialTick);
+        // Render the base instrument screen
+        instrumentScreen.ifPresent((screen) -> {
+            screen.render(gui, Integer.MAX_VALUE, Integer.MAX_VALUE, pPartialTick);
             // Push the options screen infront
             gui.pose().translate(0, 0, 1);
-        }
-        
-        
+        });
+
         renderBackground(gui);
         gui.drawCenteredString(font, title, width/2, 15, Color.WHITE.getRGB());
         
