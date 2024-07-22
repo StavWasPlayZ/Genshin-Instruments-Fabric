@@ -22,7 +22,7 @@ import static com.cstav.genshinstrument.event.InstrumentPlayedEvent.handleInsEve
 public interface HeldNoteSoundPlayedEvent extends ModEvent<HeldNoteSoundPlayedEventArgs> {
 
     static Event<HeldNoteSoundPlayedEvent> EVENT = EventFactory.createArrayBacked(HeldNoteSoundPlayedEvent.class,
-        (listeners) -> args -> handleInsEvent(listeners, args, HeldNoteSound.class)
+        (listeners) -> args -> handleInsEvent(listeners, args)
     );
 
     @Cancelable

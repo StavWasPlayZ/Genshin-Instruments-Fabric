@@ -24,51 +24,37 @@ import java.util.Optional;
 public interface InstrumentPlayedEvent<T> extends ModEvent<InstrumentPlayedEventArgs<T>> {
 
     static Event<InstrumentPlayedEvent<Object>> EVENT = EventFactory.createArrayBacked(InstrumentPlayedEvent.class,
-        (listeners) -> args -> handleInsEvent(listeners, args, Object.class, false)
+        (listeners) -> args -> ModEvent.handleEvent(listeners, args)
     );
 
     /**
      * Handles the instrument event.
      * Only invokes for subscribers whose sound type is
      * an instance of the called event.
-     * @param <T> The sound object type
      * @param <E> The event type
      * @param <A> The args type
      */
-    public static <T, E extends ModEvent<A>, A extends InstrumentPlayedEventArgs<T>>
+    public static <E extends ModEvent<A>, A extends InstrumentPlayedEventArgs<?>>
     void handleInsEvent(
-        E[] listeners, A args, Class<T> soundType
+        E[] listeners, A args
     ) {
-        handleInsEvent(listeners, args, soundType, true);
+        handleInsEvent(listeners, args, true);
     }
     /**
-     * Handles the instrument event.
-     * Only invokes for subscribers whose sound type is
-     * an instance of the called event.
-     * @param <T> The sound object type
+     * Invokes the provided event subscribers,
+     * then passes to the {@link InstrumentPlayedEvent#EVENT general instrument event}.
      * @param <E> The event type
      * @param <A> The args type
-     * @param callMain Also call InstrumentPlayEvent?
      */
-    @SuppressWarnings("unchecked")
-    public static <T, E extends ModEvent<A>, A extends InstrumentPlayedEventArgs<T>>
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static <E extends ModEvent<A>, A extends InstrumentPlayedEventArgs<?>>
     void handleInsEvent(
-        E[] listeners, A args, Class<T> soundType, boolean callMain
+        E[] listeners, A args, boolean callMain
     ) {
-        for (E listener : listeners) {
-            // Check if the passed sound is an instance of the requested
-            // sound type
-            if (!soundType.isAssignableFrom(args.sound().getClass()))
-                continue;
-
-            if (args.isCanceled())
-                return;
-
-            listener.triggered(args);
-        }
+        ModEvent.handleEvent(listeners, args);
 
         if (callMain) {
-            EVENT.invoker().triggered((InstrumentPlayedEventArgs<Object>) args);
+            EVENT.invoker().triggered((InstrumentPlayedEventArgs) args);
         }
     }
 
