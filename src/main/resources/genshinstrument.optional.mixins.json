@@ -3,7 +3,8 @@
 	"package": "com.cstav.genshinstrument.mixin.optional",
 	"compatibilityLevel": "JAVA_17",
 	"client": [
-		"InstrumentAnimMixin"
+		"InstrumentAnimMixin",
+		"ItemRendererMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

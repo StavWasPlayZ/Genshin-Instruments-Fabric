@@ -1,6 +1,7 @@
 package com.cstav.genshinstrument.client;
 
 import com.cstav.genshinstrument.GInstrumentMod;
+import com.cstav.genshinstrument.ModModels;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screen.instrument.drum.AratakisGreatAndGloriousDrumScreen;
 import com.cstav.genshinstrument.client.gui.screen.instrument.floralzither.FloralZitherScreen;
@@ -34,6 +35,7 @@ public class ClientInitiator implements ClientModInitializer {
 		ClientEvents.register();
 
 		ModItemPredicates.register();
+		ModModels.register();
 
 		InstrumentKeyMappings.load();
 
