@@ -6,6 +6,8 @@
 		"2": "genshinstrument:item/nightwind_neck_dec",
 		"particle": "genshinstrument:item/nightwind_neck_dec"
 	},
+	"gui_light": "front",
+
 	"elements": [
 		{
 			"from": [8.59281, 6.4385, 7.3347],

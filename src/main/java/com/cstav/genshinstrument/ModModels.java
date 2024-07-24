@@ -11,7 +11,9 @@ import net.minecraft.world.item.ItemDisplayContext;
 @Environment(EnvType.CLIENT)
 public class ModModels {
 
-    private static final ModelResourceLocation TRIDENT_MODEL = ModelResourceLocation.vanilla("trident", "inventory");
+    private static final ModelResourceLocation
+        NIGHTWIND_HORN_ITEM = mrl("nightwind_horn_item")
+    ;
 
     public static void register() {
         ModifyItemRendersModelEvent.EVENT.register(ModModels::onItemRenders);
@@ -25,11 +27,15 @@ public class ModModels {
                 || args.context == ItemDisplayContext.FIXED
                 || args.context == ItemDisplayContext.GROUND
             ) {
-                //TODO replace w/ actual model
-                args.setModel(args.itemModelShaper.getModelManager().getModel(TRIDENT_MODEL));
+                args.setModel(args.itemModelShaper.getModelManager().getModel(NIGHTWIND_HORN_ITEM));
             }
 
         }
+    }
+
+
+    private static ModelResourceLocation mrl(String path) {
+        return new ModelResourceLocation(GInstrumentMod.MODID, path, "inventory");
     }
 
 }
