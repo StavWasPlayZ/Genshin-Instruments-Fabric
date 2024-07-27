@@ -2,6 +2,8 @@ package com.cstav.genshinstrument;
 
 import com.cstav.genshinstrument.event.ModifyItemRendersModelEvent;
 import com.cstav.genshinstrument.event.ModifyItemRendersModelEvent.ModifyItemRendersModelEventArgs;
+import com.cstav.genshinstrument.event.RegisterAdditionalModelsEvent;
+import com.cstav.genshinstrument.event.RegisterAdditionalModelsEvent.RegisterAdditionalModelsEventArgs;
 import com.cstav.genshinstrument.item.GIItems;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -17,6 +19,7 @@ public class ModModels {
 
     public static void register() {
         ModifyItemRendersModelEvent.EVENT.register(ModModels::onItemRenders);
+        RegisterAdditionalModelsEvent.EVENT.register(ModModels::onRegisterModels);
     }
 
     private static void onItemRenders(final ModifyItemRendersModelEventArgs args) {
@@ -31,6 +34,10 @@ public class ModModels {
             }
 
         }
+    }
+
+    private static void onRegisterModels(final RegisterAdditionalModelsEventArgs args) {
+        args.addModel(NIGHTWIND_HORN_ITEM);
     }
 
 
