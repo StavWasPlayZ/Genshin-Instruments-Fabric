@@ -50,6 +50,9 @@ public abstract class ClientEvents {
         if (!(block instanceof AbstractInstrumentBlock blockInstrument))
             return;
 
+        if (!InstrumentEntityData.isOpen(args.player) || InstrumentEntityData.isItem(args.player))
+            return;
+
         blockInstrument.onPosePlayerArm(args);
     }
     private static void poseForItemInstrument(PosePlayerArmEventArgs args, Player player) {
@@ -58,6 +61,9 @@ public abstract class ClientEvents {
             return;
 
         if (!(instrumentItem.getItem() instanceof ItemPoseModifier item))
+            return;
+
+        if (!InstrumentEntityData.isOpen(args.player) || !InstrumentEntityData.isItem(args.player))
             return;
 
         item.onPosePlayerArm(args);

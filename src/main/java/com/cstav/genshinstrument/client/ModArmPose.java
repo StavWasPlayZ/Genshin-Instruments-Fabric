@@ -14,9 +14,6 @@ public abstract class ModArmPose {
     public static final float HAND_HEIGHT_ROT = .9f;
 
     public static void poseForItemInstrument(final PosePlayerArmEventArgs args) {
-        if (!InstrumentEntityData.isOpen(args.player) || !InstrumentEntityData.isItem(args.player))
-			return;
-            
         final ModelPart arm = args.arm;
         if (args.hand == HandType.LEFT) {
             arm.xRot = -HAND_HEIGHT_ROT;
