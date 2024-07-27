@@ -3,6 +3,8 @@ package com.cstav.genshinstrument.networking.packet.instrument.s2c;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.cstav.genshinstrument.event.InstrumentOpenStateChangedEvent;
+import com.cstav.genshinstrument.event.InstrumentOpenStateChangedEvent.InstrumentOpenStateChangedEventArgs;
 import com.cstav.genshinstrument.networking.IModPacket;
 import com.cstav.genshinstrument.sound.held.HeldNoteSounds;
 import com.cstav.genshinstrument.util.InstrumentEntityData;
@@ -88,10 +90,11 @@ public class NotifyInstrumentOpenPacket implements IModPacket {
 
         } else {
             InstrumentEntityData.setClosed(player);
-            // Also remove their potential entry over at HeldNoteSounds
-            //TODO Extract as an "instrument closed" event and apply elsewhere
-            HeldNoteSounds.release(HeldNoteSounds.getInitiatorId(player));
         }
+
+        InstrumentOpenStateChangedEvent.EVENT.invoker().triggered(
+            new InstrumentOpenStateChangedEventArgs(isOpen, player, pos, hand)
+        );
     }
     
 }
