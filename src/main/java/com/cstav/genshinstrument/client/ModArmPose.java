@@ -75,6 +75,8 @@ public abstract class ModArmPose {
             args.model.rightArm.zRot = 0.1f;
             args.model.rightArm.yRot = 0;
         }
+
+        args.setCanceled(true);
     }
 
 }
