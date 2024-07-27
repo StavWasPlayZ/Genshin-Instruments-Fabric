@@ -23,13 +23,13 @@ public abstract class ModArmPose {
             arm.zRot = -0.35f;
         }
 
-        args.setCanceled(true);
+        args.cancel();
     }
 
     public static void poseForBlockInstrument(final PosePlayerArmEventArgs args) {
         args.arm.xRot = -HAND_HEIGHT_ROT;
 
-        args.setCanceled(true);
+        args.cancel();
     }
 
 
@@ -55,7 +55,7 @@ public abstract class ModArmPose {
             defLeftWind(args.arm);
         }
 
-        args.setCanceled(true);
+        args.cancel();
     }
 
     public static void poseForNightwindHornInstrument(final PosePlayerArmEventArgs args) {
@@ -73,7 +73,7 @@ public abstract class ModArmPose {
             args.model.rightArm.yRot = 0;
         }
 
-        args.setCanceled(true);
+        args.cancel();
     }
 
 }

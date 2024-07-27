@@ -26,9 +26,15 @@ public interface ModifyItemRendersModelEvent extends ModEvent<ModifyItemRendersM
         public BakedModel getModel() {
             return model;
         }
+
+        /**
+         * Replaces the model with the given model
+         * and cancels this event (and any future replacements).
+         * @param model The model to replace
+         */
         public void setModel(BakedModel model) {
             this.model = model;
-            setCanceled(true);
+            cancel();
         }
 
         public ModifyItemRendersModelEventArgs(BakedModel model,
