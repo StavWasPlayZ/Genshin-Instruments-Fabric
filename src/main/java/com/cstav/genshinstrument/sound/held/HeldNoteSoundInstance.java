@@ -9,8 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -20,8 +19,8 @@ public class HeldNoteSoundInstance extends AbstractTickableSoundInstance {
     public final HeldNoteSound heldSoundContainer;
     public final HeldNoteSound.Phase phase;
 
-    public final Optional<Player> initiator;
-    public final String initiatorId;
+    public final Optional<Entity> initiator;
+    public final InitiatorID initiatorId;
 
     /**
      * The origin of the sound. May be empty
@@ -40,7 +39,7 @@ public class HeldNoteSoundInstance extends AbstractTickableSoundInstance {
      */
     protected HeldNoteSoundInstance(HeldNoteSound heldSoundContainer, HeldNoteSound.Phase phase,
                                     int notePitch, float volume,
-                                    @Nullable Player initiator, @Nullable BlockPos soundOrigin,
+                                    @Nullable Entity initiator, @Nullable BlockPos soundOrigin,
                                     int timeAlive, boolean released) {
         //TODO get new parameters: initiator, soundOrigin, update new constructors,
         // handle the new packets.
@@ -55,7 +54,7 @@ public class HeldNoteSoundInstance extends AbstractTickableSoundInstance {
         );
 
 
-        initiatorId = HeldNoteSounds.getInitiatorId(
+        initiatorId = InitiatorID.fromObj(
             (soundOrigin == null) ? initiator : soundOrigin
         );
 
@@ -84,7 +83,7 @@ public class HeldNoteSoundInstance extends AbstractTickableSoundInstance {
      */
     public HeldNoteSoundInstance(HeldNoteSound heldSoundContainer, HeldNoteSound.Phase phase,
                                  int notePitch, float volume,
-                                 @Nullable Player initiator, @Nullable BlockPos soundOrigin) {
+                                 @Nullable Entity initiator, @Nullable BlockPos soundOrigin) {
         this(heldSoundContainer, phase, notePitch, volume, initiator, soundOrigin, 0, false);
     }
     /**
@@ -102,7 +101,7 @@ public class HeldNoteSoundInstance extends AbstractTickableSoundInstance {
     public void queueAndAddInstance() {
         Minecraft.getInstance().getSoundManager().queueTickingSound(this);
         ClientUtil.stopMusicIfClose(
-            soundOrigin.orElseGet(initiator.map(LivingEntity::blockPosition)::get)
+            soundOrigin.orElseGet(initiator.map(Entity::blockPosition)::get)
         );
         addSoundInstance();
     }

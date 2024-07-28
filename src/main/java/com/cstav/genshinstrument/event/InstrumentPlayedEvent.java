@@ -11,6 +11,7 @@ import com.cstav.genshinstrument.util.InstrumentEntityData;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
@@ -73,28 +74,28 @@ public interface InstrumentPlayedEvent<T> extends ModEvent<InstrumentPlayedEvent
          * Information about the player initiator.
          * Present if there is indeed a player initiator.
          */
-        private final Optional<ByPlayerArgs> playerInfo;
+        private final Optional<ByEntityArgs> entityInfo;
 
         /**
-         * Constructor for creating a non-player event
+         * Constructor for creating a non-entity event
          */
         public InstrumentPlayedEventArgs(Level level, T sound, NoteSoundMetadata soundMeta) {
             this.level = level;
             this.sound = sound;
             this.soundMeta = soundMeta;
 
-            this.playerInfo = Optional.empty();
+            this.entityInfo = Optional.empty();
         }
 
         /**
-         * Constructor for creating a by-player event
+         * Constructor for creating a by-entity event
          */
-        public InstrumentPlayedEventArgs(Player player, T sound, NoteSoundMetadata soundMeta) {
-            this.level = player.level();
+        public InstrumentPlayedEventArgs(Entity initiator, T sound, NoteSoundMetadata soundMeta) {
+            this.level = initiator.level();
             this.sound = sound;
             this.soundMeta = soundMeta;
 
-            this.playerInfo = Optional.of(new ByPlayerArgs(player));
+            this.entityInfo = Optional.of(new ByEntityArgs(initiator));
         }
 
 
@@ -107,8 +108,8 @@ public interface InstrumentPlayedEvent<T> extends ModEvent<InstrumentPlayedEvent
         public Level level() {
             return level;
         }
-        public Optional<ByPlayerArgs> playerInfo() {
-            return playerInfo;
+        public Optional<ByEntityArgs> entityInfo() {
+            return entityInfo;
         }
 
         /**
@@ -124,26 +125,35 @@ public interface InstrumentPlayedEvent<T> extends ModEvent<InstrumentPlayedEvent
          * An object containing information
          * about the player who initiated the event
          */
-        public class ByPlayerArgs {
-            public final Player player;
+        public class ByEntityArgs {
+            public final Entity entity;
+
+            /**
+             * The hand carrying the <b>item</b> instrument.
+             * Empty for when not played by an instrument
+             * or is not a player.
+             */
             public final Optional<InteractionHand> hand;
 
             protected final InstrumentPlayedEventArgs<T> baseEvent = InstrumentPlayedEventArgs.this;
 
-            public ByPlayerArgs(Player player) {
-                this.player = player;
+            public ByEntityArgs(Entity entity) {
+                this.entity = entity;
 
-                if (InstrumentEntityData.isItem(player)) {
-                    this.hand = Optional.of(InstrumentEntityData.getHand(player));
+                if (
+                    (entity instanceof Player player)
+                    && (InstrumentEntityData.isItem(player))
+                ) {
+                    hand = Optional.of(InstrumentEntityData.getHand(player));
                 } else {
-                    this.hand = Optional.empty();
+                    hand = Optional.empty();
                 }
             }
 
             /**
              * <p>Returns whether this event was fired by an item instrument.</p>
              * A {@code false} result does NOT indicate a block instrument.
-             * @see ByPlayerArgs#isBlockInstrument
+             * @see ByEntityArgs#isBlockInstrument
              */
             public boolean isItemInstrument() {
                 return hand.isPresent();
@@ -151,11 +161,11 @@ public interface InstrumentPlayedEvent<T> extends ModEvent<InstrumentPlayedEvent
             /**
              * <p>Returns whether this event was fired by a block instrument.</p>
              * A {@code false} result does NOT indicate an instrument item.
-             * @see ByPlayerArgs#isItemInstrument()
+             * @see ByEntityArgs#isItemInstrument()
              */
             public boolean isBlockInstrument() {
                 return !isItemInstrument()
-                    && player.level().getBlockEntity(baseEvent.soundMeta.pos())
+                    && entity.level().getBlockEntity(baseEvent.soundMeta.pos())
                     instanceof InstrumentBlockEntity;
             }
 

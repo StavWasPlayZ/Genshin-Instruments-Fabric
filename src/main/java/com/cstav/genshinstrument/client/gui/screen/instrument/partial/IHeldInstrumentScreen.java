@@ -33,11 +33,28 @@ public interface IHeldInstrumentScreen {
             );
 
             final IHoldableNoteButton heldNote = (IHoldableNoteButton) note;
+            heldNote.playAttackAnimation(true);
 
-            switch (e.phase) {
-                case ATTACK -> heldNote.playAttackAnimation(true);
-                case RELEASE -> heldNote.playReleaseAnimation(true);
-            }
+        } catch (Exception ignore) {
+            // Button was prolly just not found
+        }
+    }
+
+    default void releaseForeign(final HeldNoteSoundPlayedEventArgs event) {
+        try {
+
+            final NoteButton note = asScreen().getNoteButton(
+                event.soundMeta().noteIdentifier(),
+                event.sound().getSound(Phase.ATTACK),
+                event.soundMeta().pitch()
+            );
+
+            final IHoldableNoteButton heldNote = (IHoldableNoteButton) note;
+            // Don't play release if already released
+            if (!heldNote.isHeld())
+                return;
+
+            heldNote.playReleaseAnimation(true);
 
         } catch (Exception ignore) {
             // Button was prolly just not found

@@ -2,13 +2,16 @@ package com.cstav.genshinstrument.event;
 
 import com.cstav.genshinstrument.block.partial.AbstractInstrumentBlock;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
+import com.cstav.genshinstrument.client.gui.screen.instrument.partial.IHeldInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.SoundTypeOptionsScreen;
 import com.cstav.genshinstrument.client.midi.MidiController;
+import com.cstav.genshinstrument.event.HeldNoteSoundPlayedEvent.HeldNoteSoundPlayedEventArgs;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEventArgs;
 import com.cstav.genshinstrument.event.MidiEvent.MidiEventArgs;
 import com.cstav.genshinstrument.event.PosePlayerArmEvent.PosePlayerArmEventArgs;
 import com.cstav.genshinstrument.item.ItemPoseModifier;
+import com.cstav.genshinstrument.networking.packet.instrument.util.HeldSoundPhase;
 import com.cstav.genshinstrument.sound.NoteSound;
 import com.cstav.genshinstrument.sound.held.HeldNoteSounds;
 import com.cstav.genshinstrument.util.InstrumentEntityData;
@@ -21,9 +24,12 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+
+import java.util.Optional;
 
 @Environment(EnvType.CLIENT)
 public abstract class ClientEvents {
@@ -79,8 +85,10 @@ public abstract class ClientEvents {
         else
             poseForBlockInstrument(args, player);
     }
-    
+
+    //#region Shared Instrument Screen implementation
     // Responsible for closing the instrument screen when
+
     // an instrument item is missing from the player's hands
     public static void onClientTick(Minecraft mc) {
         InstrumentScreen.getCurrentScreen(mc).ifPresent(InstrumentScreen::handleAbruptClosing);
@@ -89,34 +97,72 @@ public abstract class ClientEvents {
     
     // Responsible for showing the notes other players play
     public static void onInstrumentPlayed(final InstrumentPlayedEventArgs<?> args) {
-        if (!args.level().isClientSide)
+        if (!validateSharedScreen(args))
             return;
         if (!ModClientConfigs.SHARED_INSTRUMENT.get())
             return;
-
-        // If this sound was produced by a player, and that player is ourselves - omit.
-        if (args.playerInfo().isPresent()) {
-            final Player initiator = args.playerInfo().get().player;
-
-            if (initiator.equals(MINECRAFT.player))
-                return;
-        }
 
         // Only show play notes in the local range
         if (!args.soundMeta().pos().closerThan(MINECRAFT.player.blockPosition(), NoteSound.LOCAL_RANGE))
             return;
 
+        foreignPlayableInstrumentScreen(args)
+            .ifPresent((screen) -> screen.foreignPlay(args));
+    }
 
-        InstrumentScreen.getCurrentScreen(MINECRAFT)
+    // Also shared screen impl
+    // Handle separately because unlike in the above *initiate*
+    // method, we want to release it - which for all we know, could be
+    // blocks away for some reason.
+    public static void onHeldNoteSound(final HeldNoteSoundPlayedEventArgs args) {
+        if (args.phase != HeldSoundPhase.RELEASE)
+            return;
+        if (!validateSharedScreen(args))
+            return;
+
+        foreignPlayableInstrumentScreen(args)
+            .filter((screen) -> screen instanceof IHeldInstrumentScreen)
+            .map((screen) -> (IHeldInstrumentScreen) screen)
+            .ifPresent((screen) -> screen.releaseForeign(args));
+    }
+
+
+    /**
+     * @return Whether the provided instrument event is eligible
+     * for a shared screen play event
+     */
+    private static boolean validateSharedScreen(final InstrumentPlayedEventArgs<?> event) {
+        if (!event.level().isClientSide)
+            return false;
+        if (!ModClientConfigs.SHARED_INSTRUMENT.get())
+            return false;
+
+        if (event.entityInfo().isPresent()) {
+            final Entity initiator = event.entityInfo().get().entity;
+
+            if (initiator.equals(MINECRAFT.player))
+                return false;
+        }
+
+        return true;
+    }
+    /**
+     * @return The current instrument screen (if present)
+     * that matches the played sound described by the provided sound event.
+     */
+    private static Optional<InstrumentScreen> foreignPlayableInstrumentScreen(final InstrumentPlayedEventArgs<?> event) {
+        return InstrumentScreen.getCurrentScreen(MINECRAFT)
             // Filter instruments that do not match the one we're on.
             // If the note identifier is empty, it matters not - as the check
             // will be performed on the sound itself, which is bound to be unique for every note.
             .filter((screen) ->
-                args.soundMeta().noteIdentifier().isEmpty()
-                    || screen.getInstrumentId().equals(args.soundMeta().instrumentId())
+                event.soundMeta().noteIdentifier().isEmpty()
+                || screen.getInstrumentId().equals(event.soundMeta().instrumentId())
             )
-            .ifPresent((screen) -> screen.foreignPlay(args));
+        ;
     }
+
+    //#endregion
 
 
     public static void onLevelUnload(MinecraftServer server, ServerLevel world) {

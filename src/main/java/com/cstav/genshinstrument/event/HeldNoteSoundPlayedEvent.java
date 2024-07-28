@@ -9,7 +9,7 @@ import com.cstav.genshinstrument.networking.packet.instrument.util.HeldSoundPhas
 import com.cstav.genshinstrument.sound.held.HeldNoteSound;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 
 import static com.cstav.genshinstrument.event.InstrumentPlayedEvent.handleInsEvent;
@@ -33,8 +33,8 @@ public interface HeldNoteSoundPlayedEvent extends ModEvent<HeldNoteSoundPlayedEv
             super(level, sound, soundMeta);
             this.phase = phase;
         }
-        public HeldNoteSoundPlayedEventArgs(Player player, HeldNoteSound sound, NoteSoundMetadata soundMeta, HeldSoundPhase phase) {
-            super(player, sound, soundMeta);
+        public HeldNoteSoundPlayedEventArgs(Entity initiator, HeldNoteSound sound, NoteSoundMetadata soundMeta, HeldSoundPhase phase) {
+            super(initiator, sound, soundMeta);
             this.phase = phase;
         }
     }

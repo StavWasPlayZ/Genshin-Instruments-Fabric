@@ -4,6 +4,7 @@ import com.cstav.genshinstrument.event.InstrumentOpenStateChangedEvent.Instrumen
 import com.cstav.genshinstrument.item.InstrumentItem;
 import com.cstav.genshinstrument.networking.packet.instrument.util.InstrumentPacketUtil;
 import com.cstav.genshinstrument.sound.held.HeldNoteSounds;
+import com.cstav.genshinstrument.sound.held.InitiatorID;
 import com.cstav.genshinstrument.util.InstrumentEntityData;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -38,7 +39,7 @@ public abstract class ServerEvents {
     private static void onInstrumentScreenOpenStateChanged(final InstrumentOpenStateChangedEventArgs args) {
         if (!args.isOpen) {
             // Remove their potential entry over at HeldNoteSounds
-            HeldNoteSounds.release(HeldNoteSounds.getInitiatorId(args.player));
+            HeldNoteSounds.release(InitiatorID.fromObj(args.player));
         }
     }
 

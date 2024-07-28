@@ -8,6 +8,7 @@ import com.cstav.genshinstrument.networking.packet.instrument.NoteSoundMetadata;
 import com.cstav.genshinstrument.sound.NoteSound;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
@@ -29,8 +30,8 @@ public interface NoteSoundPlayedEvent extends ModEvent<NoteSoundPlayedEventArgs>
         public NoteSoundPlayedEventArgs(Level level, NoteSound sound, NoteSoundMetadata soundMeta) {
             super(level, sound, soundMeta);
         }
-        public NoteSoundPlayedEventArgs(Player player, NoteSound sound, NoteSoundMetadata soundMeta) {
-            super(player, sound, soundMeta);
+        public NoteSoundPlayedEventArgs(Entity initiator, NoteSound sound, NoteSoundMetadata soundMeta) {
+            super(initiator, sound, soundMeta);
         }
     }
 }

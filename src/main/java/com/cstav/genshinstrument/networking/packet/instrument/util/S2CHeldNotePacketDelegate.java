@@ -16,18 +16,18 @@ public interface S2CHeldNotePacketDelegate {
      * Construct a new Held Play Note packet.
      * @param sound The sound to play
      * @param meta The sound metadata
-     * @param initiatorUUID The UUID of the player initiating the sound.
-     *                      May be empty for a non-player trigger.
+     * @param initiatorID The ID of the player initiating the sound.
+     *                    May be empty for a non-player trigger.
      * @param phase The phase for the packet to report
      */
-    S2CHeldNoteSoundPacket create(Optional<UUID> initiatorUUID, HeldNoteSound sound, NoteSoundMetadata meta,
-                                     HeldSoundPhase phase);
+    S2CHeldNoteSoundPacket create(Optional<Integer> initiatorID, HeldNoteSound sound, NoteSoundMetadata meta,
+                                  HeldSoundPhase phase);
 
     default S2CNotePacketDelegate<HeldNoteSound> toReg(HeldSoundPhase phase) {
         return toReg(this, phase);
     }
 
     public static S2CNotePacketDelegate<HeldNoteSound> toReg(S2CHeldNotePacketDelegate del, HeldSoundPhase phase) {
-        return (initiatorUUID, sound, meta) -> del.create(initiatorUUID, sound, meta, phase);
+        return (initiatorID, sound, meta) -> del.create(initiatorID, sound, meta, phase);
     }
 }

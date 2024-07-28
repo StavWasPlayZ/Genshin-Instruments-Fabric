@@ -22,6 +22,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.ApiStatus.Internal;
@@ -147,16 +148,16 @@ public class NoteSound {
     /**
      * A method for packets to use for playing this note on the client's end.
      * Will also stop the client's background music per preference.
-     * @param initiatorUUID The UUID of the player who initiated the sound. Empty for when it wasn't a player.
+     * @param initiatorID The ID of the player who initiated the sound. Empty for when it wasn't a player.
      * @param meta Additional metadata of the Note Sound being played
      */
     @Environment(EnvType.CLIENT)
-    public void playFromServer(Optional<UUID> initiatorUUID, NoteSoundMetadata meta) {
+    public void playFromServer(Optional<Integer> initiatorID, NoteSoundMetadata meta) {
         final Minecraft minecraft = Minecraft.getInstance();
         final Player player = minecraft.player;
 
         final Level level = minecraft.level;
-        final Player initiator = initiatorUUID.map(level::getPlayerByUUID).orElse(null);
+        final Entity initiator = initiatorID.map(level::getEntity).orElse(null);
 
         final double distanceFromPlayer = meta.pos().getCenter().distanceTo(player.position());
         ClientUtil.stopMusicIfClose(distanceFromPlayer);
