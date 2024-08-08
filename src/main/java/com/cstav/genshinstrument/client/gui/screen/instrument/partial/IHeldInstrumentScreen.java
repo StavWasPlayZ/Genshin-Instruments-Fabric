@@ -2,10 +2,9 @@ package com.cstav.genshinstrument.client.gui.screen.instrument.partial;
 
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.NoteButton;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.held.IHoldableNoteButton;
-import com.cstav.genshinstrument.event.HeldNoteSoundPlayedEvent;
 import com.cstav.genshinstrument.event.HeldNoteSoundPlayedEvent.HeldNoteSoundPlayedEventArgs;
-import com.cstav.genshinstrument.event.InstrumentPlayedEvent;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEventArgs;
+import com.cstav.genshinstrument.networking.packet.instrument.util.HeldSoundPhase;
 import com.cstav.genshinstrument.sound.held.HeldNoteSound;
 import com.cstav.genshinstrument.sound.held.HeldNoteSound.Phase;
 import net.fabricmc.api.EnvType;
@@ -22,6 +21,9 @@ public interface IHeldInstrumentScreen {
 
     default void foreignPlayHeld(final InstrumentPlayedEventArgs<?> event) {
         if (!(event instanceof HeldNoteSoundPlayedEventArgs e))
+            return;
+        // Release handled separately at IHeldInstrumentScreen#releaseForeign
+        if (e.phase == HeldSoundPhase.RELEASE)
             return;
 
         try {
