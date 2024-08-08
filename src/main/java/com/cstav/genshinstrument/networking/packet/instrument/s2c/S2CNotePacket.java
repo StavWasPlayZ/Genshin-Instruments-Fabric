@@ -1,21 +1,20 @@
 package com.cstav.genshinstrument.networking.packet.instrument.s2c;
 
-import com.cstav.genshinstrument.networking.packet.INoteIdentifierSender;
+import com.cstav.genshinstrument.networking.IModPacket;
 import com.cstav.genshinstrument.networking.packet.instrument.NoteSoundMetadata;
 import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * A generic S2C packet notifying the client to play
  * a specific note.
  * @param <T> The sound object type
  */
-public abstract class S2CNotePacket<T> implements INoteIdentifierSender {
-    protected final Optional<Integer> initiatorID;
-    protected final T sound;
-    protected final NoteSoundMetadata meta;
+public abstract class S2CNotePacket<T> implements IModPacket {
+    public final Optional<Integer> initiatorID;
+    public final T sound;
+    public final NoteSoundMetadata meta;
 
     /**
      * Constructs a new {@link S2CNoteSoundPacket}.
@@ -30,7 +29,7 @@ public abstract class S2CNotePacket<T> implements INoteIdentifierSender {
     public S2CNotePacket(FriendlyByteBuf buf) {
         initiatorID = buf.readOptional(FriendlyByteBuf::readInt);
         sound = readSound(buf);
-        meta = NoteSoundMetadata.read(buf, this);
+        meta = NoteSoundMetadata.read(buf);
     }
 
     @Override

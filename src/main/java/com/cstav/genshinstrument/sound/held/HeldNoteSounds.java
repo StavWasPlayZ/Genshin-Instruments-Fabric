@@ -1,11 +1,12 @@
 package com.cstav.genshinstrument.sound.held;
 
+import com.cstav.genshinstrument.util.MultTuple;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.world.entity.Entity;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * A class storing all note sounds in the present level.
@@ -18,13 +19,13 @@ public abstract class HeldNoteSounds {
      * map of pitches to active note sound instances.
      */
     private static final
-        Map<InitiatorID,
-            // Sound key
-            Map<HeldNoteSound,
-                // Note pitch
-                Map<Integer,
-                    // List of held sound instances
-                    List<HeldNoteSoundInstance>
+    Map<InitiatorID,
+        // Sound key
+        Map<HeldNoteSound,
+            // Note pitch
+            Map<Integer,
+                // List of held sound instances
+                List<HeldNoteSoundInstance>
                 >
             >
         >
@@ -54,6 +55,24 @@ public abstract class HeldNoteSounds {
         // Should always be empty when map is empty
         return SOUND_INSTANCES.values().stream()
             .anyMatch((k2p2i) -> k2p2i.containsKey(sound));
+    }
+
+
+    /**
+     * A uniqueness of a sound instance is defined by its
+     * sound type, instrument ID and note pitch.
+     * @return A collection of all unique sound instances in the
+     * provided list.
+     */
+    public static Collection<HeldNoteSoundInstance> getUnique(final List<HeldNoteSoundInstance> sounds) {
+        return sounds.stream()
+            .collect(Collectors.toMap(
+                // Get unique by the following params:
+                (sound) -> new MultTuple(sound.heldSoundContainer, sound.instrumentId, sound.notePitch),
+                Function.identity(),
+                (curr, repl) -> curr
+            ))
+            .values();
     }
 
 
@@ -91,7 +110,7 @@ public abstract class HeldNoteSounds {
 
     /**
      * Releases all note instances produced by the provided initiator.
-      @return The released sounds
+     @return The released sounds
      */
     public static List<HeldNoteSoundInstance> release(InitiatorID initiatorId) {
         if (!SOUND_INSTANCES.containsKey(initiatorId))
@@ -111,7 +130,7 @@ public abstract class HeldNoteSounds {
 
     /**
      * Releases all note instances matching the provided {@code sound}.
-      @return The released sounds
+     @return The released sounds
      */
     public static List<HeldNoteSoundInstance> release(InitiatorID initiatorId, HeldNoteSound sound) {
         if (!SOUND_INSTANCES.containsKey(initiatorId))
@@ -133,7 +152,7 @@ public abstract class HeldNoteSounds {
 
     /**
      * Releases all note instances matching the provided {@code sound} and {@code pitch}.
-      @return The released sounds
+     @return The released sounds
      */
     public static List<HeldNoteSoundInstance> release(InitiatorID initiatorId, HeldNoteSound sound, int notePitch) {
         if (!SOUND_INSTANCES.containsKey(initiatorId))
@@ -160,7 +179,7 @@ public abstract class HeldNoteSounds {
 
     /**
      * Removes the specified note sound.
-      @return The released sounds
+     @return The released sounds
      */
     public static List<HeldNoteSoundInstance> release(InitiatorID initiatorId, HeldNoteSound sound, int notePitch,
                                                       HeldNoteSoundInstance soundInstance) {

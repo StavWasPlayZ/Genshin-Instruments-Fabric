@@ -24,7 +24,7 @@ import java.util.Optional;
 @FunctionalInterface
 public interface InstrumentPlayedEvent<T> extends ModEvent<InstrumentPlayedEventArgs<T>> {
 
-    static Event<InstrumentPlayedEvent<Object>> EVENT = EventFactory.createArrayBacked(InstrumentPlayedEvent.class,
+    Event<InstrumentPlayedEvent<Object>> EVENT = EventFactory.createArrayBacked(InstrumentPlayedEvent.class,
         (listeners) -> args -> ModEvent.handleEvent(listeners, args)
     );
 
@@ -35,7 +35,7 @@ public interface InstrumentPlayedEvent<T> extends ModEvent<InstrumentPlayedEvent
      * @param <E> The event type
      * @param <A> The args type
      */
-    public static <E extends ModEvent<A>, A extends InstrumentPlayedEventArgs<?>>
+    static <E extends ModEvent<A>, A extends InstrumentPlayedEventArgs<?>>
     void handleInsEvent(
         E[] listeners, A args
     ) {
@@ -48,7 +48,7 @@ public interface InstrumentPlayedEvent<T> extends ModEvent<InstrumentPlayedEvent
      * @param <A> The args type
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static <E extends ModEvent<A>, A extends InstrumentPlayedEventArgs<?>>
+    static <E extends ModEvent<A>, A extends InstrumentPlayedEventArgs<?>>
     void handleInsEvent(
         E[] listeners, A args, boolean callMain
     ) {
@@ -64,17 +64,23 @@ public interface InstrumentPlayedEvent<T> extends ModEvent<InstrumentPlayedEvent
      * @param <T> The sound object type
      */
     @Cancelable
-    public static class InstrumentPlayedEventArgs<T> extends EventArgs {
+    class InstrumentPlayedEventArgs<T> extends EventArgs {
 
         private final T sound;
         private final NoteSoundMetadata soundMeta;
         private final Level level;
 
         /**
-         * Information about the player initiator.
-         * Present if there is indeed a player initiator.
+         * Information about the entity initiator.
+         * Present if there is indeed an entity initiator.
          */
-        private final Optional<ByEntityArgs> entityInfo;
+        private final Optional<EntityInfo> entityInfo;
+        public boolean isByEntity() {
+            return entityInfo.isPresent();
+        }
+        public boolean isByPlayer() {
+            return isByEntity() && (entityInfo.get().entity instanceof Player);
+        }
 
         /**
          * Constructor for creating a non-entity event
@@ -95,7 +101,7 @@ public interface InstrumentPlayedEvent<T> extends ModEvent<InstrumentPlayedEvent
             this.sound = sound;
             this.soundMeta = soundMeta;
 
-            this.entityInfo = Optional.of(new ByEntityArgs(initiator));
+            this.entityInfo = Optional.of(new EntityInfo(initiator));
         }
 
 
@@ -108,7 +114,7 @@ public interface InstrumentPlayedEvent<T> extends ModEvent<InstrumentPlayedEvent
         public Level level() {
             return level;
         }
-        public Optional<ByEntityArgs> entityInfo() {
+        public Optional<EntityInfo> entityInfo() {
             return entityInfo;
         }
 
@@ -123,9 +129,9 @@ public interface InstrumentPlayedEvent<T> extends ModEvent<InstrumentPlayedEvent
 
         /**
          * An object containing information
-         * about the player who initiated the event
+         * about the entity who initiated the event
          */
-        public class ByEntityArgs {
+        public class EntityInfo {
             public final Entity entity;
 
             /**
@@ -137,7 +143,7 @@ public interface InstrumentPlayedEvent<T> extends ModEvent<InstrumentPlayedEvent
 
             protected final InstrumentPlayedEventArgs<T> baseEvent = InstrumentPlayedEventArgs.this;
 
-            public ByEntityArgs(Entity entity) {
+            public EntityInfo(Entity entity) {
                 this.entity = entity;
 
                 if (
@@ -153,7 +159,7 @@ public interface InstrumentPlayedEvent<T> extends ModEvent<InstrumentPlayedEvent
             /**
              * <p>Returns whether this event was fired by an item instrument.</p>
              * A {@code false} result does NOT indicate a block instrument.
-             * @see ByEntityArgs#isBlockInstrument
+             * @see EntityInfo#isBlockInstrument
              */
             public boolean isItemInstrument() {
                 return hand.isPresent();
@@ -161,11 +167,11 @@ public interface InstrumentPlayedEvent<T> extends ModEvent<InstrumentPlayedEvent
             /**
              * <p>Returns whether this event was fired by a block instrument.</p>
              * A {@code false} result does NOT indicate an instrument item.
-             * @see ByEntityArgs#isItemInstrument()
+             * @see EntityInfo#isItemInstrument()
              */
             public boolean isBlockInstrument() {
                 return !isItemInstrument()
-                    && entity.level().getBlockEntity(baseEvent.soundMeta.pos())
+                    && level.getBlockEntity(baseEvent.soundMeta.pos())
                     instanceof InstrumentBlockEntity;
             }
 

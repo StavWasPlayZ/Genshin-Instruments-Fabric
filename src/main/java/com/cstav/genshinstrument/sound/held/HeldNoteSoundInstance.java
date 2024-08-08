@@ -9,7 +9,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -18,6 +21,8 @@ import java.util.Optional;
 public class HeldNoteSoundInstance extends AbstractTickableSoundInstance {
     public final HeldNoteSound heldSoundContainer;
     public final HeldNoteSound.Phase phase;
+
+    public final ResourceLocation instrumentId;
 
     public final Optional<Entity> initiator;
     public final InitiatorID initiatorId;
@@ -40,23 +45,16 @@ public class HeldNoteSoundInstance extends AbstractTickableSoundInstance {
     protected HeldNoteSoundInstance(HeldNoteSound heldSoundContainer, HeldNoteSound.Phase phase,
                                     int notePitch, float volume,
                                     @Nullable Entity initiator, @Nullable BlockPos soundOrigin,
+                                    InitiatorID initiatorId, ResourceLocation instrumentId,
                                     int timeAlive, boolean released) {
-        //TODO get new parameters: initiator, soundOrigin, update new constructors,
-        // handle the new packets.
         super(
-            heldSoundContainer.getSound(phase).getByPreference(
-                Minecraft.getInstance().player.position().distanceTo(
-                    (soundOrigin == null) ? initiator.position() : soundOrigin.getCenter()
-                )
-            ),
+            heldSoundContainer.getSound(phase).getByPreference(distFromSourceSqr(soundOrigin, initiator)),
             NoteSound.INSTRUMENT_SOUND_SOURCE,
             SoundInstance.createUnseededRandom()
         );
 
-
-        initiatorId = InitiatorID.fromObj(
-            (soundOrigin == null) ? initiator : soundOrigin
-        );
+        this.initiatorId = initiatorId;
+        this.instrumentId = instrumentId;
 
         this.heldSoundContainer = heldSoundContainer;
         this.phase = phase;
@@ -65,22 +63,32 @@ public class HeldNoteSoundInstance extends AbstractTickableSoundInstance {
         this.initiator = Optional.ofNullable(initiator);
         this.soundOrigin = Optional.ofNullable(soundOrigin);
 
-        // Update position
-        this.soundOrigin.ifPresentOrElse(
-            (loc) -> {
-                x = loc.getX();
-                y = loc.getY();
-                z = loc.getZ();
-            },
-            this::updateInitiatorPos
-        );
-
         this.volume = volume;
         this.notePitch = notePitch;
         this.pitch = NoteSound.getPitchByNoteOffset(notePitch);
-        attenuation = Attenuation.NONE;
 
         this.released = released;
+
+
+        if (distFromSourceSqr() < Mth.square(NoteSound.LOCAL_RANGE)) {
+            // Very close; play relative
+            attenuation = Attenuation.NONE;
+            relative = true;
+            x = y = z = 0;
+        } else {
+            // Not close; play local
+            attenuation = Attenuation.LINEAR;
+            relative = false;
+
+            this.soundOrigin.ifPresentOrElse(
+                (loc) -> {
+                    x = loc.getX();
+                    y = loc.getY();
+                    z = loc.getZ();
+                },
+                this::toInitiatorPos
+            );
+        }
     }
 
     /**
@@ -92,20 +100,16 @@ public class HeldNoteSoundInstance extends AbstractTickableSoundInstance {
      */
     public HeldNoteSoundInstance(HeldNoteSound heldSoundContainer, HeldNoteSound.Phase phase,
                                  int notePitch, float volume,
-                                 @Nullable Entity initiator, @Nullable BlockPos soundOrigin) {
-        this(heldSoundContainer, phase, notePitch, volume, initiator, soundOrigin, 0, false);
-    }
-    /**
-     * A held note sound instance for local playing
-     */
-    public HeldNoteSoundInstance(HeldNoteSound heldSoundContainer, HeldNoteSound.Phase phase,
-                                 int notePitch, float volume) {
+                                 @Nullable Entity initiator, @Nullable BlockPos soundOrigin,
+                                 InitiatorID initiatorId, ResourceLocation instrumentId) {
         this(
-            heldSoundContainer, phase,
-            notePitch, volume,
-            Minecraft.getInstance().player, null
+            heldSoundContainer,
+            phase, notePitch, volume,
+            initiator, soundOrigin, initiatorId, instrumentId,
+            0, false
         );
     }
+
 
     public void queueAndAddInstance() {
         Minecraft.getInstance().getSoundManager().queueTickingSound(this);
@@ -131,13 +135,50 @@ public class HeldNoteSoundInstance extends AbstractTickableSoundInstance {
      * Marks this held sound as being released
      */
     public void setReleased() {
+        if (released)
+            return;
+
         this.released = true;
+
+        // Play release sound, if applicable.
+        // Only a 'hold' sound type may play a release.
+        if (phase == Phase.HOLD) {
+
+            if (heldSoundContainer.release() != null) {
+                final Vec3 pos = getSourcePos();
+
+                heldSoundContainer.release().playLocally(
+                    pitch, volume,
+                    new BlockPos((int) pos.x, (int) pos.y, (int) pos.z)
+                );
+            }
+
+        }
     }
+    public boolean isReleased() {
+        return released;
+    }
+
+
+    protected static double distFromSourceSqr(@Nullable BlockPos soundOrigin, @Nullable Entity initiator) {
+        return Minecraft.getInstance().player.position().distanceToSqr(getSourcePos(soundOrigin, initiator));
+    }
+    public double distFromSourceSqr() {
+        return Minecraft.getInstance().player.position().distanceToSqr(getSourcePos());
+    }
+
+    protected static Vec3 getSourcePos(@Nullable BlockPos soundOrigin, @Nullable Entity initiator) {
+        return (soundOrigin == null) ? initiator.position() : soundOrigin.getCenter();
+    }
+    protected Vec3 getSourcePos() {
+        return getSourcePos(soundOrigin.orElse(null), initiator.orElse(null));
+    }
+
 
     protected int timeAlive = 0, overallTimeAlive;
     @Override
     public void tick() {
-        updateInitiatorPos();
+        toInitiatorPos();
 
         handleChainHolding();
 
@@ -197,12 +238,18 @@ public class HeldNoteSoundInstance extends AbstractTickableSoundInstance {
         new HeldNoteSoundInstance(
             heldSoundContainer, Phase.HOLD, notePitch, volume - (decreaseVol ? heldSoundContainer.decay() : 0),
             initiator.orElse(null), soundOrigin.orElse(null),
+            initiatorId, instrumentId,
             overallTimeAlive, released
         ).queueAndAddInstance();
     }
 
-    protected void updateInitiatorPos() {
+    protected void toInitiatorPos() {
+        if (relative)
+            return;
         if (soundOrigin.isPresent() || initiator.isEmpty())
+            return;
+        // "Blown air" at the same location
+        if (released)
             return;
 
         x = initiator.get().getX();

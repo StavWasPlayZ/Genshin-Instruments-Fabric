@@ -15,6 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -28,9 +29,14 @@ import java.util.UUID;
  */
 public record HeldNoteSound(
     ResourceLocation baseSoundLocation, int index,
-    NoteSound attack, NoteSound hold, float holdDuration,
+    NoteSound attack,
+    NoteSound hold,
+    @Nullable NoteSound release,
+
+    float holdDuration,
     float holdDelay,
-    float chainedHoldDelay, float decay,
+    float chainedHoldDelay,
+    float decay,
     float releaseFadeOut,
     float fullHoldFadeoutTime
 ) {
@@ -39,6 +45,7 @@ public record HeldNoteSound(
         return switch (phase) {
             case HOLD -> hold;
             case ATTACK -> attack;
+            case RELEASE -> release;
         };
     }
 
@@ -53,33 +60,44 @@ public record HeldNoteSound(
      * A held note sound instance for 3rd party trigger
      */
     @Environment(EnvType.CLIENT)
-    public void startPlaying(int notePitch, float volume, Entity initiator, BlockPos pos) {
+    public void startPlaying(int notePitch, float volume, Entity initiator, BlockPos pos,
+                             InitiatorID initiatorId, ResourceLocation instrumentId) {
         new HeldNoteSoundInstance(
             this, Phase.ATTACK,
             notePitch, volume,
-            initiator, pos
+            initiator, pos,
+            initiatorId, instrumentId
         ).queueAndAddInstance();
     }
     /**
      * A held note sound instance for 3rd party trigger
      */
     @Environment(EnvType.CLIENT)
-    public void startPlaying(int notePitch, float volume, Entity initiator) {
-        startPlaying(notePitch, volume, initiator, null);
+    public void startPlaying(int notePitch, float volume, Entity initiator,
+                             InitiatorID initiatorId, ResourceLocation instrumentId) {
+        startPlaying(notePitch, volume, initiator, null, initiatorId, instrumentId);
     }
     /**
      * A held note sound instance for 3rd party trigger
      */
     @Environment(EnvType.CLIENT)
-    public void startPlaying(int notePitch, float volume, BlockPos pos) {
-        startPlaying(notePitch, volume, null, pos);
+    public void startPlaying(int notePitch, float volume, Entity initiator, ResourceLocation instrumentId) {
+        startPlaying(notePitch, volume, initiator, InitiatorID.fromEntity(initiator), instrumentId);
+    }
+    /**
+     * A held note sound instance for 3rd party trigger
+     */
+    @Environment(EnvType.CLIENT)
+    public void startPlaying(int notePitch, float volume, BlockPos pos,
+                             InitiatorID initiatorId, ResourceLocation instrumentId) {
+        startPlaying(notePitch, volume, null, pos, initiatorId, instrumentId);
     }
     /**
      * A held note sound instance for local playing
      */
     @Environment(EnvType.CLIENT)
-    public void startPlaying(int notePitch, float volume) {
-        startPlaying(notePitch, volume, Minecraft.getInstance().player);
+    public void startPlaying(int notePitch, float volume, ResourceLocation instrumentId) {
+        startPlaying(notePitch, volume, Minecraft.getInstance().player, instrumentId);
     }
 
 
@@ -88,19 +106,23 @@ public record HeldNoteSound(
     /**
      * A method for packets to use for playing this note on the client's end.
      * Will also stop the client's background music per preference.
-     * @param initiatorID The ID of the player who initiated the sound. Empty for when it wasn't a player.
+     * @param initiatorId The ID of the entity who initiated the sound. Empty for when it wasn't an entity.
+     * @param oInitiatorId The initiator ID of the non-player initiator.
      * @param meta Additional metadata of the Note Sound being played
      */
     @Environment(EnvType.CLIENT)
-    public void playFromServer(Optional<Integer> initiatorID, NoteSoundMetadata meta, HeldSoundPhase phase) {
+    public void playFromServer(Optional<Integer> initiatorId, Optional<InitiatorID> oInitiatorId,
+                               NoteSoundMetadata meta, HeldSoundPhase phase) {
         final Player localPlayer = Minecraft.getInstance().player;
         final Level level = localPlayer.level();
 
-        if (initiatorID.isPresent()) {
-            final Entity initiator = level.getEntity(initiatorID.get());
+        final InitiatorID _initiatorID = InitiatorID.getEither(initiatorId, oInitiatorId);
+
+        if (initiatorId.isPresent()) {
+            final Entity initiator = level.getEntity(initiatorId.get());
 
             HeldNoteSoundPlayedEvent.EVENT.invoker().triggered(
-                new HeldNoteSoundPlayedEventArgs(initiator, this, meta, phase)
+                new HeldNoteSoundPlayedEventArgs(initiator, this, meta, phase, _initiatorID)
             );
 
             // Don't play sound for ourselves
@@ -109,37 +131,38 @@ public record HeldNoteSound(
         }
 
         HeldNoteSoundPlayedEvent.EVENT.invoker().triggered(
-            new HeldNoteSoundPlayedEventArgs(level, this, meta, phase)
+            new HeldNoteSoundPlayedEventArgs(level, this, meta, phase, _initiatorID)
         );
 
         switch (phase) {
-            case ATTACK -> attackFromServer(initiatorID, meta);
-            case RELEASE -> releaseFromServer(initiatorID, meta);
+            case ATTACK -> attackFromServer(_initiatorID, meta);
+            case RELEASE -> releaseFromServer(_initiatorID, meta);
+        }
+    }
+
+    @Environment(EnvType.CLIENT)
+    private void attackFromServer(InitiatorID initiatorID, NoteSoundMetadata meta) {
+        if (initiatorID.type().equals("entity")) {
+            // Play as an entity
+            startPlaying(
+                meta.pitch(), meta.volume() / 100f,
+                Minecraft.getInstance().level.getEntity(
+                    Integer.parseInt(initiatorID.identifier())
+                ),
+                meta.instrumentId()
+            );
+        } else {
+            // Play as other
+            startPlaying(
+                meta.pitch(), meta.volume() / 100f,
+                meta.pos(),
+                initiatorID, meta.instrumentId()
+            );
         }
     }
     @Environment(EnvType.CLIENT)
-    private void attackFromServer(Optional<Integer> initiatorID, NoteSoundMetadata meta) {
-        initiatorID.ifPresentOrElse(
-            // Sound was played by player
-            (id) -> startPlaying(
-                meta.pitch(), meta.volume() / 100f,
-                Minecraft.getInstance().level.getEntity(id)
-            ),
-            // Sound is by some other thing
-            () -> startPlaying(meta.pitch(), meta.volume(), meta.pos())
-        );
-    }
-    @Environment(EnvType.CLIENT)
-    private void releaseFromServer(Optional<Integer> initiatorID, NoteSoundMetadata meta) {
-        HeldNoteSounds.release(
-            InitiatorID.fromObj(
-                initiatorID
-                    .map(Minecraft.getInstance().level::getEntity)
-                    .map((id) -> (Object) id)
-                    .orElse(meta.pos())
-            ),
-            this, meta.pitch()
-        );
+    private void releaseFromServer(InitiatorID initiatorID, NoteSoundMetadata meta) {
+        HeldNoteSounds.release(initiatorID, this, meta.pitch());
     }
 
     //#endregion
@@ -153,8 +176,8 @@ public record HeldNoteSound(
     }
 
 
-    public static enum Phase {
-        ATTACK, HOLD
+    public enum Phase {
+        ATTACK, HOLD, RELEASE
     }
 
 }

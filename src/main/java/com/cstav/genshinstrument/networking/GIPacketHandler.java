@@ -33,11 +33,6 @@ public class GIPacketHandler {
         })
     ;
 
-    @SuppressWarnings("unchecked")
-    public static final List<Class<? extends NoteButtonIdentifier>> ACCEPTABLE_IDENTIFIERS = List.of(new Class[] {
-        NoteButtonIdentifier.class, NoteGridButtonIdentifier.class, DrumNoteIdentifier.class
-    });
-
 
     public static void registerClientPackets() {
         for (final Class<IModPacket> packetClass : S2C_PACKETS) {

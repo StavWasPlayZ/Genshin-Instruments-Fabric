@@ -1,5 +1,8 @@
 package com.cstav.genshinstrument;
 
+import com.cstav.genshinstrument.networking.buttonidentifier.DrumNoteIdentifier;
+import com.cstav.genshinstrument.networking.buttonidentifier.NoteGridButtonIdentifier;
+import net.minecraft.world.item.Instruments;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +16,11 @@ import com.cstav.genshinstrument.sound.GISounds;
 
 import net.fabricmc.api.ModInitializer;
 
+/**
+ * The main class of the Genshin Instruments mod
+ *
+ * @author StavWasPlayZ
+ */
 public class GInstrumentMod implements ModInitializer {
 	public static final String MODID = "genshinstrument";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
@@ -21,6 +29,10 @@ public class GInstrumentMod implements ModInitializer {
 	public void onInitialize() {
 		GIPacketHandler.registerServerPackets();
 		ServerEvents.register();
+		NoteButtonIdentifiers.register(
+			NoteGridButtonIdentifier.class,
+			DrumNoteIdentifier.class
+		);
 
 		ModCriteria.register();
 		

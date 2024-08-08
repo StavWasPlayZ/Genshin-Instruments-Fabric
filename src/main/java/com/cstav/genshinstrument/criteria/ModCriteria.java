@@ -19,7 +19,7 @@ public class ModCriteria {
             if (args.level().isClientSide)
                 return;
             // Only get player events
-            if (args.entityInfo().isEmpty())
+            if (!args.isByPlayer())
                 return;
 
             final Item instrument = BuiltInRegistries.ITEM.get(args.soundMeta().instrumentId());

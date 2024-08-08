@@ -37,9 +37,12 @@ public abstract class ServerEvents {
     }
 
     private static void onInstrumentScreenOpenStateChanged(final InstrumentOpenStateChangedEventArgs args) {
+        if (args.player.level().isClientSide)
+            return;
+
         if (!args.isOpen) {
             // Remove their potential entry over at HeldNoteSounds
-            HeldNoteSounds.release(InitiatorID.fromObj(args.player));
+            HeldNoteSounds.release(InitiatorID.fromEntity(args.player));
         }
     }
 

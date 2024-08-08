@@ -38,6 +38,6 @@ public class C2SNoteSoundPacket extends C2SNotePacket<NoteSound> {
     }
 
     protected void sendPlayNotePackets(final ServerPlayer player) {
-        NoteSoundPacketUtil.sendPlayerPlayNotePackets(player, sound, meta, S2CNoteSoundPacket::new);
+        NoteSoundPacketUtil.sendPlayerPlayNotePackets(player, sound, meta);
     }
 }

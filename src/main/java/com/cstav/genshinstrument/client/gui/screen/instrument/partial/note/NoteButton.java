@@ -11,6 +11,7 @@ import com.cstav.genshinstrument.networking.GIPacketHandler;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.networking.packet.instrument.c2s.C2SNoteSoundPacket;
 import com.cstav.genshinstrument.sound.NoteSound;
+import com.cstav.genshinstrument.util.InstrumentEntityData;
 import com.cstav.genshinstrument.util.LabelUtil;
 
 import net.fabricmc.api.EnvType;
@@ -21,8 +22,10 @@ import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -89,7 +92,21 @@ public abstract class NoteButton extends AbstractButton {
     public void setSound(NoteSound sound) {
         this.sound = sound;
     }
-    
+
+
+    /**
+     * @return The position of the sounds
+     * to be produced from this note button.
+     */
+    public BlockPos getSoundSourcePos() {
+        final Player player = Minecraft.getInstance().player;
+
+        return InstrumentEntityData.isItem(player)
+            ? player.blockPosition()
+            : InstrumentEntityData.getBlockPos(player)
+        ;
+    }
+
 
     private int initX, initY;
     /**
@@ -213,7 +230,7 @@ public abstract class NoteButton extends AbstractButton {
     }
 
     protected void playLocalSound(final NoteSound sound, final int pitch) {
-        sound.playLocally(pitch, instrumentScreen.volume());
+        sound.playLocally(pitch, instrumentScreen.volume(), getSoundSourcePos());
     }
     protected void sendNotePlayPacket(final NoteSound sound, final int pitch) {
         GIPacketHandler.sendToServer(new C2SNoteSoundPacket(this, sound, pitch));
@@ -274,7 +291,10 @@ public abstract class NoteButton extends AbstractButton {
      */
     @Override
     public boolean equals(Object obj) {
-        return (obj instanceof NoteButton btn) && getIdentifier().matches(btn);
+        return (this == obj) || (
+            (obj instanceof NoteButton btn)
+            && getIdentifier().matches(btn)
+        );
     }
 
 

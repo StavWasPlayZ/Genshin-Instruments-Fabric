@@ -14,14 +14,16 @@ import net.minecraft.world.entity.player.Player;
 import javax.sound.midi.MidiMessage;
 import java.util.Optional;
 
-@Environment(EnvType.CLIENT)
+/**
+ * An event when the open state of an instrument screen has changed.
+ */
 public interface InstrumentOpenStateChangedEvent extends ModEvent<InstrumentOpenStateChangedEventArgs> {
 
     Event<InstrumentOpenStateChangedEvent> EVENT = EventFactory.createArrayBacked(InstrumentOpenStateChangedEvent.class,
         (listeners) -> args -> ModEvent.handleEvent(listeners, args)
     );
 
-    public static class InstrumentOpenStateChangedEventArgs extends EventArgs {
+    class InstrumentOpenStateChangedEventArgs extends EventArgs {
         public final boolean isOpen;
         public final Player player;
 

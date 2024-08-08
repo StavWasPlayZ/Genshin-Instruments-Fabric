@@ -15,6 +15,7 @@ import net.minecraft.client.gui.layouts.FrameLayout;
 import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 
 @Environment(EnvType.CLIENT)
 public class ClientUtil {
@@ -27,12 +28,12 @@ public class ClientUtil {
 
     /**
      * Stops Minecraft's music if the client desires it and
-     * {@code distanceFromPlayer} < {@link ClientUtil#STOP_SOUND_DISTANCE}
-     * @param distanceFromPlayer The distance of the played sound from the player
+     * {@code playDistSqr} < {@link ClientUtil#STOP_SOUND_DISTANCE}
+     * @param playDistSqr The distance of the played sound from the player
      * @return Whether the music stopped
      */
-    public static boolean stopMusicIfClose(final double distanceFromPlayer) {
-        if (ModClientConfigs.STOP_MUSIC_ON_PLAY.get() && (distanceFromPlayer < STOP_SOUND_DISTANCE)) {
+    public static boolean stopMusicIfClose(final double playDistSqr) {
+        if (ModClientConfigs.STOP_MUSIC_ON_PLAY.get() && (playDistSqr < Mth.square(STOP_SOUND_DISTANCE))) {
             Minecraft.getInstance().getMusicManager().stopPlaying();
             return true;
         }
@@ -46,7 +47,7 @@ public class ClientUtil {
      * @return Whether the music stopped
      */
     public static boolean stopMusicIfClose(final BlockPos pos) {
-        return stopMusicIfClose(pos.getCenter().distanceTo(Minecraft.getInstance().player.position()));
+        return stopMusicIfClose(pos.getCenter().distanceToSqr(Minecraft.getInstance().player.position()));
     }
 
 

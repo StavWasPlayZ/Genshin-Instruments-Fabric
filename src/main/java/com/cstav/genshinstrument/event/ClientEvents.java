@@ -137,7 +137,7 @@ public abstract class ClientEvents {
         if (!ModClientConfigs.SHARED_INSTRUMENT.get())
             return false;
 
-        if (event.entityInfo().isPresent()) {
+        if (event.isByPlayer()) {
             final Entity initiator = event.entityInfo().get().entity;
 
             if (initiator.equals(MINECRAFT.player))

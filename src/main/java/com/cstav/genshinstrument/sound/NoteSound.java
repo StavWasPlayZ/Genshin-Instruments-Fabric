@@ -17,6 +17,8 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.client.resources.sounds.SoundInstance.Attenuation;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -108,18 +110,18 @@ public class NoteSound {
     /**
      * Determines which sound type should play based on this player's distance from the instrument player.
      * <p>This method is fired from the server.</p>
-     * @param distanceFromPlayer The distance between this player and the position of the note's sound
+     * @param playDistSqr The distance between this player and the position of the note's sound sqared
      * @return Either the Mono or Stereo sound, based on the client's preference.
      */
     @Environment(EnvType.CLIENT)
-    public SoundEvent getByPreference(final double distanceFromPlayer) {
+    public SoundEvent getByPreference(final double playDistSqr) {
         if (!hasStereo())
             return mono;
         
         final InstrumentChannelType preference = ModClientConfigs.CHANNEL_TYPE.get();
 
         return switch(preference) {
-            case MIXED -> (metInstrumentVolume() && (distanceFromPlayer <= STEREO_RANGE)) ? stereo : mono;
+            case MIXED -> (metInstrumentVolume() && (playDistSqr <= Mth.square(STEREO_RANGE))) ? stereo : mono;
 
             case STEREO -> stereo;
             case MONO -> mono;
@@ -139,7 +141,6 @@ public class NoteSound {
     /**
      * @return True if the instrument volume is set to 100%
      */
-    @SuppressWarnings("resource")
     private static boolean metInstrumentVolume() {
         return Minecraft.getInstance().options.getSoundSourceVolume(INSTRUMENT_SOUND_SOURCE) == 1;
     }
@@ -159,8 +160,8 @@ public class NoteSound {
         final Level level = minecraft.level;
         final Entity initiator = initiatorID.map(level::getEntity).orElse(null);
 
-        final double distanceFromPlayer = meta.pos().getCenter().distanceTo(player.position());
-        ClientUtil.stopMusicIfClose(distanceFromPlayer);
+        final double playDistSqr = meta.pos().getCenter().distanceToSqr(player.position());
+        ClientUtil.stopMusicIfClose(playDistSqr);
 
         NoteSoundPlayedEvent.EVENT.invoker().triggered(
             (initiator == null)
@@ -174,28 +175,66 @@ public class NoteSound {
             return;
 
         final float mcPitch = getPitchByNoteOffset(clampPitch(meta.pitch()));
-            
-        if (distanceFromPlayer > LOCAL_RANGE)
-            level.playLocalSound(meta.pos(),
-                getByPreference(distanceFromPlayer), INSTRUMENT_SOUND_SOURCE,
-                1, mcPitch,
+
+        playLocally(
+            mcPitch, meta.volume() / 100f,
+            meta.pos(),
+            playDistSqr
+        );
+    }
+
+
+    /**
+     * Plays this sound locally. Treats the given {@code pitch} as a Minecraft pitch.
+     */
+    @Environment(EnvType.CLIENT)
+    public void playLocally(float pitch, float volume, BlockPos pos, double playDistSqr) {
+        final Minecraft minecraft = Minecraft.getInstance();
+        final SoundEvent sound = getByPreference(playDistSqr);
+
+        if (playDistSqr > Mth.square(LOCAL_RANGE)) {
+            minecraft.level.playLocalSound(
+                pos, sound,
+                INSTRUMENT_SOUND_SOURCE,
+                volume, pitch,
                 false
             );
-        else
-            playLocally(mcPitch, meta.volume() / 100f);
+        } else {
+            Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(
+                sound.getLocation(),
+                INSTRUMENT_SOUND_SOURCE,
+                volume, pitch,
+                SoundInstance.createUnseededRandom(),
+                false, 0,
+
+                Attenuation.NONE,
+                0, 0, 0,
+                true
+            ));
+        }
     }
 
     /**
      * Plays this sound locally. Treats the given {@code pitch} as a Minecraft pitch.
      */
     @Environment(EnvType.CLIENT)
-    public void playLocally(final float pitch, final float volume) {
-        Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(
-            getByPreference().getLocation(), INSTRUMENT_SOUND_SOURCE,
-            volume, pitch, SoundInstance.createUnseededRandom(),
-            false, 0, SoundInstance.Attenuation.NONE,
-            0, 0, 0, true
-        ));
+    public void playLocally(float pitch, float volume, BlockPos pos) {
+        playLocally(
+            pitch, volume,
+            pos,
+            Minecraft.getInstance().player.position().distanceToSqr(pos.getCenter())
+        );
+    }
+
+    /**
+     * <p>Plays this note locally.</p>
+     * Treats the given {@code pitch} as a note offset pitch,
+     * thus performs a conversion from note offset pitch to Minecraft pitch.
+     * @see NoteSound#getPitchByNoteOffset
+     */
+    @Environment(EnvType.CLIENT)
+    public void playLocally(int pitch, float volume, BlockPos pos, double playDistSqr) {
+        playLocally(getPitchByNoteOffset(clampPitch(pitch)), volume, pos, playDistSqr);
     }
     /**
      * <p>Plays this note locally.</p>
@@ -204,8 +243,13 @@ public class NoteSound {
      * @see NoteSound#getPitchByNoteOffset
      */
     @Environment(EnvType.CLIENT)
-    public void playLocally(final int pitch, final float volume) {
-        playLocally(getPitchByNoteOffset(clampPitch(pitch)), volume);
+    public void playLocally(int pitch, float volume, BlockPos pos) {
+        playLocally(
+            getPitchByNoteOffset(clampPitch(pitch)),
+            volume,
+            pos,
+            Minecraft.getInstance().player.position().distanceToSqr(pos.getCenter())
+        );
     }
 
 
@@ -239,6 +283,9 @@ public class NoteSound {
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+
         if (!(obj instanceof NoteSound other))
             return false;
 

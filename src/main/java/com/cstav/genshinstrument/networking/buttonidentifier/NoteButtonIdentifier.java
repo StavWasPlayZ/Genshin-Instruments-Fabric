@@ -38,18 +38,15 @@ public abstract class NoteButtonIdentifier {
 
     @Override
     public boolean equals(Object other) {
-        return (other instanceof NoteButtonIdentifier _other) && matches(_other);
+        return (this == other) || (
+            (other instanceof NoteButtonIdentifier _other)
+                && matches(_other)
+        );
     }
 
-    /**
-     * @apiNote Consider implementing {@link INoteIdentifierSender}
-     * and using the {@link INoteIdentifierSender#readNoteIdentifierFromNetwork} instead.
-     */
-    public static NoteButtonIdentifier readFromNetwork(FriendlyByteBuf buf,
-            List<Class<? extends NoteButtonIdentifier>> acceptableIdentifiers) {
-
+    public static NoteButtonIdentifier readFromNetwork(FriendlyByteBuf buf) {
         try {
-            return InstrumentPacketUtil.getValidNoteIdentifier(buf.readUtf(), acceptableIdentifiers)
+            return NoteButtonIdentifiers.getIdentifier(buf.readUtf())
                 .getDeclaredConstructor(FriendlyByteBuf.class).newInstance(buf);
         } catch (Exception e) {
             GInstrumentMod.LOGGER.error("Error initializing button identifier", e);
