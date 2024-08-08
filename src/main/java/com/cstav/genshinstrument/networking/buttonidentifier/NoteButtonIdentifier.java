@@ -1,16 +1,12 @@
 package com.cstav.genshinstrument.networking.buttonidentifier;
 
-import java.util.List;
-import java.util.function.Function;
-
 import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.NoteButton;
-import com.cstav.genshinstrument.networking.packet.INoteIdentifierSender;
-import com.cstav.genshinstrument.networking.packet.instrument.util.InstrumentPacketUtil;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.network.FriendlyByteBuf;
+
+import java.util.function.Function;
 
 /**
  * <p>
