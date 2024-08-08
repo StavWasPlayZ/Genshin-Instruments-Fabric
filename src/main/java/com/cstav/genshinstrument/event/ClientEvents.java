@@ -15,7 +15,6 @@ import com.cstav.genshinstrument.networking.packet.instrument.util.HeldSoundPhas
 import com.cstav.genshinstrument.sound.NoteSound;
 import com.cstav.genshinstrument.sound.held.HeldNoteSounds;
 import com.cstav.genshinstrument.util.InstrumentEntityData;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
@@ -42,6 +41,7 @@ public abstract class ClientEvents {
         ServerWorldEvents.UNLOAD.register(ClientEvents::onLevelUnload);
 
         InstrumentPlayedEvent.EVENT.register(ClientEvents::onInstrumentPlayed);
+        HeldNoteSoundPlayedEvent.EVENT.register(ClientEvents::onHeldNoteSound);
         PosePlayerArmEvent.EVENT.register(ClientEvents::posePlayerArmEvent);
 
         ClientLifecycleEvents.CLIENT_STOPPING.register(ClientEvents::onGameShutdown);
