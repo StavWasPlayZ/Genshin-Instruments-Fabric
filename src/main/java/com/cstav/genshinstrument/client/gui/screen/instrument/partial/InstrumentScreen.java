@@ -1,11 +1,5 @@
 package com.cstav.genshinstrument.client.gui.screen.instrument.partial;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.function.Consumer;
-
 import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screen.instrument.GenshinConsentScreen;
@@ -17,7 +11,6 @@ import com.cstav.genshinstrument.client.gui.widget.IconToggleButton;
 import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings;
 import com.cstav.genshinstrument.client.midi.InstrumentMidiReceiver;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEventArgs;
-import com.cstav.genshinstrument.event.NoteSoundPlayedEvent;
 import com.cstav.genshinstrument.event.NoteSoundPlayedEvent.NoteSoundPlayedEventArgs;
 import com.cstav.genshinstrument.networking.GIPacketHandler;
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
@@ -27,7 +20,6 @@ import com.cstav.genshinstrument.util.InstrumentEntityData;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.platform.InputConstants.Type;
 import com.mojang.logging.LogUtils;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -39,12 +31,17 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.Iterator;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.function.Consumer;
+
 @Environment(EnvType.CLIENT)
 public abstract class InstrumentScreen extends Screen {
     private static final int VISIBILITY_BUTTON_MARGIN = 6;
     private static final String VISIBILITY_SPRITE_LOC = "textures/gui/sprites/icon/visibility/";
-    
-    @SuppressWarnings("resource")
+
     public int getNoteSize() {
         return switch (Minecraft.getInstance().options.guiScale().get()) {
             case 1 -> 36;
