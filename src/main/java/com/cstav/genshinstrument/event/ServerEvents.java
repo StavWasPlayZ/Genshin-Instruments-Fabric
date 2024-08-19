@@ -6,7 +6,6 @@ import com.cstav.genshinstrument.networking.packet.instrument.util.InstrumentPac
 import com.cstav.genshinstrument.sound.held.HeldNoteSounds;
 import com.cstav.genshinstrument.sound.held.InitiatorID;
 import com.cstav.genshinstrument.util.InstrumentEntityData;
-
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.server.MinecraftServer;
@@ -37,7 +36,7 @@ public abstract class ServerEvents {
     }
 
     private static void onInstrumentScreenOpenStateChanged(final InstrumentOpenStateChangedEventArgs args) {
-        if (args.player.level().isClientSide)
+        if (!args.player.level().isClientSide)
             return;
 
         if (!args.isOpen) {
