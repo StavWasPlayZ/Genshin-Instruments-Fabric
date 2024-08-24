@@ -1,10 +1,5 @@
 package com.cstav.genshinstrument.client.gui.screen.instrument.partial.grid;
 
-import java.awt.Color;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.function.Consumer;
-
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.NoteButton;
@@ -20,11 +15,15 @@ import com.cstav.genshinstrument.networking.buttonidentifier.NoteGridButtonIdent
 import com.cstav.genshinstrument.sound.NoteSound;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.layouts.AbstractLayout;
+
+import java.awt.*;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.function.Consumer;
 
 @Environment(EnvType.CLIENT)
 public abstract class GridInstrumentScreen extends InstrumentScreen {
@@ -113,6 +112,17 @@ public abstract class GridInstrumentScreen extends InstrumentScreen {
 
     public NoteButton getNoteButton(final int row, final int column) throws IndexOutOfBoundsException {
         return noteGrid.getNoteButton(row, column);
+    }
+
+    /**
+     * Retrieves the MIDI note that corresponds with
+     * note button at position {@code note}.
+     * Starts from bottom-left corner (0, 0).
+     * @param note The MIDI note to fetch
+     * @return The corresponding note button
+     */
+    public NoteButton getNoteButtonByMIDINote(final int note) {
+        return getNoteButton(note % rows(), note / rows());
     }
 
 

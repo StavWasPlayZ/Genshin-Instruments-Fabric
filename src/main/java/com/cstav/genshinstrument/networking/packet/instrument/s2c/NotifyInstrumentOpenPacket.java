@@ -1,20 +1,18 @@
 package com.cstav.genshinstrument.networking.packet.instrument.s2c;
 
-import java.util.Optional;
-import java.util.UUID;
-
 import com.cstav.genshinstrument.event.InstrumentOpenStateChangedEvent;
 import com.cstav.genshinstrument.event.InstrumentOpenStateChangedEvent.InstrumentOpenStateChangedEventArgs;
 import com.cstav.genshinstrument.networking.IModPacket;
-import com.cstav.genshinstrument.sound.held.HeldNoteSounds;
 import com.cstav.genshinstrument.util.InstrumentEntityData;
-
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * A S2C packet to update the {@code instrument open} state
@@ -76,7 +74,6 @@ public class NotifyInstrumentOpenPacket implements IModPacket {
     }
 
 
-    @SuppressWarnings("resource")
     @Override
     public void handle(Player player, PacketSender responseSender) {
         final Player _player = Minecraft.getInstance().level.getPlayerByUUID(playerUUID);
@@ -85,7 +82,7 @@ public class NotifyInstrumentOpenPacket implements IModPacket {
 
             if (pos.isPresent()) // is block instrument
                 InstrumentEntityData.setOpen(_player, pos.get());
-            else
+            else // is item instrument
                 InstrumentEntityData.setOpen(_player, hand.get());
 
         } else {

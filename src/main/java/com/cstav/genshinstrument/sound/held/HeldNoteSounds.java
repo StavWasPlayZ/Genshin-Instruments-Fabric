@@ -1,8 +1,16 @@
 package com.cstav.genshinstrument.sound.held;
 
+import com.cstav.genshinstrument.networking.GIPacketHandler;
+import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
+import com.cstav.genshinstrument.networking.packet.instrument.NoteSoundMetadata;
+import com.cstav.genshinstrument.networking.packet.instrument.c2s.C2SHeldNoteSoundPacket;
+import com.cstav.genshinstrument.networking.packet.instrument.util.HeldSoundPhase;
 import com.cstav.genshinstrument.util.MultTuple;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
@@ -73,6 +81,24 @@ public abstract class HeldNoteSounds {
                 (curr, repl) -> curr
             ))
             .values();
+    }
+
+    /**
+     * Notifies the release of the given note.
+     */
+    public static void notifyRelease(HeldNoteSoundInstance soundInstance, @Nullable NoteButtonIdentifier noteIdentifier) {
+        final Player player = Minecraft.getInstance().player;
+
+        GIPacketHandler.sendToServer(new C2SHeldNoteSoundPacket(
+            soundInstance.heldSoundContainer,
+            new NoteSoundMetadata(
+                player.blockPosition(),
+                soundInstance.notePitch, (int)(soundInstance.getVolume() * 100),
+                soundInstance.instrumentId,
+                Optional.ofNullable(noteIdentifier)
+            ),
+            HeldSoundPhase.RELEASE
+        ));
     }
 
 

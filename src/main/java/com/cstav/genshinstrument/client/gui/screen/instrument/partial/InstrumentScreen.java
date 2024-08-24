@@ -585,8 +585,11 @@ public abstract class InstrumentScreen extends Screen {
     }
 
 
+    /**
+     * @apiNote Please override {@link InstrumentScreen#onClose(boolean)} instead.
+     */
     @Override
-    public void onClose() {
+    public final void onClose() {
         onClose(true);
     }
     public void onClose(final boolean notify) {

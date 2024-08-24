@@ -4,7 +4,6 @@ import com.cstav.genshinstrument.event.InstrumentOpenStateChangedEvent;
 import com.cstav.genshinstrument.event.InstrumentOpenStateChangedEvent.InstrumentOpenStateChangedEventArgs;
 import com.cstav.genshinstrument.networking.GIPacketHandler;
 import com.cstav.genshinstrument.networking.OpenInstrumentPacketSender;
-import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
 import com.cstav.genshinstrument.networking.packet.instrument.NoteSoundMetadata;
 import com.cstav.genshinstrument.networking.packet.instrument.s2c.NotifyInstrumentOpenPacket;
 import com.cstav.genshinstrument.networking.packet.instrument.s2c.OpenInstrumentPacket;
@@ -22,7 +21,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
-import org.jetbrains.annotations.ApiStatus.Internal;
 
 import java.util.List;
 import java.util.Optional;
@@ -222,7 +220,6 @@ public class InstrumentPacketUtil {
 
         NotifyInstrumentOpenPacket instrumentOpenPacket;
 
-        // Update the capability on the server
         if (pos == null) {
             InstrumentEntityData.setOpen(player, usedHand);
             instrumentOpenPacket = new NotifyInstrumentOpenPacket(player.getUUID(), usedHand);
@@ -251,11 +248,7 @@ public class InstrumentPacketUtil {
         return true;
     }
 
-    /**
-     * @apiNote This method should only be used by the internal Genshin Instruments mod!
-     */
-    @Internal
-    public static void sendInternalOpenPacket(ServerPlayer player, String instrumentType) {
-        GIPacketHandler.sendToClient(new OpenInstrumentPacket(instrumentType), player);
+    public static void sendOpenPacket(ServerPlayer player, ResourceLocation instrumentID) {
+        GIPacketHandler.sendToClient(new OpenInstrumentPacket(instrumentID), player);
     }
 }

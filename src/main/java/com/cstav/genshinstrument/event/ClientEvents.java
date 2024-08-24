@@ -49,7 +49,7 @@ public abstract class ClientEvents {
     }
 
 
-    // Handle instrument arm pose
+    //#region Handle instrument arm pose
 
     private static void poseForBlockInstrument(PosePlayerArmEventArgs args, Player player) {
         final Block block = player.level().getBlockState(InstrumentEntityData.getBlockPos(player)).getBlock();
@@ -85,6 +85,8 @@ public abstract class ClientEvents {
         else
             poseForBlockInstrument(args, player);
     }
+
+    //#endregion
 
     //#region Shared Instrument Screen implementation
     // Responsible for closing the instrument screen when
