@@ -612,9 +612,16 @@ public abstract class InstrumentScreen extends Screen {
         super.removed();
     }
 
+    private boolean notifiedClose = false;
+
     private void notifyClosed() {
+        if (notifiedClose)
+            return;
+
         InstrumentEntityData.setClosed(minecraft.player);
         GIPacketHandler.sendToServer(new CloseInstrumentPacket());
+        
+        notifiedClose = true;
     }
 
 
