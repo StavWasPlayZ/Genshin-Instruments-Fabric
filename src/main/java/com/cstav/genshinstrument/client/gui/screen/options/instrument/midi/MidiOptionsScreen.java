@@ -23,6 +23,7 @@ import net.minecraft.network.chat.Component;
 
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 @Environment(EnvType.CLIENT)
@@ -33,6 +34,9 @@ public class MidiOptionsScreen extends AbstractInstrumentOptionsScreen {
     ;
 
     public MidiOptionsScreen(Component pTitle, Screen prevScreen, InstrumentScreen instrumentScreen) {
+        super(pTitle, instrumentScreen, prevScreen);
+    }
+    public MidiOptionsScreen(Component pTitle, Screen prevScreen, Optional<InstrumentScreen> instrumentScreen) {
         super(pTitle, instrumentScreen, prevScreen);
     }
 
@@ -124,7 +128,8 @@ public class MidiOptionsScreen extends AbstractInstrumentOptionsScreen {
     }
         
     protected void initThatOtherSection(final GridLayout grid, final RowHelper rowHelper) {
-        final boolean canInstrumentOverflow = !isOverlay || instrumentScreen.midiReceiver.allowMidiOverflow();
+        final boolean canInstrumentOverflow = instrumentScreen.map((screen) -> screen.midiReceiver.allowMidiOverflow())
+            .orElse(false);
 
         if (canInstrumentOverflow) {
             final CycleButton<Boolean> extendOctaves = CycleButton.booleanBuilder(CommonComponents.OPTION_ON, CommonComponents.OPTION_OFF)

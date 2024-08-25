@@ -9,6 +9,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.entity.player.Player;
 
@@ -19,12 +20,14 @@ public interface PosePlayerArmEvent extends ModEvent<PosePlayerArmEventArgs> {
     @Cancelable
     public static class PosePlayerArmEventArgs extends EventArgs {
 
+        public final HumanoidModel<Player> model;
         public final Player player;
         public final HandType hand;
         public final ModelPart arm;
 
-        public PosePlayerArmEventArgs(final Player player, final HandType hand, final ModelPart arm) {
+        public PosePlayerArmEventArgs(Player player, HumanoidModel<Player> model, HandType hand, ModelPart arm) {
             this.player = player;
+            this.model = model;
             this.hand = hand;
             this.arm = arm;
         }

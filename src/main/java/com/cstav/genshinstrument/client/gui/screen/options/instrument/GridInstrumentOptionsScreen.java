@@ -3,7 +3,7 @@ package com.cstav.genshinstrument.client.gui.screen.options.instrument;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.config.enumType.label.NoteGridLabel;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.label.INoteLabel;
-import com.cstav.genshinstrument.client.gui.screen.instrument.partial.notegrid.GridInstrumentScreen;
+import com.cstav.genshinstrument.client.gui.screen.instrument.partial.grid.GridInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.InstrumentOptionsScreen;
 
 import net.fabricmc.api.EnvType;
@@ -44,8 +44,10 @@ public class GridInstrumentOptionsScreen extends InstrumentOptionsScreen {
 
     @Override
     public boolean isPitchSliderEnabled() {
-        return (instrumentScreen == null) ||
-            !((GridInstrumentScreen)instrumentScreen).isSSTI();
+        return !instrumentScreen
+            .map((screen) -> (GridInstrumentScreen) screen)
+            .map(GridInstrumentScreen::isSSTI)
+            .orElse(false);
     }
     
     

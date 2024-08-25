@@ -1,96 +1,165 @@
 package com.cstav.genshinstrument.event;
 
-import java.util.Optional;
-
 import com.cstav.genshinstrument.block.partial.InstrumentBlockEntity;
-import com.cstav.genshinstrument.event.InstrumentPlayedEvent.ByPlayer.ByPlayerArgs;
 import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEventArgs;
 import com.cstav.genshinstrument.event.impl.Cancelable;
 import com.cstav.genshinstrument.event.impl.EventArgs;
 import com.cstav.genshinstrument.event.impl.ModEvent;
-import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
-import com.cstav.genshinstrument.sound.NoteSound;
 
+import com.cstav.genshinstrument.networking.packet.instrument.NoteSoundMetadata;
 import com.cstav.genshinstrument.util.InstrumentEntityData;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-@FunctionalInterface
-public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEventArgs> {
+import java.util.Optional;
 
-    Event<InstrumentPlayedEvent> EVENT = EventFactory.createArrayBacked(InstrumentPlayedEvent.class,
+/**
+ * An abstract implementation of a sound played event.
+ * @param <T> The sound object type
+ */
+@FunctionalInterface
+public interface InstrumentPlayedEvent<T> extends ModEvent<InstrumentPlayedEventArgs<T>> {
+
+    Event<InstrumentPlayedEvent<Object>> EVENT = EventFactory.createArrayBacked(InstrumentPlayedEvent.class,
         (listeners) -> args -> ModEvent.handleEvent(listeners, args)
     );
 
+    /**
+     * Handles the instrument event.
+     * Only invokes for subscribers whose sound type is
+     * an instance of the called event.
+     * @param <E> The event type
+     * @param <A> The args type
+     */
+    static <E extends ModEvent<A>, A extends InstrumentPlayedEventArgs<?>>
+    void handleInsEvent(
+        E[] listeners, A args
+    ) {
+        handleInsEvent(listeners, args, true);
+    }
+    /**
+     * Invokes the provided event subscribers,
+     * then passes to the {@link InstrumentPlayedEvent#EVENT general instrument event}.
+     * @param <E> The event type
+     * @param <A> The args type
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    static <E extends ModEvent<A>, A extends InstrumentPlayedEventArgs<?>>
+    void handleInsEvent(
+        E[] listeners, A args, boolean callMain
+    ) {
+        ModEvent.handleEvent(listeners, args);
+
+        if (callMain) {
+            EVENT.invoker().triggered((InstrumentPlayedEventArgs) args);
+        }
+    }
+
+
+    /**
+     * @param <T> The sound object type
+     */
     @Cancelable
-    public static class InstrumentPlayedEventArgs extends EventArgs {
+    class InstrumentPlayedEventArgs<T> extends EventArgs {
 
-        public final NoteSound sound;
-        public final int pitch, volume;
+        private final T sound;
+        private final NoteSoundMetadata soundMeta;
+        private final Level level;
 
-        public final Level level;
+        /**
+         * Information about the entity initiator.
+         * Present if there is indeed an entity initiator.
+         */
+        private final Optional<EntityInfo> entityInfo;
+        public boolean isByEntity() {
+            return entityInfo.isPresent();
+        }
+        public boolean isByPlayer() {
+            return isByEntity() && (entityInfo.get().entity instanceof Player);
+        }
 
-        public final ResourceLocation instrumentId;
-        public final Optional<NoteButtonIdentifier> noteIdentifier;
-        public final BlockPos playPos;
+        /**
+         * Constructor for creating a non-entity event
+         */
+        public InstrumentPlayedEventArgs(Level level, T sound, NoteSoundMetadata soundMeta) {
+            this.level = level;
+            this.sound = sound;
+            this.soundMeta = soundMeta;
 
+            this.entityInfo = Optional.empty();
+        }
+
+        /**
+         * Constructor for creating a by-entity event
+         */
+        public InstrumentPlayedEventArgs(Entity initiator, T sound, NoteSoundMetadata soundMeta) {
+            this.level = initiator.level();
+            this.sound = sound;
+            this.soundMeta = soundMeta;
+
+            this.entityInfo = Optional.of(new EntityInfo(initiator));
+        }
+
+
+        public T sound() {
+            return sound;
+        }
+        public NoteSoundMetadata soundMeta() {
+            return soundMeta;
+        }
+        public Level level() {
+            return level;
+        }
+        public Optional<EntityInfo> entityInfo() {
+            return entityInfo;
+        }
 
         /**
          * Convenience method to convert the volume of the note
          * into a {@code float} percentage
          */
         public float volume() {
-            return volume / 100f;
+            return soundMeta.volume() / 100f;
         }
-        
-
-        public InstrumentPlayedEventArgs(NoteSound sound, int pitch, int volume, Level level, BlockPos pos,
-                ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier) {
-                    
-            this.sound = sound;
-            this.pitch = pitch;
-            this.volume = volume;
-
-            this.level = level;
-            this.playPos = pos;
-
-            this.instrumentId = instrumentId;
-            this.noteIdentifier = Optional.ofNullable(noteIdentifier);
-        }
-    }
 
 
+        /**
+         * An object containing information
+         * about the entity who initiated the event
+         */
+        public class EntityInfo {
+            public final Entity entity;
 
-    @FunctionalInterface
-    public interface ByPlayer extends ModEvent<ByPlayerArgs> {
-
-        Event<ByPlayer> EVENT = EventFactory.createArrayBacked(ByPlayer.class,
-            (listeners) -> args -> {
-                ModEvent.handleEvent(listeners, args);
-                // Also fire the event on the regular played event
-                InstrumentPlayedEvent.EVENT.invoker().triggered(args);
-            }
-        );
-
-        @Cancelable
-        public static class ByPlayerArgs extends InstrumentPlayedEventArgs {
-            public final Player player;
-
-            // The value below will only be supplied if initiated from an item
-            /** The hand holding the instrument played by this player */
+            /**
+             * The hand carrying the <b>item</b> instrument.
+             * Empty for when not played by an instrument
+             * or is not a player.
+             */
             public final Optional<InteractionHand> hand;
 
+            protected final InstrumentPlayedEventArgs<T> baseEvent = InstrumentPlayedEventArgs.this;
+
+            public EntityInfo(Entity entity) {
+                this.entity = entity;
+
+                if (
+                    (entity instanceof Player player)
+                    && (InstrumentEntityData.isItem(player))
+                ) {
+                    hand = Optional.of(InstrumentEntityData.getHand(player));
+                } else {
+                    hand = Optional.empty();
+                }
+            }
 
             /**
              * <p>Returns whether this event was fired by an item instrument.</p>
              * A {@code false} result does NOT indicate a block instrument.
-             * @see ByPlayerArgs#isBlockInstrument
+             * @see EntityInfo#isBlockInstrument
              */
             public boolean isItemInstrument() {
                 return hand.isPresent();
@@ -98,11 +167,12 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEventArg
             /**
              * <p>Returns whether this event was fired by a block instrument.</p>
              * A {@code false} result does NOT indicate an instrument item.
-             * @see ByPlayerArgs#isItemInstrument()
+             * @see EntityInfo#isItemInstrument()
              */
             public boolean isBlockInstrument() {
                 return !isItemInstrument()
-                    && player.level().getBlockEntity(playPos) instanceof InstrumentBlockEntity;
+                    && level.getBlockEntity(baseEvent.soundMeta.pos())
+                    instanceof InstrumentBlockEntity;
             }
 
             /**
@@ -110,24 +180,6 @@ public interface InstrumentPlayedEvent extends ModEvent<InstrumentPlayedEventArg
              */
             public boolean isNotInstrument() {
                 return !isBlockInstrument() && !isItemInstrument();
-            }
-
-    
-            public ByPlayerArgs(NoteSound sound, int pitch, int volume, Player player, BlockPos pos,
-                    ResourceLocation instrumentId, NoteButtonIdentifier noteIdentifier) {
-                super(
-                    sound, pitch, volume,
-                    player.level(), pos,
-                    instrumentId, noteIdentifier
-                );
-    
-                this.player = player;
-
-                if (InstrumentEntityData.isItem(player)) {
-                    this.hand = Optional.of(InstrumentEntityData.getHand(player));
-                } else {
-                    this.hand = Optional.empty();
-                }
             }
         }
     }

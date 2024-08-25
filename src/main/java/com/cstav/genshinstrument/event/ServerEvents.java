@@ -1,10 +1,15 @@
 package com.cstav.genshinstrument.event;
 
 import com.cstav.genshinstrument.item.InstrumentItem;
+import com.cstav.genshinstrument.networking.GIPacketHandler;
+import com.cstav.genshinstrument.networking.packet.instrument.s2c.NotifyInstrumentOpenPacket;
+import com.cstav.genshinstrument.networking.packet.instrument.util.InstrumentPacketUtil;
 import com.cstav.genshinstrument.util.InstrumentEntityData;
-import com.cstav.genshinstrument.util.ServerUtil;
-
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -15,14 +20,21 @@ public abstract class ServerEvents {
 
     public static void register() {
         ServerTickEvents.START_WORLD_TICK.register(ServerEvents::onServerTick);
+        ServerPlayConnectionEvents.DISCONNECT.register(ServerEvents::onPlayerLeave);
+        ServerPlayConnectionEvents.DISCONNECT.register(ServerEvents::onPlayerJoin);
     }
 
-    public static void onServerTick(final Level level) {
+    private static void onServerTick(final Level level) {
         level.players().forEach((player) -> {
             if (shouldAbruptlyClose(player))
-                ServerUtil.setInstrumentClosed(player);
+                InstrumentPacketUtil.setInstrumentClosed(player);
         });
     }
+
+    private static void onPlayerLeave(ServerGamePacketListenerImpl handler, MinecraftServer server) {
+        InstrumentPacketUtil.setInstrumentClosed(handler.player);
+    }
+
 
     private static boolean shouldAbruptlyClose(final Player player) {
         if (!InstrumentEntityData.isOpen(player))
@@ -43,5 +55,42 @@ public abstract class ServerEvents {
                 .closerToCenterThan(player.position(), MAX_BLOCK_INSTRUMENT_DIST);
         }
     }
+
+    //#region Sync the open state of players to a new player
+
+    private static void onPlayerJoin(ServerGamePacketListenerImpl handler, MinecraftServer server) {
+        final ServerPlayer player = handler.player;
+        final Level level = player.level();
+        if (level.isClientSide)
+            return;
+
+        level.players().forEach((oPlayer) -> {
+            if (oPlayer.equals(player))
+                return;
+
+            if (InstrumentEntityData.isOpen(oPlayer))
+                notifyOpenStateToPlayer(oPlayer, player);
+        });
+    }
+
+    private static void notifyOpenStateToPlayer(final Player player, final ServerPlayer target) {
+        final NotifyInstrumentOpenPacket packet;
+
+        if (InstrumentEntityData.isItem(player)) {
+            packet = new NotifyInstrumentOpenPacket(
+                player.getUUID(),
+                InstrumentEntityData.getHand(player)
+            );
+        } else {
+            packet = new NotifyInstrumentOpenPacket(
+                player.getUUID(),
+                InstrumentEntityData.getBlockPos(player)
+            );
+        }
+
+        GIPacketHandler.sendToClient(packet, target);
+    }
+
+    //#endregion
 
 }

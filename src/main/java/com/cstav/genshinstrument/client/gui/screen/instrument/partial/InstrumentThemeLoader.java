@@ -59,7 +59,16 @@ public class InstrumentThemeLoader {
     private static final ArrayList<InstrumentThemeLoader> LOADERS = new ArrayList<>();
     private static final Color DEF_PRESSED_THEME = new Color(255, 249, 239);
 
-    public final ResourceLocation resourcesRootDir, instrumentId;
+    public final ResourceLocation resourcesRootDir;
+    /**
+     * The ID of the instrument using the resources.
+     * Used for logging purposes.
+     */
+    public final ResourceLocation instrumentId;
+    /**
+     * The ID of the used instrument's resources
+     */
+    public final ResourceLocation subjectInstrumentId;
     private final boolean ignoreGlobal;
 
     private Color
@@ -73,16 +82,35 @@ public class InstrumentThemeLoader {
     /**
      * Initializes a new Instrument Theme Loader and subscribes it to the resource load event.
      * @param resourceRootDir The location of the root resources folder to derive styles from
+     * @param instrumentId The ID of the instrument using the resources. Used for logging purposes.
+     * @param subjectInstrumentId The ID of the used instrument's resources
      * @param ignoreGlobal When a global resource pack is enabled, defines whether this theme loader ignores it
      */
-    public InstrumentThemeLoader(ResourceLocation resourceRootDir, ResourceLocation instrumentId, boolean ignoreGlobal) {
+    public InstrumentThemeLoader(ResourceLocation resourceRootDir,
+                                 ResourceLocation instrumentId,
+                                 ResourceLocation subjectInstrumentId,
+                                 boolean ignoreGlobal) {
         this.resourcesRootDir = resourceRootDir;
         this.instrumentId = instrumentId;
+        this.subjectInstrumentId = subjectInstrumentId;
         this.ignoreGlobal = ignoreGlobal;
 
         LOADERS.add(this);
         addListener(this::loadColorTheme);
     }
+
+    /**
+     * Initializes a new Instrument Theme Loader and subscribes it to the resource load event.
+     * @param resourceRootDir The location of the root resources folder to derive styles from
+     * @param instrumentId The instrument ID
+     * @param ignoreGlobal When a global resource pack is enabled, defines whether this theme loader ignores it
+     */
+    public InstrumentThemeLoader(ResourceLocation resourceRootDir,
+                                 ResourceLocation instrumentId,
+                                 boolean ignoreGlobal) {
+        this(resourceRootDir, instrumentId, instrumentId, ignoreGlobal);
+    }
+
     /**
      * Initializes a new Instrument Theme Loader and subscribes it to the resource load event.
      * @param resourceRootDir The location of the root resources folder to derive styles from
@@ -99,8 +127,13 @@ public class InstrumentThemeLoader {
         this(InstrumentScreen.getInstrumentRootPath(instrumentId), instrumentId);
     }
 
-    public static InstrumentThemeLoader fromOther(ResourceLocation otherInstrumentId, ResourceLocation instrumentId) {
-        return new InstrumentThemeLoader(InstrumentScreen.getInstrumentRootPath(otherInstrumentId), instrumentId);
+    public static InstrumentThemeLoader fromOther(InstrumentThemeLoader other, ResourceLocation instrumentId) {
+        return new InstrumentThemeLoader(
+            other.resourcesRootDir,
+            instrumentId,
+            other.subjectInstrumentId,
+            other.ignoreGlobal
+        );
     }
 
 
@@ -207,6 +240,8 @@ public class InstrumentThemeLoader {
     }
 
 
+    //#region File Reading
+
     private static void reload(final ResourceManager resourceManager) {
         updateIsGlobalThemed(resourceManager);
 
@@ -280,7 +315,6 @@ public class InstrumentThemeLoader {
     }
 
 
-
     public ResourceLocation getResourcesRootDir() {
         return resourcesRootDir;
     }
@@ -289,6 +323,8 @@ public class InstrumentThemeLoader {
         return ((!ignoreGlobal && isGlobalThemed) ? GLOBAL_LOC : getResourcesRootDir())
             .withSuffix("/"+JSON_STYLER_NAME);
     }
+
+    //#endregion
 
 
 
