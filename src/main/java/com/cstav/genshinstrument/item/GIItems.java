@@ -2,16 +2,19 @@ package com.cstav.genshinstrument.item;
 
 import com.cstav.genshinstrument.GICreativeModeTabs;
 import com.cstav.genshinstrument.GInstrumentMod;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 
 import static com.cstav.genshinstrument.networking.packet.instrument.util.InstrumentPacketUtil.sendOpenPacket;
 
 public class GIItems {
-
+    
     public static final Item
         WINDSONG_LYRE = register("windsong_lyre", new InstrumentItem(
             (player) -> sendOpenPacket(player, loc("windsong_lyre"))
@@ -42,8 +45,15 @@ public class GIItems {
 
     private static void addToItemGroups(final Item item) {
         // All shall go to the instruments and tools tab
-        GICreativeModeTabs.addToInstrumentsTab(0, item);
-        GICreativeModeTabs.addToTab(0, CreativeModeTabs.TOOLS_AND_UTILITIES, item);
+        addToTab(GICreativeModeTabs.INSTRUMENTS_TAB, item);
+        addToTab(CreativeModeTabs.TOOLS_AND_UTILITIES, item);
+    }
+
+    private static void addToTab(final CreativeModeTab tab, final Item item) {
+        addToTab(BuiltInRegistries.CREATIVE_MODE_TAB.getResourceKey(tab).get(), item);
+    }
+    private static void addToTab(final ResourceKey<CreativeModeTab> tab, final Item item) {
+        ItemGroupEvents.modifyEntriesEvent(tab).register((content) -> content.accept(item));
     }
 
 
