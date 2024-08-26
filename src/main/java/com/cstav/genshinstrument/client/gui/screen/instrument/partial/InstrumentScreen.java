@@ -585,8 +585,6 @@ public abstract class InstrumentScreen extends Screen {
     }
 
 
-    private boolean closed = false;
-
     /**
      * @apiNote Please override {@link InstrumentScreen#onClose(boolean)} instead.
      */
@@ -595,37 +593,35 @@ public abstract class InstrumentScreen extends Screen {
         onClose(true);
     }
     public void onClose(final boolean notify) {
-        if (!closed) {
-            if (notify)
-                notifyClosed();
+        if (notify)
+            notifyClosed();
 
-            if (isOptionsScreenActive)
-                optionsScreen.onClose();
-
-            closed = true;
-        }
+        if (isOptionsScreenActive)
+            optionsScreen.onClose();
 
         super.onClose();
     }
 
     @Override
     public void removed() {
-        // For when the screen was forcibly replaced
-        if (!closed) {
-            if (isOptionsScreenActive)
-                optionsScreen.saveOptions();
-            else
-                notifyClosed();
-
-            closed = true;
-        }
+        if (isOptionsScreenActive)
+            optionsScreen.saveOptions();
+        else
+            notifyClosed();
 
         super.removed();
     }
 
+    private boolean notifiedClose = false;
+
     private void notifyClosed() {
+        if (notifiedClose)
+            return;
+
         InstrumentEntityData.setClosed(minecraft.player);
         GIPacketHandler.sendToServer(new CloseInstrumentPacket());
+        
+        notifiedClose = true;
     }
 
 
