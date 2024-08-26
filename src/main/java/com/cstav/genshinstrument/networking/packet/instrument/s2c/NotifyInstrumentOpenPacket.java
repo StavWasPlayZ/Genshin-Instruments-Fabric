@@ -86,7 +86,7 @@ public class NotifyInstrumentOpenPacket implements IModPacket {
                 InstrumentEntityData.setOpen(_player, hand.get());
 
         } else {
-            InstrumentEntityData.setClosed(player);
+            InstrumentEntityData.setClosed(_player);
         }
 
         InstrumentOpenStateChangedEvent.EVENT.invoker().triggered(
