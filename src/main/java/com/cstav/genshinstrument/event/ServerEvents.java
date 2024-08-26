@@ -25,7 +25,7 @@ public abstract class ServerEvents {
     }
 
     private static void onServerTick(final Level level) {
-        level.getServer().getPlayerList().getPlayers().forEach((player) -> {
+        level.players().forEach((player) -> {
             if (shouldAbruptlyClose(player))
                 InstrumentPacketUtil.setInstrumentClosed(player);
         });
@@ -64,7 +64,7 @@ public abstract class ServerEvents {
         if (level.isClientSide)
             return;
 
-        level.getServer().getPlayerList().getPlayers().forEach((oPlayer) -> {
+        level.players().forEach((oPlayer) -> {
             if (oPlayer.equals(player))
                 return;
 
