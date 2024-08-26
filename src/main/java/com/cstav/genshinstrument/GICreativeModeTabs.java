@@ -53,18 +53,52 @@ public abstract class GICreativeModeTabs {
     }
 
 
+    //#region Item registration
+
+    // Instrument tab
+
     /**
      * Queues the item to the registration event of the Instruments tab
      * @param priority The priority sort of this item. 0 is designated to the GI mod, 1 to EMI.
      * @param item The desired item
      */
     public static void addToInstrumentsTab(int priority, Item item) {
-        addToTab(priority, INSTRUMENTS_TAB, item);
+        addToInstrumentsTab(priority, item, null);
+    }
+    /**
+     * Queues the item to the registration event of the Instruments tab
+     * @param priority The priority sort of this item. 0 is designated to the GI mod, 1 to EMI.
+     * @param item The desired item
+     * @param appearsBefore This item should appear before the given item
+     */
+    public static void addToInstrumentsTab(int priority, Item item, Item appearsBefore) {
+        addToTab(priority, INSTRUMENTS_TAB, item, appearsBefore);
     }
 
+    // Creative mode tab
+
+    /**
+     * Queues the item to the registration event of the given tab
+     * @param priority The priority sort of this item. 0 is designated to the GI mod, 1 to EMI.
+     * @param tab The desired tab
+     * @param item The desired item
+     */
     private static void addToTab(int priority, CreativeModeTab tab, Item item) {
-        addToTab(priority, BuiltInRegistries.CREATIVE_MODE_TAB.getResourceKey(tab).orElseThrow(), item);
+        addToTab(priority, tab, item, null);
     }
+    /**
+     * Queues the item to the registration event of the given tab
+     * @param priority The priority sort of this item. 0 is designated to the GI mod, 1 to EMI.
+     * @param tab The desired tab
+     * @param item The desired item
+     * @param appearsBefore This item should appear before the given item
+     */
+    private static void addToTab(int priority, CreativeModeTab tab, Item item, Item appearsBefore) {
+        addToTab(priority, BuiltInRegistries.CREATIVE_MODE_TAB.getResourceKey(tab).orElseThrow(), item, appearsBefore);
+    }
+
+    // Registry key tab
+
     /**
      * Queues the item to the registration event of the given tab
      * @param priority The priority sort of this item. 0 is designated to the GI mod, 1 to EMI.
@@ -72,6 +106,15 @@ public abstract class GICreativeModeTabs {
      * @param item The desired item
      */
     public static void addToTab(int priority, ResourceKey<CreativeModeTab> tab, Item item) {
+        addToTab(priority, tab, item, null);
+    }
+    /**
+     * Queues the item to the registration event of the given tab
+     * @param priority The priority sort of this item. 0 is designated to the GI mod, 1 to EMI.
+     * @param tab The desired tab
+     * @param item The desired item
+     */
+    public static void addToTab(int priority, ResourceKey<CreativeModeTab> tab, Item item, Item appearsBefore) {
         if (!TAB_MAP.containsKey(tab)) {
             ItemGroupEvents.modifyEntriesEvent(tab).register((content) -> {
                 TAB_MAP.get(tab).values().forEach((items) ->
@@ -83,7 +126,13 @@ public abstract class GICreativeModeTabs {
             TAB_MAP.put(tab, new TreeMap<>());
         }
 
-        TAB_MAP.get(tab).computeIfAbsent(priority, (p) -> new ArrayList<>()).add(item);
+        final List<Item> items = TAB_MAP.get(tab).computeIfAbsent(priority, (p) -> new ArrayList<>());
+        if ((appearsBefore != null) && items.contains(appearsBefore))
+            items.add(items.indexOf(appearsBefore), item);
+        else
+            items.add(item);
     }
+
+    //#endregion
 
 }
