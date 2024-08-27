@@ -123,11 +123,11 @@ public abstract class GICreativeModeTabs {
      */
     public static void addToTab(int priority, ResourceKey<CreativeModeTab> tab, Item item, Item appearsBefore) {
         if (!TAB_MAP.containsKey(tab)) {
-            ItemGroupEvents.modifyEntriesEvent(tab).register((content) -> {
+            ItemGroupEvents.modifyEntriesEvent(tab).register((content) ->
                 TAB_MAP.get(tab).values().forEach((items) ->
                     items.forEach(content::accept)
-                );
-            });
+                )
+            );
 
             TAB_MAP.put(tab, new TreeMap<>());
         }
