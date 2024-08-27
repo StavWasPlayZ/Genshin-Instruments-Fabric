@@ -127,7 +127,6 @@ public abstract class GICreativeModeTabs {
                 TAB_MAP.get(tab).values().forEach((items) ->
                     items.forEach(content::accept)
                 );
-                TAB_MAP.remove(tab);
             });
 
             TAB_MAP.put(tab, new TreeMap<>());
