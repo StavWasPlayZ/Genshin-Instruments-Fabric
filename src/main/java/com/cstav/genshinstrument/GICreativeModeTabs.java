@@ -55,6 +55,13 @@ public abstract class GICreativeModeTabs {
 
     //#region Item registration
 
+    /**
+     * @return A unique priority number for your mod
+     */
+    public static int getUniquePriority(final String modId) {
+        return modId.hashCode() + 2;
+    }
+
     // Instrument tab
 
     /**
