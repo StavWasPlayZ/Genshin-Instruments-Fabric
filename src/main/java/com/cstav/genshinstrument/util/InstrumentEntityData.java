@@ -1,7 +1,6 @@
 package com.cstav.genshinstrument.util;
 
 import com.cstav.genshinstrument.mixin.util.IEntityModData;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -19,7 +18,7 @@ public abstract class InstrumentEntityData {
 
 
     public static CompoundTag getModTag(final Entity entity) {
-        return ((IEntityModData)entity).getPersistentData();
+        return ((IEntityModData)entity).genshinstrument$getPersistentData();
     }
 
 

@@ -4,6 +4,7 @@ import com.cstav.genshinstrument.networking.IModPacket;
 import com.cstav.genshinstrument.networking.packet.instrument.util.InstrumentPacketUtil;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 /**
@@ -18,7 +19,7 @@ public class CloseInstrumentPacket implements IModPacket {
 
     @Override
     public void handle(Player player, PacketSender responseSender) {
-        InstrumentPacketUtil.setInstrumentClosed(player);
+        InstrumentPacketUtil.setInstrumentClosed((ServerPlayer) player);
     }
 
 }
