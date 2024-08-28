@@ -5,12 +5,15 @@ import com.cstav.genshinstrument.networking.GIPacketHandler;
 import com.cstav.genshinstrument.networking.packet.instrument.s2c.NotifyInstrumentOpenPacket;
 import com.cstav.genshinstrument.networking.packet.instrument.util.InstrumentPacketUtil;
 import com.cstav.genshinstrument.util.InstrumentEntityData;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -21,13 +24,13 @@ public abstract class ServerEvents {
     public static void register() {
         ServerTickEvents.START_WORLD_TICK.register(ServerEvents::onServerTick);
         ServerPlayConnectionEvents.DISCONNECT.register(ServerEvents::onPlayerLeave);
-        ServerPlayConnectionEvents.DISCONNECT.register(ServerEvents::onPlayerJoin);
+        ServerEntityEvents.ENTITY_LOAD.register(ServerEvents::onEntityLoad);
     }
 
     private static void onServerTick(final Level level) {
-        level.getServer().getPlayerList().getPlayers().forEach((player) -> {
+        level.players().forEach((player) -> {
             if (shouldAbruptlyClose(player))
-                InstrumentPacketUtil.setInstrumentClosed(player);
+                InstrumentPacketUtil.setInstrumentClosed((ServerPlayer) player);
         });
     }
 
@@ -56,20 +59,25 @@ public abstract class ServerEvents {
         }
     }
 
-    //#region Sync the open state of players to a new player
+    //#region Sync the open state of players
 
-    private static void onPlayerJoin(ServerGamePacketListenerImpl handler, MinecraftServer server) {
-        final ServerPlayer player = handler.player;
-        final Level level = player.level();
-        if (level.isClientSide)
+    // This event covers both world joining and dimension traversal
+    private static void onEntityLoad(Entity entity, ServerLevel world) {
+        if (!(entity instanceof ServerPlayer player))
             return;
 
-        level.getServer().getPlayerList().getPlayers().forEach((oPlayer) -> {
-            if (oPlayer.equals(player))
+        notifyOpenStateToPlayers(player);
+    }
+
+    private static void notifyOpenStateToPlayers(final ServerPlayer target) {
+        final Level level = target.level();
+
+        level.players().forEach((player) -> {
+            if (player.equals(target))
                 return;
 
-            if (InstrumentEntityData.isOpen(oPlayer))
-                notifyOpenStateToPlayer(oPlayer, player);
+            if (InstrumentEntityData.isOpen(player))
+                notifyOpenStateToPlayer(player, target);
         });
     }
 

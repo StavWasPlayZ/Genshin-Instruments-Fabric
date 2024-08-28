@@ -170,7 +170,7 @@ public class InstrumentPacketUtil {
     /*-----------------*/
 
 
-    public static void setInstrumentClosed(final Player player) {
+    public static void setInstrumentClosed(final ServerPlayer player) {
         // No need to go through the hassle if it's already closed
         if (!InstrumentEntityData.isOpen(player))
             return;
@@ -179,10 +179,10 @@ public class InstrumentPacketUtil {
         InstrumentEntityData.setClosed(player);
 
         // And clients
-        player.getServer().getPlayerList().getPlayers().forEach((oPlayer) ->
+        player.level().players().forEach((oPlayer) ->
             GIPacketHandler.sendToClient(
                 new NotifyInstrumentOpenPacket(player.getUUID()),
-                oPlayer
+                (ServerPlayer) oPlayer
             )
         );
 
@@ -228,10 +228,10 @@ public class InstrumentPacketUtil {
             instrumentOpenPacket = new NotifyInstrumentOpenPacket(player.getUUID(), pos);
         }
 
-        player.getServer().getPlayerList().getPlayers().forEach((otherPlayer) ->
+        player.level().players().forEach((otherPlayer) ->
             GIPacketHandler.sendToClient(
                 instrumentOpenPacket,
-                otherPlayer
+                (ServerPlayer) otherPlayer
             )
         );
 
