@@ -29,7 +29,7 @@ public abstract class ModelBakeryMixin {
         value = "INVOKE",
         target = "Lnet/minecraft/client/resources/model/ModelBakery;loadTopLevel(Lnet/minecraft/client/resources/model/ModelResourceLocation;)V",
         ordinal = 3,
-        shift = Shift.BEFORE
+        shift = Shift.AFTER
     ))
     private void initInjector(BlockColors blockColors, ProfilerFiller profilerFiller, Map<ResourceLocation, BlockModel> modelResources, Map<ResourceLocation, List<LoadedJson>> blockStateResources, CallbackInfo ci) {
         final RegisterAdditionalModelsEventArgs args = new RegisterAdditionalModelsEventArgs();
