@@ -1,12 +1,8 @@
 package com.cstav.genshinstrument.criteria;
 
-import com.cstav.genshinstrument.networking.packet.instrument.InstrumentPacket;
+import com.cstav.genshinstrument.networking.packet.instrument.c2s.C2SNotePacket;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.cstav.genshinstrument.networking.packet.instrument.c2s.C2SNotePacket;
-import com.google.gson.JsonObject;
-
-import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
