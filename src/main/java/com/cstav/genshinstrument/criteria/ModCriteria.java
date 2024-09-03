@@ -10,7 +10,9 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public class ModCriteria {
 
@@ -26,12 +28,22 @@ public class ModCriteria {
 
 
     public static void register() {
-        InstrumentPlayedEvent.ByPlayer.EVENT.register((args) -> {
-            if (!args.level.isClientSide)
-                INSTRUMENT_PLAYED_TRIGGER.trigger(
-                    (ServerPlayer)args.player,
-                    new ItemStack(BuiltInRegistries.ITEM.get(args.instrumentId))
-                );
+        InstrumentPlayedEvent.EVENT.register((args) -> {
+            if (args.level().isClientSide)
+                return;
+            // Only get player events
+            if (!args.isByPlayer())
+                return;
+
+            final Item instrument = BuiltInRegistries.ITEM.get(args.soundMeta().instrumentId());
+            // Perhaps troll packets
+            if (instrument == Items.AIR)
+                return;
+
+            INSTRUMENT_PLAYED_TRIGGER.trigger(
+                (ServerPlayer) args.entityInfo().get().entity,
+                new ItemStack(instrument)
+            );
         });
     }
     

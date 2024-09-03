@@ -6,6 +6,9 @@ public abstract class EventArgs {
     
     private boolean canceled = false;
 
+    public void cancel() {
+        setCanceled(true);
+    }
     public void setCanceled(final boolean isCanceled) {
         if (isCancelable())
             this.canceled = isCanceled;

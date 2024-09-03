@@ -14,6 +14,10 @@ import net.fabricmc.fabric.api.event.EventFactory;
 @Environment(EnvType.CLIENT)
 public interface MidiEvent extends ModEvent<MidiEventArgs> {
 
+    Event<MidiEvent> EVENT = EventFactory.createArrayBacked(MidiEvent.class,
+        (listeners) -> args -> ModEvent.handleEvent(listeners, args)
+    );
+
     public static class MidiEventArgs extends EventArgs {
         public final MidiMessage message;
         public final long timeStamp;
@@ -23,9 +27,5 @@ public interface MidiEvent extends ModEvent<MidiEventArgs> {
             this.timeStamp = timeStamp;
         }
     }
-
-    Event<MidiEvent> EVENT = EventFactory.createArrayBacked(MidiEvent.class,
-        (listeners) -> args -> ModEvent.handleEvent(listeners, args)
-    );
 
 }

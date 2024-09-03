@@ -1,28 +1,18 @@
 package com.cstav.genshinstrument.client.midi;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-
-import javax.sound.midi.MidiDevice;
-import javax.sound.midi.MidiDevice.Info;
-import javax.sound.midi.MidiMessage;
-import javax.sound.midi.MidiSystem;
-import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Receiver;
-import javax.sound.midi.Transmitter;
-
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
-import org.slf4j.Logger;
-
 import com.cstav.genshinstrument.event.MidiEvent;
 import com.cstav.genshinstrument.event.MidiEvent.MidiEventArgs;
 import com.mojang.logging.LogUtils;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
+import org.slf4j.Logger;
+
+import javax.sound.midi.*;
+import javax.sound.midi.MidiDevice.Info;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 
 @Environment(EnvType.CLIENT)
 public abstract class MidiController {
@@ -41,17 +31,19 @@ public abstract class MidiController {
 
         final MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
 
-        for (int i = 0; i < infos.length; i++) {
+        for (final Info info : infos) {
             try {
 
-                final MidiDevice device = MidiSystem.getMidiDevice(infos[i]);
-                // Only obtain devices that can transmit
+                final MidiDevice device = MidiSystem.getMidiDevice(info);
+
+                // Only obtain devices that can transmit.
+                // This will throw for un-transmittable devices.
                 device.getTransmitter();
 
-                DEVICES.put(infos[i], device);
+                DEVICES.put(info, device);
 
             } catch (MidiUnavailableException e) {
-                LOGGER.warn("MIDI device "+infos[i]+" cannot transmit MIDI; ommitting!");
+                LOGGER.warn("MIDI device " + info.getName().strip() + " cannot transmit MIDI; omitting!");
             } catch (Exception e) {
                 LOGGER.error("Unexpected error occurred while trying to obtain MIDI device!", e);
             }
@@ -141,9 +133,11 @@ public abstract class MidiController {
                 @Override
                 public void send(MidiMessage message, long timeStamp) {
                     // We only want this to run on the render thread, not the MIDI one
-                    Minecraft.getInstance().execute(() ->
-                        MidiEvent.EVENT.invoker().triggered(new MidiEventArgs(message, timeStamp))
-                    );
+                    Minecraft.getInstance().execute(() -> {
+                        try {
+                            MidiEvent.EVENT.invoker().triggered(new MidiEventArgs(message, timeStamp));
+                        } catch (Exception ignored) {}
+                    });
                 }
 
                 @Override
@@ -190,7 +184,7 @@ public abstract class MidiController {
     }
 
     public static String infoAsString(final Info info) {
-        return info.getName() +" - "+ info.getDescription() + " ("+info.getVendor()+")";
+        return info.getName().strip() +" - "+ info.getDescription() + " ("+info.getVendor()+")";
     }
 
 

@@ -3,9 +3,9 @@ package com.cstav.genshinstrument.block.partial;
 import com.cstav.genshinstrument.client.ModArmPose;
 import com.cstav.genshinstrument.event.PosePlayerArmEvent.PosePlayerArmEventArgs;
 import com.cstav.genshinstrument.networking.GIPacketHandler;
-import com.cstav.genshinstrument.networking.packet.instrument.NotifyInstrumentOpenPacket;
+import com.cstav.genshinstrument.networking.packet.instrument.s2c.NotifyInstrumentOpenPacket;
+import com.cstav.genshinstrument.networking.packet.instrument.util.InstrumentPacketUtil;
 import com.cstav.genshinstrument.util.InstrumentEntityData;
-import com.cstav.genshinstrument.util.ServerUtil;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -49,7 +49,7 @@ public abstract class AbstractInstrumentBlock extends BaseEntityBlock {
         if (!(be instanceof InstrumentBlockEntity))
             return InteractionResult.FAIL;
 
-        if (ServerUtil.sendOpenPacket((ServerPlayer)pPlayer, this::onInstrumentOpen, pPos)) {
+        if (InstrumentPacketUtil.sendOpenPacket((ServerPlayer)pPlayer, this::onInstrumentOpen, pPos)) {
             ((InstrumentBlockEntity)be).users.add(pPlayer.getUUID());
             return InteractionResult.SUCCESS;
         }

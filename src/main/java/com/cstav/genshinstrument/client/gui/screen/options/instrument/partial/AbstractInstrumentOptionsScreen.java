@@ -2,6 +2,7 @@ package com.cstav.genshinstrument.client.gui.screen.options.instrument.partial;
 
 import java.awt.Color;
 import java.util.HashMap;
+import java.util.Optional;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -17,26 +18,39 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
+/**
+ * The base class for all instrument options screens.
+ */
 @Environment(EnvType.CLIENT)
 public abstract class AbstractInstrumentOptionsScreen extends Screen {
 
-    public final @Nullable InstrumentScreen instrumentScreen;
+    public final Optional<InstrumentScreen> instrumentScreen;
     public final Screen lastScreen;
 
+    /**
+     * True if this menu is an overlay of an {@link InstrumentScreen};
+     * and one does exist
+     */
     public final boolean isOverlay;
 
     public AbstractInstrumentOptionsScreen(Component pTitle, InstrumentScreen instrumentScreen, Screen lastScreen) {
         super(pTitle);
-        this.instrumentScreen = instrumentScreen;
+        this.instrumentScreen = Optional.ofNullable(instrumentScreen);
         this.lastScreen = lastScreen;
 
         this.isOverlay = instrumentScreen != null;
     }
+    public AbstractInstrumentOptionsScreen(Component pTitle, Optional<InstrumentScreen> instrumentScreen, Screen lastScreen) {
+        this(pTitle, instrumentScreen.orElse(null), lastScreen);
+    }
     public AbstractInstrumentOptionsScreen(Component pTitle, InstrumentScreen instrumentScreen) {
         this(pTitle, instrumentScreen, null);
     }
+    public AbstractInstrumentOptionsScreen(Component pTitle, Optional<InstrumentScreen> instrumentScreen) {
+        this(pTitle, instrumentScreen, null);
+    }
     public AbstractInstrumentOptionsScreen(Component pTitle, Screen lastScreen) {
-        this(pTitle, null, lastScreen);
+        this(pTitle, Optional.empty(), lastScreen);
     }
 
 
@@ -53,12 +67,14 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
 
     @Override
     public void render(GuiGraphics gui, int pMouseX, int pMouseY, float pPartialTick) {
-        if (isOverlay) {
-            instrumentScreen.render(gui, Integer.MAX_VALUE, Integer.MAX_VALUE, pPartialTick);
+        // Render the base instrument screen
+        instrumentScreen.ifPresent((screen) -> {
+            screen.render(gui, Integer.MAX_VALUE, Integer.MAX_VALUE, pPartialTick);
             // Push the options screen infront
             gui.pose().translate(0, 0, 1);
-        }
-        
+        });
+
+        renderBackground(gui, pMouseX, pMouseY, pPartialTick);
         gui.drawCenteredString(font, title, width/2, 15, Color.WHITE.getRGB());
         
         super.render(gui, pMouseX, pMouseY, pPartialTick);
@@ -68,15 +84,19 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
     @Override
     public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
         // Pass keys to the instrument screen if they are consumed
-        if (isOverlay && instrumentScreen.isKeyConsumed(pKeyCode, pScanCode))
-            instrumentScreen.keyPressed(pKeyCode, pScanCode, pModifiers);
+        instrumentScreen.ifPresent((screen) -> {
+            if (screen.isKeyConsumed(pKeyCode, pScanCode))
+                screen.keyPressed(pKeyCode, pScanCode, pModifiers);
+        });
 
         return super.keyPressed(pKeyCode, pScanCode, pModifiers);
     }
     @Override
     public boolean keyReleased(int pKeyCode, int pScanCode, int pModifiers) {
-        if (isOverlay && instrumentScreen.isKeyConsumed(pKeyCode, pScanCode))
-            instrumentScreen.keyReleased(pKeyCode, pScanCode, pModifiers);
+        instrumentScreen.ifPresent((screen) -> {
+            if (screen.isKeyConsumed(pKeyCode, pScanCode))
+                screen.keyReleased(pKeyCode, pScanCode, pModifiers);
+        });
 
         return super.keyReleased(pKeyCode, pScanCode, pModifiers);
     }
@@ -84,8 +104,9 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
     // Also resizing
     @Override
     public void resize(Minecraft minecraft, int width, int height) {
-        if (isOverlay)
-            instrumentScreen.resize(minecraft, width, height);
+        instrumentScreen.ifPresent((screen) ->
+            screen.resize(minecraft, width, height)
+        );
             
         super.resize(minecraft, width, height);
     }
@@ -93,7 +114,7 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
 
     @Override
     public boolean isPauseScreen() {
-        return instrumentScreen == null;
+        return !isOverlay;
     }
 
     @Override
@@ -145,7 +166,7 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
      * @apiNote Should be overwritten in the case of not being used by an instrument
      */
     public String modId() {
-        return isOverlay ? instrumentScreen.getModId() : null;
+        return instrumentScreen.map(InstrumentScreen::getModId).orElse(null);
     }
     
 }

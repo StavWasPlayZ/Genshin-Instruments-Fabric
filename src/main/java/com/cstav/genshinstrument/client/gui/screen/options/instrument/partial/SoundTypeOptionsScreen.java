@@ -2,7 +2,7 @@ package com.cstav.genshinstrument.client.gui.screen.options.instrument.partial;
 
 import com.cstav.genshinstrument.client.config.enumType.SoundType;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentScreen;
-import com.cstav.genshinstrument.client.gui.screen.instrument.partial.notegrid.GridInstrumentScreen;
+import com.cstav.genshinstrument.client.gui.screen.instrument.partial.grid.GridInstrumentScreen;
 import com.cstav.genshinstrument.client.util.TogglablePedalSound;
 import com.cstav.genshinstrument.event.MidiEvent.MidiEventArgs;
 import net.fabricmc.api.EnvType;
@@ -12,6 +12,8 @@ import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+
+import java.util.Locale;
 
 /**
  * An options screen that implements a button to cycle through an instrument's sounds
@@ -36,8 +38,8 @@ public abstract class SoundTypeOptionsScreen<T extends SoundType> extends Single
         this.preferredSoundType = preferredSoundType;
 
         // Update the sound for this instrument
-        if (isValidForSet(instrumentScreen))
-            instrumentScreen.setNoteSounds(preferredSoundType.getSoundArr().get());
+        if (instrumentScreen.map(this::isValidForSet).orElse(false))
+            instrumentScreen.get().setNoteSounds(preferredSoundType.getSoundArr().get());
     }
 
     protected abstract T getInitSoundType();
@@ -48,8 +50,8 @@ public abstract class SoundTypeOptionsScreen<T extends SoundType> extends Single
 
     @Override
     protected AbstractButton constructButton() {
-        return CycleButton.<T>builder((type) ->
-            Component.translatable(soundTypeButtonKey()+"."+type.toString().toLowerCase())
+        return CycleButton.<T>builder((soundType) ->
+            Component.translatable(soundTypeButtonKey()+"."+soundType.getName())
         )
             .withValues(values())
             .withInitialValue(getPreferredSoundType())
@@ -64,7 +66,9 @@ public abstract class SoundTypeOptionsScreen<T extends SoundType> extends Single
     protected void onSoundTypeChange(final CycleButton<T> btn, final T soundType) {
         setPreferredSoundType(soundType);
 
-        queueToSave(instrumentScreen.getInstrumentId().getPath()+"_sound_type", () -> saveSoundType(soundType));
+        instrumentScreen.ifPresent((screen) ->
+            queueToSave(screen.getInstrumentId().getPath() + "_sound_type", () -> saveSoundType(soundType))
+        );
     }
     protected abstract void saveSoundType(final T soundType);
 

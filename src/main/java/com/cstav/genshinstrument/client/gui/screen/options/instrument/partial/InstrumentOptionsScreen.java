@@ -8,7 +8,7 @@ import com.cstav.genshinstrument.client.config.enumType.InstrumentChannelType;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.NoteButton;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.label.INoteLabel;
-import com.cstav.genshinstrument.client.gui.screen.instrument.partial.notegrid.GridInstrumentScreen;
+import com.cstav.genshinstrument.client.gui.screen.instrument.partial.grid.GridInstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.midi.MidiOptionsScreen;
 import com.cstav.genshinstrument.client.gui.widget.SliderButton;
 import com.cstav.genshinstrument.client.util.ClientUtil;
@@ -32,6 +32,13 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
+import java.util.Locale;
+
+/**
+ * The base class for all main instrument options screens.
+ * Includes basic configurations all instruments should share
+ * by default.
+ */
 @Environment(EnvType.CLIENT)
 public abstract class InstrumentOptionsScreen extends AbstractInstrumentOptionsScreen {
     public static final MutableComponent MIDI_OPTIONS = Component.translatable("label.genshinstrument.midiOptions");
@@ -89,7 +96,7 @@ public abstract class InstrumentOptionsScreen extends AbstractInstrumentOptionsS
             .build();
 
         // Add MIDI options button for MIDI instruments
-        if (!isOverlay || instrumentScreen.isMidiInstrument()) {
+        if (!isOverlay || instrumentScreen.get().isMidiInstrument()) {
             final LinearLayout buttonLayout = new LinearLayout(
                 grid.getX() + getSmallButtonWidth() - buttonsWidth + ClientUtil.GRID_HORZ_PADDING, buttonsY,
                 Orientation.HORIZONTAL
@@ -115,11 +122,10 @@ public abstract class InstrumentOptionsScreen extends AbstractInstrumentOptionsS
 
     protected void initAudioSection(final GridLayout grid, final RowHelper rowHelper) {
         final CycleButton<InstrumentChannelType> instrumentChannel = CycleButton.<InstrumentChannelType>builder((soundType) ->
-            Component.translatable(SOUND_CHANNEL_KEY +"."+ soundType.toString().toLowerCase())
+            Component.translatable(SOUND_CHANNEL_KEY +"."+ soundType.getKey())
         )
             .withValues(InstrumentChannelType.values())
             .withInitialValue(ModClientConfigs.CHANNEL_TYPE.get())
-
             .withTooltip((soundType) -> Tooltip.create(switch (soundType) {
                 case MIXED -> translatableArgs(SOUND_CHANNEL_KEY+".mixed.tooltip", NoteSound.STEREO_RANGE);
                 case STEREO -> Component.translatable(SOUND_CHANNEL_KEY+".stereo.tooltip");
@@ -161,7 +167,7 @@ public abstract class InstrumentOptionsScreen extends AbstractInstrumentOptionsS
             rowHelper.addChild(pitchSlider);
         }
 
-        final SliderButton volumeSlider = new SliderButton(getSmallButtonWidth(), ModClientConfigs.VOLUME.get(), 0, 1) {
+        final SliderButton volumeSlider = new SliderButton(getSmallButtonWidth(), getVolume(), 0, 1) {
 
             @Override
             public Component getMessage() {
@@ -184,7 +190,7 @@ public abstract class InstrumentOptionsScreen extends AbstractInstrumentOptionsS
         // Not visual, but no space
         final CycleButton<Boolean> stopMusic = CycleButton.booleanBuilder(CommonComponents.OPTION_ON, CommonComponents.OPTION_OFF)
             .withInitialValue(ModClientConfigs.STOP_MUSIC_ON_PLAY.get())
-            .withTooltip((value) -> Tooltip.create(Component.translatable(STOP_MUSIC_KEY+".tooltip", NoteSound.STOP_SOUND_DISTANCE)))
+            .withTooltip((value) -> Tooltip.create(Component.translatable(STOP_MUSIC_KEY+".tooltip", ClientUtil.STOP_SOUND_DISTANCE)))
             .create(0, 0,
                 getSmallButtonWidth(), getButtonHeight(),
                 Component.translatable(STOP_MUSIC_KEY), this::onMusicStopChanged
@@ -214,6 +220,7 @@ public abstract class InstrumentOptionsScreen extends AbstractInstrumentOptionsS
             final CycleButton<INoteLabel> labelType = CycleButton.<INoteLabel>builder((label) -> Component.translatable(label.getKey()))
                 .withValues(labels)
                 .withInitialValue(currLabel)
+                .withTooltip((value) -> Tooltip.create(Component.translatable(value.getKey()+".description")))
                 .create(0, 0,
                     getBigButtonWidth(), getButtonHeight(),
                     Component.translatable("button.genshinstrument.label"), this::onLabelChanged
@@ -237,34 +244,31 @@ public abstract class InstrumentOptionsScreen extends AbstractInstrumentOptionsS
     }
 
     private int getPitch() {
-        return (!isOverlay)
-            ? ModClientConfigs.PITCH.get().intValue()
-            : instrumentScreen.getPitch();
+        return instrumentScreen.map(InstrumentScreen::getPitch).orElseGet(ModClientConfigs.PITCH);
+    }
+    private double getVolume() {
+        return instrumentScreen.map(screen -> (double) screen.volume()).orElseGet(ModClientConfigs.VOLUME);
     }
 
 
     // Change handlers
-    protected void onLabelChanged(final CycleButton<INoteLabel> button, final INoteLabel label) {
-        if (isOverlay)
-            instrumentScreen.notesIterable().forEach((note) -> note.setLabelSupplier(label.getLabelSupplier()));
-
-        queueToSave("note_label", () -> saveLabel(label));
-    }
-    protected abstract void saveLabel(final INoteLabel newLabel);
-
     protected void onPitchChanged(final AbstractSliderButton slider, final int pitch) {
-        if (isOverlay) {
-            // This is a double slide, hence conversions to int would
-            // make unnecessary calls
-            if (instrumentScreen.getPitch() == pitch)
-                return;
+        instrumentScreen.ifPresentOrElse(
+            (screen) -> {
+                // This is a double slide, hence conversions to int would
+                // make unnecessary calls
+                if (screen.getPitch() == pitch)
+                    return;
 
-            // Directly save the pitch if we're on an instrument
-            // Otherwise transpositions will reset to their previous pitch
-            instrumentScreen.setPitch(pitch);
-            savePitch(pitch);
-        } else
-            queueToSave("pitch", () -> savePitch(pitch));
+                // Directly save the pitch if we're on an instrument
+                // Otherwise transpositions will reset to their previous pitch
+                screen.setPitch(pitch);
+                savePitch(pitch);
+            },
+            () -> {
+                queueToSave("pitch", () -> savePitch(pitch));
+            }
+        );
     }
     protected void savePitch(final int newPitch) {
         ModClientConfigs.PITCH.set(newPitch);
@@ -272,15 +276,20 @@ public abstract class InstrumentOptionsScreen extends AbstractInstrumentOptionsS
 
     protected void onVolumeChanged(final AbstractSliderButton slider, final double volume) {
         final int newVolume = (int)(volume * 100);
-
-        if (isOverlay)
-            instrumentScreen.volume = newVolume;
+        instrumentScreen.ifPresent((screen) -> screen.volume = newVolume);
 
         queueToSave("volume", () -> saveVolume(newVolume / 100d));
     }
     protected void saveVolume(final double newVolume) {
         ModClientConfigs.VOLUME.set(CommonUtil.round(newVolume, 4));
     }
+
+    // The label enum is not cached anywhere; just save it.
+    protected void onLabelChanged(final CycleButton<INoteLabel> button, final INoteLabel label) {
+        instrumentScreen.ifPresent((screen) -> screen.setLabelSupplier(label.getLabelSupplier()));
+        saveLabel(label);
+    }
+    protected abstract void saveLabel(final INoteLabel newLabel);
 
     // These values derive from the config directly, so just update them on-spot
     protected void onChannelTypeChanged(CycleButton<InstrumentChannelType> button, InstrumentChannelType type) {
@@ -295,8 +304,9 @@ public abstract class InstrumentOptionsScreen extends AbstractInstrumentOptionsS
     protected void onAccurateNotesChanged(final CycleButton<Boolean> button, final boolean value) {
         ModClientConfigs.ACCURATE_NOTES.set(value);
 
-        if (isOverlay)
-            instrumentScreen.notesIterable().forEach(NoteButton::updateNoteLabel);
+        instrumentScreen.ifPresent((screen) ->
+            screen.notesIterable().forEach(NoteButton::updateNoteLabel)
+        );
     }
 
 
@@ -313,7 +323,7 @@ public abstract class InstrumentOptionsScreen extends AbstractInstrumentOptionsS
         }
 
         saveOptions();
-        instrumentScreen.onOptionsClose();
+        instrumentScreen.get().onOptionsClose();
     }
 
 

@@ -9,10 +9,11 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
+import java.util.Locale;
+
 /**
  * An interface for all packets under the Genshin Instruments mod.
- * All its implementers must have a {@code TYPE} field of type {@link PacketType} (see {@link IModPacket#type})
- * and a constructor that takes a {@link FriendlyByteBuf}.
+ * All its implementers must a constructor that takes a {@link FriendlyByteBuf}.
  */
 public interface IModPacket extends FabricPacket {
     void handle(Player player, PacketSender responseSender);
@@ -28,8 +29,7 @@ public interface IModPacket extends FabricPacket {
 
     public static <T extends IModPacket> PacketType<T> type(final Class<T> packetType) {
         return PacketType.create(
-            // Cannot serve custom mod IDs because FabricPacket#getType requires no arguments
-            new ResourceLocation(GInstrumentMod.MODID, packetType.getSimpleName().toLowerCase()),
+            new ResourceLocation(GInstrumentMod.MODID, packetType.getSimpleName().toLowerCase(Locale.ENGLISH)),
 
             (buf) -> {
                 try {

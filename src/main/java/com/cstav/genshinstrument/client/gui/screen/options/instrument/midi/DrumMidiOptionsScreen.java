@@ -14,11 +14,13 @@ import net.minecraft.client.gui.layouts.SpacerElement;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
+import java.util.Locale;
+import java.util.Optional;
+
 @Environment(EnvType.CLIENT)
 public class DrumMidiOptionsScreen extends MidiOptionsScreen {
-    public static final String DDT_KEY = "button.genshinstrument.dominantDrumType";
 
-    public DrumMidiOptionsScreen(Component pTitle, Screen prevScreen, InstrumentScreen instrumentScreen) {
+    public DrumMidiOptionsScreen(Component pTitle, Screen prevScreen, Optional<InstrumentScreen> instrumentScreen) {
         super(pTitle, prevScreen, instrumentScreen);
     }
 
@@ -28,13 +30,15 @@ public class DrumMidiOptionsScreen extends MidiOptionsScreen {
 
         rowHelper.addChild(SpacerElement.height(15), 2);
 
-        final CycleButton<DominantDrumType> dominantDrumType = CycleButton.<DominantDrumType>builder((type) -> Component.translatable(type.getKey()))
+        final CycleButton<DominantDrumType> dominantDrumType = CycleButton.<DominantDrumType>builder((type) ->
+            Component.translatable(type.getKey())
+        )
             .withValues(DominantDrumType.values())
-            .withTooltip((type) -> Tooltip.create(Component.translatable(DDT_KEY+"."+type.name().toLowerCase()+".tooltip")))
+            .withTooltip((type) -> Tooltip.create(Component.translatable(type.getDescKey())))
             .withInitialValue(ModClientConfigs.DOMINANT_DRUM_TYPE.get())
             .create(0, 0,
                 getSmallButtonWidth(), getButtonHeight(),
-                Component.translatable(DDT_KEY), this::onDominantDrumTypeChanged
+                Component.translatable(DominantDrumType.DDT_KEY), this::onDominantDrumTypeChanged
             );
         rowHelper.addChild(dominantDrumType);
     }

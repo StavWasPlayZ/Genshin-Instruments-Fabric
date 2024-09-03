@@ -1,9 +1,13 @@
 package com.cstav.genshinstrument.client;
 
 import com.cstav.genshinstrument.GInstrumentMod;
+import com.cstav.genshinstrument.ModModels;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
+import com.cstav.genshinstrument.client.gui.screen.instrument.InstrumentScreenRegistry;
 import com.cstav.genshinstrument.client.gui.screen.instrument.drum.AratakisGreatAndGloriousDrumScreen;
 import com.cstav.genshinstrument.client.gui.screen.instrument.floralzither.FloralZitherScreen;
+import com.cstav.genshinstrument.client.gui.screen.instrument.nightwind_horn.NightwindHornScreen;
+import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.instrument.vintagelyre.VintageLyreScreen;
 import com.cstav.genshinstrument.client.gui.screen.instrument.windsonglyre.WindsongLyreScreen;
 import com.cstav.genshinstrument.client.keyMaps.InstrumentKeyMappings;
@@ -13,15 +17,23 @@ import com.cstav.genshinstrument.networking.GIPacketHandler;
 import com.cstav.genshinstrument.util.CommonUtil;
 
 import fuzs.forgeconfigapiport.fabric.api.forge.v4.ForgeConfigRegistry;
+import fuzs.forgeconfigapiport.api.config.v2.ForgeConfigRegistry;
 import net.fabricmc.api.ClientModInitializer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.config.ModConfig;
+
+import java.util.Map;
+import java.util.function.Supplier;
 
 public class ClientInitiator implements ClientModInitializer {
 
-	private static final Class<?>[] LOAD_ME = new Class[] {
-		WindsongLyreScreen.class, VintageLyreScreen.class,
-		FloralZitherScreen.class, AratakisGreatAndGloriousDrumScreen.class
-	};
+	private static final Map<ResourceLocation, Supplier<? extends InstrumentScreen>> INSTRUMENTS = Map.of(
+		WindsongLyreScreen.INSTRUMENT_ID, WindsongLyreScreen::new,
+		VintageLyreScreen.INSTRUMENT_ID, VintageLyreScreen::new,
+		FloralZitherScreen.INSTRUMENT_ID, FloralZitherScreen::new,
+		AratakisGreatAndGloriousDrumScreen.INSTRUMENT_ID, AratakisGreatAndGloriousDrumScreen::new,
+		NightwindHornScreen.INSTRUMENT_ID, NightwindHornScreen::new
+	);
 
     
 	@Override
@@ -32,10 +44,11 @@ public class ClientInitiator implements ClientModInitializer {
 		ClientEvents.register();
 
 		ModItemPredicates.register();
+		ModModels.register();
 
 		InstrumentKeyMappings.load();
 
-		CommonUtil.loadClasses(LOAD_ME);
+		InstrumentScreenRegistry.register(INSTRUMENTS);
 	}
     
 }
