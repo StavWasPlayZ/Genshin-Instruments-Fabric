@@ -11,16 +11,21 @@ import com.cstav.genshinstrument.event.InstrumentPlayedEvent.InstrumentPlayedEve
 import com.cstav.genshinstrument.event.MidiEvent.MidiEventArgs;
 import com.cstav.genshinstrument.event.PosePlayerArmEvent.PosePlayerArmEventArgs;
 import com.cstav.genshinstrument.item.ItemPoseModifier;
+import com.cstav.genshinstrument.networking.GIPacketHandler;
+import com.cstav.genshinstrument.networking.packet.instrument.c2s.ReqInstrumentOpenStatePacket;
 import com.cstav.genshinstrument.networking.packet.instrument.util.HeldSoundPhase;
 import com.cstav.genshinstrument.sound.NoteSound;
 import com.cstav.genshinstrument.sound.held.HeldNoteSounds;
 import com.cstav.genshinstrument.util.InstrumentEntityData;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -39,6 +44,7 @@ public abstract class ClientEvents {
     public static void register() {
         ClientTickEvents.START_CLIENT_TICK.register(ClientEvents::onClientTick);
         ServerWorldEvents.UNLOAD.register(ClientEvents::onLevelUnload);
+        ClientEntityEvents.ENTITY_LOAD.register(ClientEvents::onEntityLoad);
 
         InstrumentPlayedEvent.EVENT.register(ClientEvents::onInstrumentPlayed);
         HeldNoteSoundPlayedEvent.EVENT.register(ClientEvents::onHeldNoteSound);
@@ -165,6 +171,15 @@ public abstract class ClientEvents {
     }
 
     //#endregion
+
+
+    private static void onEntityLoad(Entity entity, ClientLevel world) {
+        // This is a replacement to ModCapabilities' sync mechanism.
+        // Since for some reason it sends the info BEFORE players load in.
+        if (entity instanceof RemotePlayer player) {
+            GIPacketHandler.sendToServer(new ReqInstrumentOpenStatePacket(player.getUUID()));
+        }
+    }
 
 
     public static void onLevelUnload(MinecraftServer server, ServerLevel world) {

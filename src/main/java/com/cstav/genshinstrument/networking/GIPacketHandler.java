@@ -1,22 +1,19 @@
 package com.cstav.genshinstrument.networking;
 
-import java.util.List;
-
-import com.cstav.genshinstrument.networking.buttonidentifier.DrumNoteIdentifier;
-import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifier;
-import com.cstav.genshinstrument.networking.buttonidentifier.NoteGridButtonIdentifier;
 import com.cstav.genshinstrument.networking.packet.instrument.c2s.C2SHeldNoteSoundPacket;
 import com.cstav.genshinstrument.networking.packet.instrument.c2s.C2SNoteSoundPacket;
 import com.cstav.genshinstrument.networking.packet.instrument.c2s.CloseInstrumentPacket;
+import com.cstav.genshinstrument.networking.packet.instrument.c2s.ReqInstrumentOpenStatePacket;
 import com.cstav.genshinstrument.networking.packet.instrument.s2c.NotifyInstrumentOpenPacket;
 import com.cstav.genshinstrument.networking.packet.instrument.s2c.OpenInstrumentPacket;
-
 import com.cstav.genshinstrument.networking.packet.instrument.s2c.S2CHeldNoteSoundPacket;
 import com.cstav.genshinstrument.networking.packet.instrument.s2c.S2CNoteSoundPacket;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.FabricPacket;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.level.ServerPlayer;
+
+import java.util.List;
 
 public class GIPacketHandler {
 
@@ -29,7 +26,8 @@ public class GIPacketHandler {
         }),
         C2S_PACKETS = List.of(new Class[] {
             CloseInstrumentPacket.class,
-            C2SNoteSoundPacket.class, C2SHeldNoteSoundPacket.class
+            C2SNoteSoundPacket.class, C2SHeldNoteSoundPacket.class,
+            ReqInstrumentOpenStatePacket.class
         })
     ;
 
