@@ -611,12 +611,12 @@ public abstract class InstrumentScreen extends Screen {
     @Override
     public void removed() {
         // For when the screen was forcibly replaced
-        if (!closed) {
-            if (isOptionsScreenActive)
-                optionsScreen.saveOptions();
-            else
-                notifyClosed();
+        // This is not true for if it is replacing the instrument screen.
+        if (isOptionsScreenActive)
+            return;
 
+        if (!closed) {
+            notifyClosed();
             closed = true;
         }
 
