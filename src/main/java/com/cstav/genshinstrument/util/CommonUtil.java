@@ -1,6 +1,5 @@
 package com.cstav.genshinstrument.util;
 
-import com.cstav.genshinstrument.GInstrumentMod;
 import com.google.common.collect.Lists;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -86,16 +85,26 @@ public abstract class CommonUtil {
     }
 
 
-    public static void loadClasses(final Class<?>[] classes) {
-        for (final Class<?> loadMe : classes) {
-			
-			try {
-				Class.forName(loadMe.getName());
-			} catch (ClassNotFoundException e) {
-				GInstrumentMod.LOGGER.error("Failed to load class "+ loadMe.getSimpleName() +": class not found", e);
-			}
-
-		}
+    @SuppressWarnings("unchecked")
+    public static <T> T getStaticFinalField(final Class<?> clazz, final String name, Class<T> type) {
+        try {
+            return (T) clazz.getDeclaredField(name).get(null);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(
+                "Invalid %s field for %s. Please mark it public static final."
+                    .formatted(name, clazz.getSimpleName()),
+            e);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(
+                "No %s field found for %s. Please make a public static final %s %s in your packet class."
+                    .formatted(name, clazz.getSimpleName(), name, type.getSimpleName()),
+            e);
+        } catch (ClassCastException e) {
+            throw new RuntimeException(
+                "Invalid type found for field %s. It should be of type %s."
+                    .formatted(name, type.getSimpleName()),
+            e);
+        }
     }
 
 

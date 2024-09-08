@@ -3,6 +3,7 @@ package com.cstav.genshinstrument.networking.packet.instrument.s2c;
 import com.cstav.genshinstrument.networking.IModPacket;
 import com.cstav.genshinstrument.networking.packet.instrument.NoteSoundMetadata;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 
 import java.util.Optional;
 
@@ -11,7 +12,7 @@ import java.util.Optional;
  * a specific note.
  * @param <T> The sound object type
  */
-public abstract class S2CNotePacket<T> implements IModPacket {
+public abstract class S2CNotePacket<T> extends IModPacket {
     public final Optional<Integer> initiatorID;
     public final T sound;
     public final NoteSoundMetadata meta;
@@ -26,19 +27,19 @@ public abstract class S2CNotePacket<T> implements IModPacket {
         this.sound = sound;
         this.meta = meta;
     }
-    public S2CNotePacket(FriendlyByteBuf buf) {
+    public S2CNotePacket(RegistryFriendlyByteBuf buf) {
         initiatorID = buf.readOptional(FriendlyByteBuf::readInt);
         sound = readSound(buf);
         meta = NoteSoundMetadata.read(buf);
     }
 
     @Override
-    public void write(FriendlyByteBuf buf) {
+    public void write(RegistryFriendlyByteBuf buf) {
         buf.writeOptional(initiatorID, FriendlyByteBuf::writeInt);
         writeSound(buf);
         meta.write(buf);
     }
 
-    protected abstract T readSound(FriendlyByteBuf buf);
-    protected abstract void writeSound(FriendlyByteBuf buf);
+    protected abstract T readSound(RegistryFriendlyByteBuf buf);
+    protected abstract void writeSound(RegistryFriendlyByteBuf buf);
 }

@@ -3,7 +3,7 @@
 
     "display": {
         "icon": {
-            "item": "genshinstrument:nightwind_horn"
+            "id": "genshinstrument:nightwind_horn"
         },
 
         "title": {

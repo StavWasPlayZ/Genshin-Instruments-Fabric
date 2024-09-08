@@ -25,7 +25,9 @@ public class GInstrumentMod implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		GIPacketHandler.registerCodecs();
 		GIPacketHandler.registerServerPackets();
+
 		ServerEvents.register();
 		NoteButtonIdentifiers.register(
 			NoteGridButtonIdentifier.class,

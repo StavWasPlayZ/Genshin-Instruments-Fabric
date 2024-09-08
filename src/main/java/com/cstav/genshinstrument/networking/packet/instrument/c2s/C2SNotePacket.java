@@ -5,10 +5,9 @@ import com.cstav.genshinstrument.networking.IModPacket;
 import com.cstav.genshinstrument.networking.packet.instrument.NoteSoundMetadata;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.minecraft.network.FriendlyByteBuf;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.Context;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 
 import java.util.Optional;
 
@@ -17,7 +16,7 @@ import java.util.Optional;
  * notifying that a specific note should be played in the level
  * @param <T> The sound object type
  */
-public abstract class C2SNotePacket<T> implements IModPacket {
+public abstract class C2SNotePacket<T> extends IModPacket {
 
     public final T sound;
     public final NoteSoundMetadata meta;
@@ -37,23 +36,24 @@ public abstract class C2SNotePacket<T> implements IModPacket {
         ));
     }
 
-    public C2SNotePacket(FriendlyByteBuf buf) {
+    public C2SNotePacket(RegistryFriendlyByteBuf buf) {
         sound = readSound(buf);
         meta = NoteSoundMetadata.read(buf);
     }
     @Override
-    public void write(final FriendlyByteBuf buf) {
+    public void write(final RegistryFriendlyByteBuf buf) {
         writeSound(buf);
         meta.write(buf);
     }
 
-    protected abstract T readSound(FriendlyByteBuf buf);
-    protected abstract void writeSound(FriendlyByteBuf buf);
+    protected abstract T readSound(RegistryFriendlyByteBuf buf);
+    protected abstract void writeSound(RegistryFriendlyByteBuf buf);
 
 
     @Override
-    public void handle(Player player, PacketSender responseSender) {
-        sendPlayNotePackets((ServerPlayer) player);
+    public void handleServer(Context context) {
+        sendPlayNotePackets(context.player());
     }
+
     protected abstract void sendPlayNotePackets(final ServerPlayer player);
 }

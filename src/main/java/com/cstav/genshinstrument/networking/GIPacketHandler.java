@@ -8,9 +8,12 @@ import com.cstav.genshinstrument.networking.packet.instrument.s2c.NotifyInstrume
 import com.cstav.genshinstrument.networking.packet.instrument.s2c.OpenInstrumentPacket;
 import com.cstav.genshinstrument.networking.packet.instrument.s2c.S2CHeldNoteSoundPacket;
 import com.cstav.genshinstrument.networking.packet.instrument.s2c.S2CNoteSoundPacket;
+import com.cstav.genshinstrument.networking.packet.instrument.util.ClientDistExec;
+import com.cstav.genshinstrument.util.ServerUtil;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.FabricPacket;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.List;
@@ -32,32 +35,23 @@ public class GIPacketHandler {
     ;
 
 
+    public static void registerCodecs() {
+        ServerUtil.registerCodecs(PayloadTypeRegistry.playC2S(), C2S_PACKETS);
+        ServerUtil.registerCodecs(PayloadTypeRegistry.playS2C(), S2C_PACKETS);
+    }
+
     public static void registerClientPackets() {
-        for (final Class<IModPacket> packetClass : S2C_PACKETS) {
-
-            ClientPlayNetworking.registerGlobalReceiver(
-                IModPacket.type(packetClass),
-                IModPacket::handle
-            );
-
-        }
+        ServerUtil.registerClientPackets(S2C_PACKETS, ClientDistExec.PACKET_SWITCH);
     }
     public static void registerServerPackets() {
-        for (final Class<IModPacket> packetClass : C2S_PACKETS) {
-
-            ServerPlayNetworking.registerGlobalReceiver(
-                IModPacket.type(packetClass),
-                IModPacket::handle
-            );
-
-        }
+        ServerUtil.registerServerPackets(C2S_PACKETS);
     }
 
 
-    public static void sendToServer(final FabricPacket packet) {
+    public static void sendToServer(final CustomPacketPayload packet) {
         ClientPlayNetworking.send(packet);
     }
-    public static void sendToClient(final FabricPacket packet, final ServerPlayer player) {
+    public static void sendToClient(final CustomPacketPayload packet, final ServerPlayer player) {
         ServerPlayNetworking.send(player, packet);
     }
     

@@ -1,31 +1,30 @@
 package com.cstav.genshinstrument.networking.packet.instrument.s2c;
 
+import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.networking.IModPacket;
-import com.cstav.genshinstrument.networking.packet.instrument.util.ClientDistExec;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
 
-public class OpenInstrumentPacket implements IModPacket {
+public class OpenInstrumentPacket extends IModPacket {
+    public static final String MOD_ID = GInstrumentMod.MODID;
+    public static final StreamCodec<RegistryFriendlyByteBuf, OpenInstrumentPacket> CODEC = CustomPacketPayload.codec(
+        OpenInstrumentPacket::write,
+        OpenInstrumentPacket::new
+    );
 
-    private final ResourceLocation instrumentType;
+    public final ResourceLocation instrumentType;
     public OpenInstrumentPacket(final ResourceLocation instrumentScreen) {
         this.instrumentType = instrumentScreen;
     }
 
-    public OpenInstrumentPacket(FriendlyByteBuf buf) {
+    public OpenInstrumentPacket(RegistryFriendlyByteBuf buf) {
         instrumentType = buf.readResourceLocation();
     }
 
     @Override
-    public void write(FriendlyByteBuf buf) {
+    public void write(RegistryFriendlyByteBuf buf) {
         buf.writeResourceLocation(instrumentType);
-    }
-
-
-    @Override
-    public void handle(Player player, PacketSender responseSender) {
-        ClientDistExec.setScreenByInstrumentId(instrumentType);
     }
 }

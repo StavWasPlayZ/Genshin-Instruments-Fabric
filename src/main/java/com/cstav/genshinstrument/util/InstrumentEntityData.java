@@ -41,8 +41,7 @@ public abstract class InstrumentEntityData {
      * Present only for when {@link InstrumentEntityData#isItem is an item}.
      */
     public static BlockPos getBlockPos(final Player player) {
-        final CompoundTag posTag = getModTag(player).getCompound(BLOCK_POS_TAG);
-        return posTag.isEmpty() ? null : NbtUtils.readBlockPos(posTag);
+        return NbtUtils.readBlockPos(getModTag(player), BLOCK_POS_TAG).orElse(null);
     }
 
 
