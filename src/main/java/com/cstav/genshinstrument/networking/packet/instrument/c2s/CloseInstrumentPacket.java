@@ -4,7 +4,6 @@ import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.networking.IModPacket;
 import com.cstav.genshinstrument.networking.packet.instrument.util.InstrumentPacketUtil;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.Context;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 
@@ -18,7 +17,6 @@ public class CloseInstrumentPacket extends IModPacket {
     public static final StreamCodec<RegistryFriendlyByteBuf, CloseInstrumentPacket> CODEC = StreamCodec.unit(INSTANCE);
 
     private CloseInstrumentPacket() {}
-    public CloseInstrumentPacket(FriendlyByteBuf buf) {}
 
     @Override
     public void handleServer(Context context) {
