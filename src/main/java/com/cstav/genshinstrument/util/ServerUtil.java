@@ -62,8 +62,8 @@ public class ServerUtil {
     }
 
     public static <T extends IModPacket> Entry<String, BiConsumer<T, Context>> switchEntry(
-        final Class<T> packetType,
-        BiConsumer<T, ClientPlayNetworking.Context> handler
+        BiConsumer<T, Context> handler,
+        final Class<T> packetType
     ) {
         return Map.entry(IModPacket.path(packetType), handler);
     }

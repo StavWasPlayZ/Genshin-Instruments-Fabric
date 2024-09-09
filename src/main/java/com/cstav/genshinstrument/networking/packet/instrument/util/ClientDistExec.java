@@ -22,26 +22,26 @@ import static com.cstav.genshinstrument.util.ServerUtil.switchEntry;
 public class ClientDistExec {
 
     public static final Map<String, BiConsumer<? extends IModPacket, ClientPlayNetworking.Context>> PACKET_SWITCH = Map.ofEntries(
-        switchEntry(S2CNoteSoundPacket.class, ClientDistExec::handleNoteSoundPacket),
-        switchEntry(S2CHeldNoteSoundPacket.class, ClientDistExec::handleHeldNoteSoundPacket),
-        switchEntry(OpenInstrumentPacket.class, ClientDistExec::handleOpenInstrumentPacket),
-        switchEntry(NotifyInstrumentOpenPacket.class, ClientDistExec::handleNotifyInstrumentOpenPacket)
+        switchEntry(ClientDistExec::handle, S2CNoteSoundPacket.class),
+        switchEntry(ClientDistExec::handle, S2CHeldNoteSoundPacket.class),
+        switchEntry(ClientDistExec::handle, OpenInstrumentPacket.class),
+        switchEntry(ClientDistExec::handle, NotifyInstrumentOpenPacket.class)
     );
 
 
-    private static void handleNoteSoundPacket(final S2CNoteSoundPacket packet, final Context context) {
+    private static void handle(final S2CNoteSoundPacket packet, final Context context) {
         packet.sound.playFromServer(packet.initiatorID, packet.meta);
     }
 
-    private static void handleHeldNoteSoundPacket(final S2CHeldNoteSoundPacket packet, final Context context) {
+    private static void handle(final S2CHeldNoteSoundPacket packet, final Context context) {
         packet.sound.playFromServer(packet.initiatorID, packet.oInitiatorID, packet.meta, packet.phase);
     }
 
-    public static void handleOpenInstrumentPacket(final OpenInstrumentPacket packet, final Context context) {
+    public static void handle(final OpenInstrumentPacket packet, final Context context) {
         InstrumentScreenRegistry.setScreenByID(packet.instrumentType);
     }
 
-    public static void handleNotifyInstrumentOpenPacket(final NotifyInstrumentOpenPacket packet, final Context context) {
+    public static void handle(final NotifyInstrumentOpenPacket packet, final Context context) {
         final Player _player = Minecraft.getInstance().level.getPlayerByUUID(packet.playerUUID);
 
         if (packet.isOpen) {
