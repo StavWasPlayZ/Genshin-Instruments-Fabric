@@ -11,7 +11,6 @@ import com.cstav.genshinstrument.networking.packet.instrument.s2c.S2CNoteSoundPa
 import com.cstav.genshinstrument.networking.packet.instrument.util.ClientDistExec;
 import com.cstav.genshinstrument.util.ServerUtil;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
@@ -36,8 +35,7 @@ public class GIPacketHandler {
 
 
     public static void registerCodecs() {
-        ServerUtil.registerCodecs(PayloadTypeRegistry.playC2S(), C2S_PACKETS);
-        ServerUtil.registerCodecs(PayloadTypeRegistry.playS2C(), S2C_PACKETS);
+        ServerUtil.registerCodecs(C2S_PACKETS, S2C_PACKETS);
     }
 
     public static void registerClientPackets() {

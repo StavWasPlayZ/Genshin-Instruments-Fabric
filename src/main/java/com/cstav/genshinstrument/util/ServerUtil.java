@@ -14,6 +14,14 @@ import java.util.function.BiConsumer;
 
 public class ServerUtil {
 
+    public static void registerCodecs(
+        List<Class<IModPacket>> c2sPacketTypes,
+        List<Class<IModPacket>> s2cPacketTypes
+    ) {
+        ServerUtil.registerCodecs(PayloadTypeRegistry.playC2S(), c2sPacketTypes);
+        ServerUtil.registerCodecs(PayloadTypeRegistry.playS2C(), s2cPacketTypes);
+    }
+
     public static void registerCodecs(PayloadTypeRegistry<RegistryFriendlyByteBuf> registry, List<Class<IModPacket>> packetTypes) {
         for (final Class<IModPacket> packetClass : packetTypes) {
             registry.register(
@@ -22,6 +30,7 @@ public class ServerUtil {
             );
         }
     }
+
 
     public static void registerServerPackets(final List<Class<IModPacket>> packetTypes) {
         for (final Class<IModPacket> packetClass : packetTypes) {
