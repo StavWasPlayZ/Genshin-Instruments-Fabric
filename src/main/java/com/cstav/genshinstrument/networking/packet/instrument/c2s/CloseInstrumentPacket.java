@@ -16,8 +16,6 @@ public class CloseInstrumentPacket extends IModPacket {
     public static final String MOD_ID = GInstrumentMod.MODID;
     public static final StreamCodec<RegistryFriendlyByteBuf, CloseInstrumentPacket> CODEC = StreamCodec.unit(INSTANCE);
 
-    private CloseInstrumentPacket() {}
-
     @Override
     public void handleServer(Context context) {
         InstrumentPacketUtil.setInstrumentClosed(context.player());
