@@ -9,6 +9,8 @@ import com.cstav.genshinstrument.networking.packet.instrument.s2c.OpenInstrument
 import com.cstav.genshinstrument.networking.packet.instrument.s2c.S2CHeldNoteSoundPacket;
 import com.cstav.genshinstrument.networking.packet.instrument.s2c.S2CNoteSoundPacket;
 import com.cstav.genshinstrument.util.InstrumentEntityData;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.Context;
 import net.minecraft.client.Minecraft;
@@ -19,6 +21,7 @@ import java.util.function.BiConsumer;
 
 import static com.cstav.genshinstrument.util.ServerUtil.switchEntry;
 
+@Environment(EnvType.CLIENT)
 public class ClientDistExec {
 
     public static final Map<String, BiConsumer<? extends IModPacket, ClientPlayNetworking.Context>> PACKET_SWITCH = Map.ofEntries(
