@@ -42,7 +42,7 @@ public class ModModels {
 
 
     private static ModelResourceLocation mrl(String path) {
-        return new ModelResourceLocation(GInstrumentMod.MODID, path, "inventory");
+        return new ModelResourceLocation(GInstrumentMod.loc(path), "inventory");
     }
 
 }

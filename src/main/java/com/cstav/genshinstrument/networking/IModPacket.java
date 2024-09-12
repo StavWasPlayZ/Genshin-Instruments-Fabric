@@ -35,7 +35,7 @@ public abstract class IModPacket implements CustomPacketPayload {
     }
 
     public static <T extends IModPacket> CustomPacketPayload.Type<T> type(final Class<T> packetType) {
-        return new Type<>(new ResourceLocation(
+        return new Type<>(ResourceLocation.fromNamespaceAndPath(
             CommonUtil.getStaticFinalField(packetType, "MOD_ID", String.class),
             path(packetType)
         ));

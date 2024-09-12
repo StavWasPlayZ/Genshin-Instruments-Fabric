@@ -8,7 +8,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -44,7 +43,7 @@ public abstract class GICreativeModeTabs {
     private static ResourceKey<CreativeModeTab> register(final String name, final CreativeModeTab tab) {
         final ResourceKey<CreativeModeTab> tabKey = ResourceKey.create(
             Registries.CREATIVE_MODE_TAB,
-            new ResourceLocation(GInstrumentMod.MODID, name)
+            GInstrumentMod.loc(name)
         );
 
         Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, tabKey, tab);

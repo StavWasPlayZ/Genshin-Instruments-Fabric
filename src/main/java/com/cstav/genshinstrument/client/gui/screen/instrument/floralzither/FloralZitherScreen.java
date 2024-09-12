@@ -6,14 +6,13 @@ import com.cstav.genshinstrument.client.gui.screen.instrument.partial.grid.GridI
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.FloralZitherOptionsScreen;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.InstrumentOptionsScreen;
 import com.cstav.genshinstrument.sound.NoteSound;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
 
 @Environment(EnvType.CLIENT)
 public class FloralZitherScreen extends GridInstrumentScreen {
-    public static final ResourceLocation INSTRUMENT_ID = new ResourceLocation(GInstrumentMod.MODID, "floral_zither");
+    public static final ResourceLocation INSTRUMENT_ID = GInstrumentMod.loc("floral_zither");
 
     @Override
     public ResourceLocation getInstrumentId() {

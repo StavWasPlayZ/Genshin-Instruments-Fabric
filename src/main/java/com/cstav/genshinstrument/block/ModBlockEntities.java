@@ -9,7 +9,7 @@ public abstract class ModBlockEntities {
     // );
     
     // private static <T extends BlockEntity> BlockEntityType<T> regsiter(final String name, final BlockEntityType<T> bet) {
-    //     Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, new ResourceLocation(GInstrumentMod.MODID, name), bet);
+    //     Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, GInstrumentMod.loc(name), bet);
     //     return bet;
     // }
 }

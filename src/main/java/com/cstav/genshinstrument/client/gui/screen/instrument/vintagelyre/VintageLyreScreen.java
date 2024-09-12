@@ -14,7 +14,6 @@ import com.cstav.genshinstrument.client.midi.MidiOverflowResult.OverflowType;
 import com.cstav.genshinstrument.client.midi.PressedMIDINote;
 import com.cstav.genshinstrument.sound.GISounds;
 import com.cstav.genshinstrument.sound.NoteSound;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
@@ -22,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Environment(EnvType.CLIENT)
 public class VintageLyreScreen extends GridInstrumentScreen {
-    public static final ResourceLocation INSTRUMENT_ID = new ResourceLocation(GInstrumentMod.MODID, "vintage_lyre");
+    public static final ResourceLocation INSTRUMENT_ID = GInstrumentMod.loc("vintage_lyre");
     public static final String[] NOTE_LAYOUT = new String[] {
         "C", "Db", "Eb", "F", "G", "Ab", "Bb",
         "C", "D", "Eb", "F", "G", "A", "Bb",

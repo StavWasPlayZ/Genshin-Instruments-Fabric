@@ -1,13 +1,11 @@
 package com.cstav.genshinstrument.sound;
 
 import com.cstav.genshinstrument.GInstrumentMod;
-
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.grid.GridInstrumentScreen;
 import com.cstav.genshinstrument.sound.held.HeldNoteSound;
 import com.cstav.genshinstrument.sound.registrar.HeldNoteSoundRegistrar;
 import com.cstav.genshinstrument.sound.registrar.NoteSoundRegistrar;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
 
 public class GISounds {
 
@@ -62,10 +60,10 @@ public class GISounds {
 
 
     /**
-     * Shorthand for {@code new ResourceLocation(GInstrumentMod.MODID, name)}
+     * Shorthand for {@code GInstrumentMod.loc(name)}
      */
     private static ResourceLocation loc(final String name) {
-        return new ResourceLocation(GInstrumentMod.MODID, name);
+        return GInstrumentMod.loc(name);
     }
 
     /**

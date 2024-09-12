@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 
 @Environment(EnvType.CLIENT)
 public class NightwindHornScreen extends HeldGridInstrumentScreen {
-    public static final ResourceLocation INSTRUMENT_ID = new ResourceLocation(GInstrumentMod.MODID, "nightwind_horn");
+    public static final ResourceLocation INSTRUMENT_ID = GInstrumentMod.loc("nightwind_horn");
 
     @Override
     public ResourceLocation getInstrumentId() {

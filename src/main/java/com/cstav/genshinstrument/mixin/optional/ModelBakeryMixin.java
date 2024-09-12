@@ -4,8 +4,8 @@ import com.cstav.genshinstrument.event.RegisterAdditionalModelsEvent;
 import com.cstav.genshinstrument.event.RegisterAdditionalModelsEvent.RegisterAdditionalModelsEventArgs;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.resources.model.BlockStateModelLoader;
 import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelBakery.LoadedJson;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -23,19 +23,19 @@ import java.util.Map;
 public abstract class ModelBakeryMixin {
 
     @Invoker
-    public abstract void invokeLoadTopLevel(ModelResourceLocation location);
+    public abstract void invokeLoadSpecialItemModelAndDependencies(ModelResourceLocation location);
 
     @Inject(method = "<init>", at = @At(
         value = "INVOKE",
-        target = "Lnet/minecraft/client/resources/model/ModelBakery;loadTopLevel(Lnet/minecraft/client/resources/model/ModelResourceLocation;)V",
-        ordinal = 3,
+        target = "Lnet/minecraft/client/resources/model/ModelBakery;loadSpecialItemModelAndDependencies(Lnet/minecraft/client/resources/model/ModelResourceLocation;)V",
+        ordinal = 1,
         shift = Shift.AFTER
     ))
-    private void initInjector(BlockColors blockColors, ProfilerFiller profilerFiller, Map<ResourceLocation, BlockModel> modelResources, Map<ResourceLocation, List<LoadedJson>> blockStateResources, CallbackInfo ci) {
+    private void initInjector(BlockColors blockColors, ProfilerFiller profilerFiller, Map<ResourceLocation, BlockModel> map, Map<ResourceLocation, List<BlockStateModelLoader.LoadedJson>> map2, CallbackInfo ci) {
         final RegisterAdditionalModelsEventArgs args = new RegisterAdditionalModelsEventArgs();
         RegisterAdditionalModelsEvent.EVENT.invoker().triggered(args);
 
-        args.getModels().forEach(this::invokeLoadTopLevel);
+        args.getModels().forEach(this::invokeLoadSpecialItemModelAndDependencies);
     }
 
 }

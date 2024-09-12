@@ -11,6 +11,7 @@ import com.cstav.genshinstrument.networking.buttonidentifier.NoteButtonIdentifie
 import com.cstav.genshinstrument.networking.buttonidentifier.NoteGridButtonIdentifier;
 import com.cstav.genshinstrument.sound.GISounds;
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +23,11 @@ import org.slf4j.LoggerFactory;
 public class GInstrumentMod implements ModInitializer {
 	public static final String MODID = "genshinstrument";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
+
+	public static ResourceLocation loc(final String name) {
+		return ResourceLocation.fromNamespaceAndPath(MODID, name);
+	}
+
 
 	@Override
 	public void onInitialize() {

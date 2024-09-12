@@ -33,7 +33,7 @@ public class GIItems {
     
     
     private static Item register(final String id, final Item item) {
-        Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(GInstrumentMod.MODID, id), item);
+        Registry.register(BuiltInRegistries.ITEM, GInstrumentMod.loc(id), item);
         addToItemGroups(item);
 
         return item;
@@ -48,7 +48,7 @@ public class GIItems {
 
 
     private static ResourceLocation loc(final String path) {
-        return new ResourceLocation(GInstrumentMod.MODID, path);
+        return GInstrumentMod.loc(path);
     }
 
     
