@@ -3,11 +3,11 @@ plugins {
 	id 'maven-publish'
 }
 
-version = project.mod_version
+version = "fabric-${archive_version_range}-${project.mod_version}"
 group = project.maven_group
 
 base {
-	archivesName = project.archives_base_name+"-fabric-"+project.minecraft_version
+	archivesName = project.archives_base_name
 }
 
 repositories {
@@ -51,10 +51,10 @@ dependencies {
 }
 
 processResources {
-	inputs.property "version", project.version
+	inputs.property "version", mod_version
 
 	filesMatching("fabric.mod.json") {
-		expand "version": project.version
+		expand "version": mod_version
 	}
 }
 
@@ -82,6 +82,7 @@ jar {
 publishing {
 	publications {
 		mavenJava(MavenPublication) {
+			artifactId = mod_id
 			from components.java
 		}
 	}

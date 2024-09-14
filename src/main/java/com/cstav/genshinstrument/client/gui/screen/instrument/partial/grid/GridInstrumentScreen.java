@@ -219,6 +219,8 @@ public abstract class GridInstrumentScreen extends InstrumentScreen {
     }
 
     protected void renderClef(GuiGraphics gui, int index, int x, String clefName) {
+        RenderSystem.enableBlend();
+
         gui.blit(getInternalResourceFromGlob("background/clef/"+clefName+".png"),
             x, grid.getY() + NoteGrid.getPaddingVert() + getLayerAddition(index) - 5,
             0, 0,
@@ -226,8 +228,12 @@ public abstract class GridInstrumentScreen extends InstrumentScreen {
             CLEF_WIDTH, CLEF_HEIGHT,
             CLEF_WIDTH, CLEF_HEIGHT
         );
+
+        RenderSystem.disableBlend();
     }
     protected void renderStaff(final GuiGraphics gui, final int index) {
+        RenderSystem.enableBlend();
+
         gui.blit(getInternalResourceFromGlob("background/staff.png"),
             grid.getX() + 2, grid.getY() + NoteGrid.getPaddingVert() + getLayerAddition(index),
             0, 0,
@@ -235,6 +241,8 @@ public abstract class GridInstrumentScreen extends InstrumentScreen {
             grid.getWidth() - 5, getNoteSize(),
             grid.getWidth() - 5, getNoteSize()
         );
+
+        RenderSystem.disableBlend();
     }
 
     /**
