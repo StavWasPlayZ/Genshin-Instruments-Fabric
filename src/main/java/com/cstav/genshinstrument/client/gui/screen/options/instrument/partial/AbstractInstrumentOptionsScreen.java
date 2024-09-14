@@ -72,7 +72,6 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
         });
 
         super.render(gui, pMouseX, pMouseY, pPartialTick);
-
         gui.drawCenteredString(font, title, width/2, 15, Color.WHITE.getRGB());
     }
 
