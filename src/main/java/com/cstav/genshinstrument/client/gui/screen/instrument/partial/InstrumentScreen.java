@@ -19,7 +19,6 @@ import com.cstav.genshinstrument.sound.NoteSound;
 import com.cstav.genshinstrument.util.InstrumentEntityData;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.platform.InputConstants.Type;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.logging.LogUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -441,9 +440,7 @@ public abstract class InstrumentScreen extends Screen {
     public void renderInstrument(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         // To omit background
         for (Renderable renderable : Screens.getButtons(this)) {
-            RenderSystem.enableBlend();
             renderable.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
-            RenderSystem.disableBlend();
         }
     }
 
