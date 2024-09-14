@@ -1,22 +1,19 @@
 package com.cstav.genshinstrument.client.gui.screen.options.instrument.partial;
 
-import java.awt.Color;
-import java.util.HashMap;
-import java.util.Optional;
-
-import org.jetbrains.annotations.Nullable;
-
 import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentScreen;
 import com.cstav.genshinstrument.client.util.ClientUtil;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+
+import java.awt.*;
+import java.util.HashMap;
+import java.util.Optional;
 
 /**
  * The base class for all instrument options screens.
@@ -75,9 +72,9 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
         });
 
         renderBackground(gui);
-        gui.drawCenteredString(font, title, width/2, 15, Color.WHITE.getRGB());
-        
         super.render(gui, pMouseX, pMouseY, pPartialTick);
+
+        gui.drawCenteredString(font, title, width/2, 15, Color.WHITE.getRGB());
     }
 
 
