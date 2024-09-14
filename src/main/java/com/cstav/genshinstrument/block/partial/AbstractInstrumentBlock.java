@@ -6,7 +6,6 @@ import com.cstav.genshinstrument.networking.GIPacketHandler;
 import com.cstav.genshinstrument.networking.packet.instrument.s2c.NotifyInstrumentOpenPacket;
 import com.cstav.genshinstrument.networking.packet.instrument.util.InstrumentPacketUtil;
 import com.cstav.genshinstrument.util.InstrumentEntityData;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
@@ -40,7 +39,7 @@ public abstract class AbstractInstrumentBlock extends BaseEntityBlock {
 
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand,
-            BlockHitResult pHit) {        
+                                 BlockHitResult pHit) {
         if (pLevel.isClientSide)
             return InteractionResult.CONSUME;
 
@@ -61,9 +60,10 @@ public abstract class AbstractInstrumentBlock extends BaseEntityBlock {
     @Override
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
         final BlockEntity be = pLevel.getBlockEntity(pPos);
-        if (!(be instanceof InstrumentBlockEntity))
+        if (!(be instanceof InstrumentBlockEntity)) {
+            super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston);
             return;
-
+        }
 
         final InstrumentBlockEntity ibe = (InstrumentBlockEntity)be;
 
@@ -73,6 +73,8 @@ public abstract class AbstractInstrumentBlock extends BaseEntityBlock {
                 GIPacketHandler.sendToClient(new NotifyInstrumentOpenPacket(user), (ServerPlayer)player);
             });
         }
+
+        super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston);
     }
 
 
