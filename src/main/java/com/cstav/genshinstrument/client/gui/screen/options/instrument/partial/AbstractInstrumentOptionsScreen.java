@@ -4,7 +4,6 @@ import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentScreen;
 import com.cstav.genshinstrument.client.util.ClientUtil;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -67,10 +66,7 @@ public abstract class AbstractInstrumentOptionsScreen extends Screen {
     public void render(GuiGraphics gui, int pMouseX, int pMouseY, float pPartialTick) {
         // Render the base instrument screen
         instrumentScreen.ifPresent((screen) -> {
-            RenderSystem.enableBlend();
             screen.render(gui, Integer.MAX_VALUE, Integer.MAX_VALUE, pPartialTick);
-            RenderSystem.disableBlend();
-
             // Push the options screen infront
             gui.pose().translate(0, 0, 1);
         });

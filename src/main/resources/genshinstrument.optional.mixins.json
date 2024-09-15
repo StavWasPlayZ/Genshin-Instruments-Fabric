@@ -3,6 +3,7 @@
     "package": "com.cstav.genshinstrument.mixin.optional",
     "compatibilityLevel": "JAVA_21",
     "client": [
+        "GameRendererMixin",
         "InstrumentAnimMixin",
         "ItemRendererMixin",
         "ModelBakeryMixin"
