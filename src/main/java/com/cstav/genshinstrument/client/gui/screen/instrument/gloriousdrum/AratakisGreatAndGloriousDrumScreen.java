@@ -1,4 +1,4 @@
-package com.cstav.genshinstrument.client.gui.screen.instrument.drum;
+package com.cstav.genshinstrument.client.gui.screen.instrument.gloriousdrum;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,7 +8,6 @@ import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentScreen;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentThemeLoader;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.NoteButton;
-import com.cstav.genshinstrument.client.gui.screen.options.instrument.DrumOptionsScren;
 import com.cstav.genshinstrument.client.gui.screen.options.instrument.partial.InstrumentOptionsScreen;
 import com.cstav.genshinstrument.client.midi.InstrumentMidiReceiver;
 import com.mojang.blaze3d.platform.InputConstants.Key;
@@ -42,7 +41,7 @@ public class AratakisGreatAndGloriousDrumScreen extends InstrumentScreen {
 
     @Override
     protected InstrumentOptionsScreen initInstrumentOptionsScreen() {
-        return new DrumOptionsScren(this);
+        return new GloriousDrumOptionsScreen(this);
     }
 
 
@@ -50,8 +49,8 @@ public class AratakisGreatAndGloriousDrumScreen extends InstrumentScreen {
     protected void init() {
         initOptionsButton(height/2 + 25);
 
-        final LinearLayout layout1 = createRow(DrumButtonType.DON, 2),
-            layout2 = createRow(DrumButtonType.KA, 1.3f);
+        final LinearLayout layout1 = createRow(GloriousDrumButtonType.DON, 2),
+            layout2 = createRow(GloriousDrumButtonType.KA, 1.3f);
 
         // Make layout magic
         layout1.arrangeElements();
@@ -73,7 +72,7 @@ public class AratakisGreatAndGloriousDrumScreen extends InstrumentScreen {
         super.init();
     }
 
-    private LinearLayout createRow(DrumButtonType type, float widthPercent) {
+    private LinearLayout createRow(GloriousDrumButtonType type, float widthPercent) {
         final LinearLayout layout = new LinearLayout(
             0, 0,
             (int)(width/widthPercent), getNoteSize(),
@@ -85,8 +84,8 @@ public class AratakisGreatAndGloriousDrumScreen extends InstrumentScreen {
 
         return layout;
     }
-    private DrumNoteButton createButton(DrumButtonType btnType, LinearLayout container, boolean isRight) {
-        final DrumNoteButton btn = new DrumNoteButton(btnType, isRight, this);
+    private GloriousDrumNoteButton createButton(GloriousDrumButtonType btnType, LinearLayout container, boolean isRight) {
+        final GloriousDrumNoteButton btn = new GloriousDrumNoteButton(btnType, isRight, this);
 
         container.addChild(btn);
         notes.put(btn.getKey(), btn);
@@ -115,13 +114,13 @@ public class AratakisGreatAndGloriousDrumScreen extends InstrumentScreen {
 
             @Override
             protected @Nullable NoteButton handleMidiPress(int note, int key) {
-                final boolean isKa = (ddt() == DominantDrumType.KA) || ((ddt() == DominantDrumType.BOTH) && (note >= 12));
+                final boolean isKa = (ddt() == DominantGloriousDrumType.KA) || ((ddt() == DominantGloriousDrumType.BOTH) && (note >= 12));
 
                 setPitch(note - (isKa ? 19 : 2));
 
                 for (final NoteButton noteButton : notesIterable()) {
-                    final DrumNoteButton dnb = (DrumNoteButton) noteButton;
-                    if (dnb.btnType != (isKa ? DrumButtonType.KA : DrumButtonType.DON))
+                    final GloriousDrumNoteButton dnb = (GloriousDrumNoteButton) noteButton;
+                    if (dnb.btnType != (isKa ? GloriousDrumButtonType.KA : GloriousDrumButtonType.DON))
                         continue;
 
                     // Toggle between left/right keys
@@ -146,32 +145,32 @@ public class AratakisGreatAndGloriousDrumScreen extends InstrumentScreen {
             protected NoteButton getLowestNote() {
                 // Get the first don
                 return notes.values().stream()
-                    .map((btn) -> ((DrumNoteButton)btn))
-                    .filter((btn) -> btn.btnType == getDrumTypeOf(DrumButtonType.DON))
+                    .map((btn) -> ((GloriousDrumNoteButton)btn))
+                    .filter((btn) -> btn.btnType == getDrumTypeOf(GloriousDrumButtonType.DON))
                     .findFirst().get();
             }
             @Override
             protected NoteButton getHighestNote() {
                 // Get the first ka
                 return notes.values().stream()
-                    .map((btn) -> ((DrumNoteButton)btn))
-                    .filter((btn) -> btn.btnType == getDrumTypeOf(DrumButtonType.KA))
+                    .map((btn) -> ((GloriousDrumNoteButton)btn))
+                    .filter((btn) -> btn.btnType == getDrumTypeOf(GloriousDrumButtonType.KA))
                     .findFirst().get();
             }
 
             /**
              * @param btnType The preferred button type
-             * @return The preferred button type if {@code ddt} is {@link DominantDrumType#BOTH both},
+             * @return The preferred button type if {@code ddt} is {@link DominantGloriousDrumType#BOTH both},
              * or the other when forced to.
              */
-            private DrumButtonType getDrumTypeOf(DrumButtonType btnType) {
-                DominantDrumType ddt = ddt();
+            private GloriousDrumButtonType getDrumTypeOf(GloriousDrumButtonType btnType) {
+                DominantGloriousDrumType ddt = ddt();
 
-                return (ddt == DominantDrumType.BOTH)
+                return (ddt == DominantGloriousDrumType.BOTH)
                     ? btnType
-                    : ((ddt == DominantDrumType.DON)
-                    ? DrumButtonType.DON
-                    : DrumButtonType.KA
+                    : ((ddt == DominantGloriousDrumType.DON)
+                    ? GloriousDrumButtonType.DON
+                    : GloriousDrumButtonType.KA
                 )
                     ;
             }
@@ -179,16 +178,16 @@ public class AratakisGreatAndGloriousDrumScreen extends InstrumentScreen {
 
             @Override
             protected int minMidiNote() {
-                return ((ddt() == DominantDrumType.BOTH) || ddt() == DominantDrumType.DON) ? -10 : 7;
+                return ((ddt() == DominantGloriousDrumType.BOTH) || ddt() == DominantGloriousDrumType.DON) ? -10 : 7;
             }
             @Override
             protected int maxMidiNote() {
-                return ((ddt() == DominantDrumType.BOTH) || ddt() == DominantDrumType.KA) ? 32 : 15;
+                return ((ddt() == DominantGloriousDrumType.BOTH) || ddt() == DominantGloriousDrumType.KA) ? 32 : 15;
             }
         };
     }
 
-    private static DominantDrumType ddt() {
+    private static DominantGloriousDrumType ddt() {
         return ModClientConfigs.DOMINANT_DRUM_TYPE.get();
     }
     

@@ -2,7 +2,6 @@ package com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.grid
 
 import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.grid.GridInstrumentScreen;
-import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.grid.NoteGridButton;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.held.HeldNoteButtonRenderer;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.held.IHoldableNoteButton;
 import com.cstav.genshinstrument.networking.packet.instrument.util.HeldSoundPhase;
@@ -93,7 +92,7 @@ public class HeldGridNoteButton extends NoteGridButton implements IHoldableNoteB
 
     @Override
     protected HeldNoteButtonRenderer initNoteRenderer() {
-        return new HeldNoteButtonRenderer(this, this::getTextureAtRow);
+        return new HeldNoteButtonRenderer(this, this::getLabelTexture);
     }
 
     @Override

@@ -1,6 +1,4 @@
-package com.cstav.genshinstrument.client.gui.screen.instrument.drum;
-
-import com.cstav.genshinstrument.client.gui.screen.options.instrument.midi.DrumMidiOptionsScreen;
+package com.cstav.genshinstrument.client.gui.screen.instrument.gloriousdrum;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -8,7 +6,7 @@ import net.fabricmc.api.Environment;
 import java.util.Locale;
 
 @Environment(EnvType.CLIENT)
-public enum DominantDrumType {
+public enum DominantGloriousDrumType {
     DON, KA, BOTH;
 
     public static final String DDT_KEY = "button.genshinstrument.dominantDrumType";
@@ -17,7 +15,7 @@ public enum DominantDrumType {
     public String getKey() {
         return (this == BOTH)
             ? (DDT_KEY + ".both")
-            : ((this == KA) ? DrumButtonType.KA : DrumButtonType.DON).getTransKey();
+            : ((this == KA) ? GloriousDrumButtonType.KA : GloriousDrumButtonType.DON).getTransKey();
     }
 
     public String getDescKey() {
