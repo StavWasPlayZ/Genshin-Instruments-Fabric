@@ -1,0 +1,22 @@
+{
+    "type": "minecraft:crafting_shaped",
+
+    "key": {
+        "#": {
+            "item": "minecraft:spruce_planks"
+        },
+        "X": {
+            "item": "minecraft:leather"
+        }
+    },
+
+    "pattern": [
+        " #X",
+        " ##",
+        "#  "
+    ],
+
+    "result": {
+        "item": "genshinstrument:glorious_drum"
+    }
+}
