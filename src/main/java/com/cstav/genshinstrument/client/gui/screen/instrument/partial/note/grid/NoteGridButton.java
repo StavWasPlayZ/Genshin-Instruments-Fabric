@@ -11,7 +11,6 @@ import com.cstav.genshinstrument.networking.buttonidentifier.NoteGridButtonIdent
 import com.cstav.genshinstrument.sound.NoteSound;
 import com.cstav.genshinstrument.util.LabelUtil;
 import com.mojang.blaze3d.platform.InputConstants.Key;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.resources.ResourceLocation;
@@ -96,17 +95,17 @@ public class NoteGridButton extends NoteButton {
 
     @Override
     protected NoteButtonRenderer initNoteRenderer() {
-        return new NoteButtonRenderer(this, this::getTextureAtRow);
+        return new NoteButtonRenderer(this, this::getLabelTexture);
     }
-    protected int textureRow() {
+    protected int getLabelTextureRow() {
         return ModClientConfigs.ACCURATE_NOTES.get() ? getABCOffset() : (row % GRID_LABELS.length);
     }
 
-    protected ResourceLocation getTextureAtRow(final int row) {
+    protected ResourceLocation getLabelTextureAt(final int row) {
         return GRID_LABELS[row];
     }
-    protected ResourceLocation getTextureAtRow() {
-        return getTextureAtRow(textureRow());
+    protected ResourceLocation getLabelTexture() {
+        return getLabelTextureAt(getLabelTextureRow());
     }
 
 

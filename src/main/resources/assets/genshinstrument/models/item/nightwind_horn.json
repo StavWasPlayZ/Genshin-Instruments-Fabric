@@ -1,12 +1,12 @@
 {
-    "parent": "genshinstrument:item/nightwind_horn_idle",
+	"parent": "genshinstrument:item/nightwind_horn_idle",
 
-    "overrides": [
-        {
-            "predicate": {
-                "genshinstrument:instrument_open": 1
-            },
-            "model": "genshinstrument:item/nightwind_horn_played"
-        }
-    ]
+	"overrides": [
+		{
+			"predicate": {
+				"genshinstrument:instrument_open": 1
+			},
+			"model": "genshinstrument:item/nightwind_horn_played"
+		}
+	]
 }

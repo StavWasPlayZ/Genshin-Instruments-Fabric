@@ -1,7 +1,5 @@
 package com.cstav.genshinstrument.client.gui.screen.instrument.partial.note;
 
-import java.awt.Point;
-
 import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.config.ModClientConfigs;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.InstrumentScreen;
@@ -13,7 +11,6 @@ import com.cstav.genshinstrument.networking.packet.instrument.c2s.C2SNoteSoundPa
 import com.cstav.genshinstrument.sound.NoteSound;
 import com.cstav.genshinstrument.util.InstrumentEntityData;
 import com.cstav.genshinstrument.util.LabelUtil;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -27,6 +24,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
+
+import java.awt.*;
 
 /**
  * The abstract implementation of an instrument's note button.
@@ -110,6 +109,7 @@ public abstract class NoteButton extends AbstractButton {
 
 
     private int initX, initY;
+    private int initWidth, initHeight;
     /**
      * Initializes the button's initial position.
      * This is done for the animations to work properly - for them to stick to the same position.
@@ -117,9 +117,8 @@ public abstract class NoteButton extends AbstractButton {
     public void initPos() {
         initX = getX();
         initY = getY();
-
-        noteRenderer.setLabelX(getX() + width/2);
-        noteRenderer.setLabelY(getY() + height/2 + 7);
+        initWidth = getWidth();
+        initHeight = getHeight();
     }
 
     public int getInitX() {
@@ -127,6 +126,12 @@ public abstract class NoteButton extends AbstractButton {
     }
     public int getInitY() {
         return initY;
+    }
+    public int getInitWidth() {
+        return initWidth;
+    }
+    public int getInitHeight() {
+        return initHeight;
     }
 
     public Point getCenter() {

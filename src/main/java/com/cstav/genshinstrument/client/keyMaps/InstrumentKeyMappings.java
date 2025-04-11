@@ -1,17 +1,15 @@
 package com.cstav.genshinstrument.client.keyMaps;
 
-import org.lwjgl.glfw.GLFW;
-
 import com.cstav.genshinstrument.GInstrumentMod;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.grid.GridInstrumentScreen;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.platform.InputConstants.Type;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
+import org.lwjgl.glfw.GLFW;
 
 @Environment(EnvType.CLIENT)
 public class InstrumentKeyMappings {
@@ -44,16 +42,16 @@ public class InstrumentKeyMappings {
     });
 
     // Glorious drum
-    public static final DrumKeys
-        DON = new DrumKeys(83, 75),
-        KA = new DrumKeys(65, 76)
+    public static final GlriousDrumKeys
+        DON = new GlriousDrumKeys(83, 75),
+        KA = new GlriousDrumKeys(65, 76)
     ;
 
     @Environment(EnvType.CLIENT)
-    public static final class DrumKeys {
+    public static final class GlriousDrumKeys {
         public final Key left, right;
 
-        private DrumKeys(final int left, final int right) {
+        private GlriousDrumKeys(final int left, final int right) {
             this.left = create(left);
             this.right = create(right);
         }

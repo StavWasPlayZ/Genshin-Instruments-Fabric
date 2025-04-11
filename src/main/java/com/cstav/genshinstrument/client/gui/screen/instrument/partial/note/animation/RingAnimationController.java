@@ -2,7 +2,6 @@ package com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.anim
 
 import com.cstav.genshinstrument.client.AnimationController;
 import com.cstav.genshinstrument.client.gui.screen.instrument.partial.note.NoteRing;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
@@ -20,7 +19,7 @@ public class RingAnimationController extends AnimationController {
         this.ringSizeMultiplier = ringSizeMultiplier;
         this.ring = ring;
 
-        initSize = ring.note.instrumentScreen.getNoteSize() * .8;
+        initSize = ring.noteButton.instrumentScreen.getNoteSize() * .8;
     }
 
 
