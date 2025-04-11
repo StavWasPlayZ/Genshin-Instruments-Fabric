@@ -44,16 +44,16 @@ public class InstrumentKeyMappings {
     });
 
     // Glorious drum
-    public static final DrumKeys
-        DON = new DrumKeys(83, 75),
-        KA = new DrumKeys(65, 76)
+    public static final GlriousDrumKeys
+        DON = new GlriousDrumKeys(83, 75),
+        KA = new GlriousDrumKeys(65, 76)
     ;
 
     @Environment(EnvType.CLIENT)
-    public static final class DrumKeys {
+    public static final class GlriousDrumKeys {
         public final Key left, right;
 
-        private DrumKeys(final int left, final int right) {
+        private GlriousDrumKeys(final int left, final int right) {
             this.left = create(left);
             this.right = create(right);
         }

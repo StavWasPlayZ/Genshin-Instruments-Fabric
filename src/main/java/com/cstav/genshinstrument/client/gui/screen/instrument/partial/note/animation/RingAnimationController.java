@@ -20,7 +20,7 @@ public class RingAnimationController extends AnimationController {
         this.ringSizeMultiplier = ringSizeMultiplier;
         this.ring = ring;
 
-        initSize = ring.note.instrumentScreen.getNoteSize() * .8;
+        initSize = ring.noteButton.instrumentScreen.getNoteSize() * .8;
     }
 
 

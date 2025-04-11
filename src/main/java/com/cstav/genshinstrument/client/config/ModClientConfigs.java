@@ -2,10 +2,12 @@ package com.cstav.genshinstrument.client.config;
 
 import com.cstav.genshinstrument.client.config.enumType.InstrumentChannelType;
 import com.cstav.genshinstrument.client.config.enumType.ZitherSoundType;
-import com.cstav.genshinstrument.client.config.enumType.label.DrumNoteLabel;
-import com.cstav.genshinstrument.client.config.enumType.label.NoteGridLabel;
-import com.cstav.genshinstrument.client.gui.screen.instrument.drum.DominantDrumType;
-import com.cstav.genshinstrument.client.gui.screen.options.instrument.midi.MidiOptionsScreen;
+import com.cstav.genshinstrument.client.config.enumType.NoteGridLabel;
+import com.cstav.genshinstrument.client.config.enumType.label.GloriousDrumNoteLabel;
+import com.cstav.genshinstrument.client.gui.screen.instrument.djemdjemdrum.DjemDjemDrumNoteLabel;
+import com.cstav.genshinstrument.client.gui.screen.instrument.gloriousdrum.DominantGloriousDrumType;
+import com.cstav.genshinstrument.client.gui.screen.instrument.ukulele.Ukulele3rdOctaveType;
+import com.cstav.genshinstrument.client.gui.screen.options.instrument.MidiOptionsScreen;
 import com.cstav.genshinstrument.client.util.ClientUtil;
 import com.cstav.genshinstrument.sound.NoteSound;
 
@@ -20,6 +22,8 @@ import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 
 @Environment(EnvType.CLIENT)
 public class ModClientConfigs {
+    //TODO: Prefix common configs the same
+
     public static final ForgeConfigSpec CONFIGS;
 
     public static final IntValue PITCH, MIDI_DEVICE_INDEX, OCTAVE_SHIFT, MIDI_CHANNEL;
@@ -27,14 +31,19 @@ public class ModClientConfigs {
 
     public static final EnumValue<NoteGridLabel> GRID_LABEL_TYPE;
     public static final EnumValue<InstrumentChannelType> CHANNEL_TYPE;
-    public static final BooleanValue STOP_MUSIC_ON_PLAY, SHARED_INSTRUMENT,
+
+    public static final BooleanValue
+        STOP_MUSIC_ON_PLAY, SHARED_INSTRUMENT,
         RENDER_BACKGROUND, ACCEPTED_GENSHIN_CONSENT, ACCURATE_NOTES,
         MIDI_ENABLED, EXTEND_OCTAVES, FIXED_TOUCH, ACCEPT_ALL_CHANNELS,
-        NORMALIZE_VINTAGE_LYRE;
+        NORMALIZE_VINTAGE_LYRE
+    ;
 
     public static final EnumValue<ZitherSoundType> ZITHER_SOUND_TYPE;
-    public static final EnumValue<DrumNoteLabel> DRUM_LABEL_TYPE;
-    public static final EnumValue<DominantDrumType> DOMINANT_DRUM_TYPE;
+    public static final EnumValue<GloriousDrumNoteLabel> GLORIOUS_DRUM_LABEL_TYPE;
+    public static final EnumValue<DjemDjemDrumNoteLabel> DJEM_DJEM_DRUM_LABEL_TYPE;
+    public static final EnumValue<DominantGloriousDrumType> DOMINANT_DRUM_TYPE;
+    public static final EnumValue<Ukulele3rdOctaveType> UKULELE_3RD_OCTAVE_TYPE;
 
 
     static {
@@ -65,7 +74,8 @@ public class ModClientConfigs {
 
 
         ZITHER_SOUND_TYPE = configBuilder.defineEnum("zither_sound_type", ZitherSoundType.NEW);
-        DRUM_LABEL_TYPE = configBuilder.defineEnum("drum_label_type", DrumNoteLabel.KEYBOARD_LAYOUT);
+        GLORIOUS_DRUM_LABEL_TYPE = configBuilder.defineEnum("glorious_drum_label_type", GloriousDrumNoteLabel.KEYBOARD_LAYOUT);
+        DJEM_DJEM_DRUM_LABEL_TYPE = configBuilder.defineEnum("djem_djem_drum_label_type", DjemDjemDrumNoteLabel.KEYBOARD_LAYOUT);
 
 
         MIDI_ENABLED = configBuilder.define("midi_enabled", false);
@@ -90,7 +100,9 @@ public class ModClientConfigs {
 
         DOMINANT_DRUM_TYPE = configBuilder.comment(
             "Defines the MIDI split behaviour of the Arataki's Great and Glorious Drum"
-        ).defineEnum("dominant_drum_type", DominantDrumType.BOTH);
+        ).defineEnum("dominant_drum_type", DominantGloriousDrumType.BOTH);
+
+        UKULELE_3RD_OCTAVE_TYPE = configBuilder.defineEnum("ukulele_3rd_octave_type", Ukulele3rdOctaveType.CHORDS);
 
 
         CONFIGS = configBuilder.build();
