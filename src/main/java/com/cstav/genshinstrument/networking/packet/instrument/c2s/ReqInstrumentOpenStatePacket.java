@@ -8,6 +8,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.UUID;
 
@@ -34,7 +35,15 @@ public class ReqInstrumentOpenStatePacket extends IModPacket {
 
     @Override
     public void handleServer(Context context) {
-        final ServerPlayer player = context.player();
-        ServerEvents.notifyOpenStateToPlayer(player.level().getPlayerByUUID(uuid), player);
+        final ServerPlayer target = context.player();
+        final Player player = target.level().getPlayerByUUID(uuid);
+
+        // 'player' was reportedly null for some players.
+        // This could stem from the NPCs mod used in issue #5 (Fabric),
+        // where these "clients" don't actually hold a true ServerPlayer UUID.
+        if (player == null)
+            return;
+
+        ServerEvents.notifyOpenStateToPlayer(player, target);
     }
 }
