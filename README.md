@@ -13,6 +13,12 @@ For full Mod and "in-game" API documentations, visit [the Forge version's reposi
 
 I didn't know about it and I regret my life for it its too late to turn back send help
 
+>[!WARNING]
+> # This Mod is No Longer being Maintained.
+> I'm too burnt out and busy to do anything.
+>
+> See the CurseForge page for more info.
+
 # Contributing
 
 Unless directly related to the Fabric port, do refer to the [Forge port](https://github.com/StavWasPlayZ/Genshin-Instruments/).
